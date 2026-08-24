@@ -282,6 +282,7 @@
                 "issues": "https://github.com/pmmp/BinaryUtils/issues",
                 "source": "https://github.com/pmmp/BinaryUtils/tree/0.1.13"
             },
+            "abandoned": true,
             "time": "2021-01-15T14:19:13+00:00"
         },
         {
@@ -332,6 +333,7 @@
                 "issues": "https://github.com/pmmp/CallbackValidator/issues",
                 "source": "https://github.com/pmmp/CallbackValidator/tree/1.0.4"
             },
+            "abandoned": true,
             "time": "2025-12-24T01:25:05+00:00"
         },
         {
@@ -418,6 +420,7 @@
                 "issues": "https://github.com/pmmp/Log/issues",
                 "source": "https://github.com/pmmp/Log/tree/0.2.1"
             },
+            "abandoned": true,
             "time": "2021-01-15T14:32:41+00:00"
         },
         {
@@ -503,6 +506,7 @@
                 "issues": "https://github.com/pmmp/Math/issues",
                 "source": "https://github.com/pmmp/Math/tree/0.2.6"
             },
+            "abandoned": true,
             "time": "2021-01-15T14:25:11+00:00"
         },
         {
