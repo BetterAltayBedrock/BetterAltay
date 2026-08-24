@@ -25,6 +25,8 @@ namespace pocketmine\network\mcpe\protocol;
 
 #include <rules/DataPacket.h>
 
+use pocketmine\nbt\BigEndianNBTStream;
+use pocketmine\nbt\NetworkLittleEndianNBTStream;
 use pocketmine\network\mcpe\NetworkSession;
 use function file_get_contents;
 use const pocketmine\RESOURCE_PATH;
@@ -36,16 +38,15 @@ class AvailableActorIdentifiersPacket extends DataPacket{
 
 	public string $namedtag;
 
-	protected function decodePayload(){
+	protected function decodePayload() : void{
 		$this->namedtag = $this->getRemaining();
 	}
 
-	protected function encodePayload(){
-		$this->put(
-			$this->namedtag ??
-			self::$DEFAULT_NBT_CACHE ??
-			(self::$DEFAULT_NBT_CACHE = file_get_contents(RESOURCE_PATH . '/vanilla/entity_identifiers.nbt'))
+	protected function encodePayload() : void{
+		self::$DEFAULT_NBT_CACHE ??= (new NetworkLittleEndianNBTStream())->write(
+			(new BigEndianNBTStream())->readCompressed(file_get_contents(RESOURCE_PATH . '/vanilla/entity_identifiers.nbt'))
 		);
+		$this->put($this->namedtag ?? self::$DEFAULT_NBT_CACHE);
 	}
 
 	public function handle(NetworkSession $session) : bool{

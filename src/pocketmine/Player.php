@@ -3595,14 +3595,15 @@ class Player extends Human implements CommandSender, ChunkLoader, IPlayer{
 	}
 
 	public function handleSetPlayerGameType(SetPlayerGameTypePacket $packet) : bool{
-		if($packet->gamemode !== $this->gamemode){
-			if($packet->gamemode === 6){
-				$packet->gamemode = self::SPECTATOR;
-			}
-			$this->setGamemode($packet->gamemode);
-			$this->sendAdventureSettings();
-			$this->sendAbilities();
+		$gm = $packet->gamemode === 6 ? 3 : $packet->gamemode;
+		if($gm !== $this->gamemode && $this->hasPermission("pocketmine.command.gamemode")){
+			$this->setGamemode($gm);
+		}else{
+			$this->sendGamemode();
 		}
+
+		$this->sendAdventureSettings();
+		$this->sendAbilities();
 		return true;
 	}
 
