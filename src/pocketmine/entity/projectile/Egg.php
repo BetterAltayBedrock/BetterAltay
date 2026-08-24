@@ -29,9 +29,7 @@ use pocketmine\entity\Entity;
 use pocketmine\event\entity\ProjectileHitEvent;
 use pocketmine\item\ItemFactory;
 use pocketmine\item\ItemIds;
-use pocketmine\level\Level;
 use pocketmine\level\particle\ItemBreakParticle;
-use pocketmine\nbt\tag\CompoundTag;
 use function mt_rand;
 
 class Egg extends Throwable implements ClimateEntity{
@@ -39,8 +37,8 @@ class Egg extends Throwable implements ClimateEntity{
 
 	public const NETWORK_ID = self::EGG;
 
-	public function __construct(Level $level, CompoundTag $nbt, ?Entity $shootingEntity = null){
-		parent::__construct($level, $nbt, $shootingEntity);
+	protected function initEntity() : void{
+		parent::initEntity();
 		$this->initClimateNBT();
 	}
 
