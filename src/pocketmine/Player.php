@@ -2298,21 +2298,6 @@ class Player extends Human implements CommandSender, ChunkLoader, IPlayer{
 			$packet->clientData["ProfileHash"] ?? ""
 		);
 
-		//TODO: REMOVE THIS
-		//Mojang forgot to bump the protocol version when they changed protocol in 26.44
-		if(preg_match('/^(\d+)\.(\d+)\.(\d+)/', $packet->clientData["GameVersion"], $matches) !== 1){
-			throw new UnexpectedValueException("Invalid game version format, expected at least 3 digits");
-		}
-		$major = (int) $matches[1];
-		$minor = (int) $matches[2];
-		$patch = (int) $matches[3];
-		if($major === 1 && $minor === 26 && $patch < 44){
-			$this->sendPlayStatus(PlayStatusPacket::LOGIN_FAILED_CLIENT, true);
-			//This pocketmine disconnect message will only be seen by the console (PlayStatusPacket causes the messages to be shown for the client)
-			$this->close("", "Incompatible client version (1.26.$patch)", false);
-			return true;
-		}
-
 		try{
 			$skin = SkinAdapterSingleton::get()->fromSkinData($skinData);
 			$skin->validate();
