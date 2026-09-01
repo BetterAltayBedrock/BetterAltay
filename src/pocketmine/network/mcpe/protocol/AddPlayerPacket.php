@@ -65,7 +65,7 @@ class AddPlayerPacket extends DataPacket{
 	public array $links = [];
 
 	public string $deviceId = ""; //TODO: fill player's device ID (???)
-	public int $buildPlatform = DeviceOS::UNKNOWN;
+	public int $buildPlatform = DeviceOS::ANDROID;
 
 	protected function decodePayload() : void{
 		$this->uuid = $this->getUUID();

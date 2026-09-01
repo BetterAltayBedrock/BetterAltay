@@ -80,20 +80,21 @@ class SetScorePacket extends DataPacket{
 			});
 
 			$this->putVarLong($entry->scoreboardId);
+			$objectiveName = $entry->objectiveName === "" ? " " : $entry->objectiveName;
 			switch($entry->type){
 				case ScorePacketEntry::TYPE_REMOVE:
-					$this->writeOptional($entry->objectiveName, fn($objectiveName) => $this->putString($objectiveName));
+					$this->writeOptional($objectiveName, fn($objectiveName) => $this->putString($objectiveName));
 					break;
 				case ScorePacketEntry::TYPE_PLAYER:
 				case ScorePacketEntry::TYPE_ENTITY:
-					$this->putString($entry->objectiveName ?? throw new InvalidArgumentException("Objective name must be set for player/entity entry"));
+					$this->putString($objectiveName ?? throw new InvalidArgumentException("Objective name must be set for player/entity entry"));
 					$this->putLInt($entry->score);
 					$this->putEntityUniqueId($entry->entityUniqueId);
 					break;
 				case ScorePacketEntry::TYPE_FAKE_PLAYER:
-					$this->putString($entry->objectiveName ?? throw new InvalidArgumentException("Objective name must be set for fake player entry"));
+					$this->putString($objectiveName ?? throw new InvalidArgumentException("Objective name must be set for fake player entry"));
 					$this->putLInt($entry->score);
-					$this->putString($entry->customName);
+					$this->putString($entry->customName === "" ? " " : $entry->customName);
 					break;
 				default:
 					throw new InvalidArgumentException("Unknown entry type $entry->type");

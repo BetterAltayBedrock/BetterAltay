@@ -45,9 +45,9 @@ class Egg extends ProjectileItem{
 
 	protected function addExtraTags(CompoundTag $tag) : void{
 		$tag->setInt("ClimateVariant", match ($this->getId()) {
-			self::BLUE_EGG => ClimateVariant::CLIMATE_COLD,
-			self::BROWN_EGG => ClimateVariant::CLIMATE_WARM,
-			default => ClimateVariant::CLIMATE_TEMPERATE
+			self::BLUE_EGG => ClimateVariant::VARIANT_COLD,
+			self::BROWN_EGG => ClimateVariant::VARIANT_WARM,
+			default => ClimateVariant::VARIANT_TEMPERATE
 		});
 	}
 }

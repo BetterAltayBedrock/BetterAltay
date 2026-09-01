@@ -23,7 +23,8 @@ declare(strict_types=1);
 
 namespace pocketmine\entity\projectile;
 
-use pocketmine\entity\ClimateVariant;
+use pocketmine\entity\ClimateEntity;
+use pocketmine\entity\ClimateTrait;
 use pocketmine\entity\Entity;
 use pocketmine\event\entity\ProjectileHitEvent;
 use pocketmine\item\ItemFactory;
@@ -31,10 +32,15 @@ use pocketmine\item\ItemIds;
 use pocketmine\level\particle\ItemBreakParticle;
 use function mt_rand;
 
-class Egg extends Throwable{
+class Egg extends Throwable implements ClimateEntity{
+	use ClimateTrait;
+
 	public const NETWORK_ID = self::EGG;
 
-	//TODO: add egg climate variant
+	protected function initEntity() : void{
+		parent::initEntity();
+		$this->initClimateNBT();
+	}
 
 	protected function onHit(ProjectileHitEvent $event) : void{
 		for($i = 0; $i < 6; ++$i){
@@ -43,7 +49,7 @@ class Egg extends Throwable{
 
 		if(mt_rand(1, 8) === 1){
 			$nbt = Entity::createBaseNBT($this);
-			$nbt->setInt("ClimateVariant", $this->namedtag->getInt("ClimateVariant", ClimateVariant::CLIMATE_TEMPERATE));
+			$nbt->setInt("ClimateVariant", $this->getClimateVariant());
 
 			$chicken = Entity::createEntity("Chicken", $this->level, $nbt);
 

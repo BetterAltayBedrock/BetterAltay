@@ -81,15 +81,12 @@ use pocketmine\Player;
 use pocketmine\Server;
 use pocketmine\timings\Timings;
 use pocketmine\utils\UUID;
+use Throwable;
 use function base64_encode;
 use function bin2hex;
-use function implode;
 use function json_decode;
-use function json_last_error_msg;
-use function preg_match;
 use function strlen;
 use function substr;
-use function trim;
 
 class PlayerNetworkSessionAdapter extends NetworkSession{
 
@@ -120,7 +117,10 @@ class PlayerNetworkSessionAdapter extends NetworkSession{
 
 		try{
 			$packet->decode();
-		}catch(\Exception $exception){
+		}catch(Throwable $exception){
+			$this->server->getLogger()->debug("Failed to decode " . $packet->getName() . " from " . $this->player->getName() . ": " . $exception->getMessage());
+			$timings->stopTiming();
+			return;
 		}
 
 		if(!$packet->feof() and !$packet->mayHaveUnreadBytes()){

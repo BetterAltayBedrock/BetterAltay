@@ -24,6 +24,7 @@ declare(strict_types=1);
 
 namespace pocketmine\entity\passive;
 
+use pocketmine\entity\Animal;
 use pocketmine\entity\behavior\FloatBehavior;
 use pocketmine\entity\behavior\FollowParentBehavior;
 use pocketmine\entity\behavior\LookAtPlayerBehavior;
@@ -32,8 +33,8 @@ use pocketmine\entity\behavior\PanicBehavior;
 use pocketmine\entity\behavior\RandomLookAroundBehavior;
 use pocketmine\entity\behavior\RandomStrollBehavior;
 use pocketmine\entity\behavior\TemptBehavior;
-use pocketmine\entity\ClimateAnimal;
-use pocketmine\entity\ClimateVariant;
+use pocketmine\entity\ClimateEntity;
+use pocketmine\entity\ClimateTrait;
 use pocketmine\item\Item;
 use pocketmine\item\ItemFactory;
 use pocketmine\item\ItemIds;
@@ -42,7 +43,8 @@ use function boolval;
 use function intval;
 use function rand;
 
-class Chicken extends ClimateAnimal{
+class Chicken extends Animal implements ClimateEntity{
+	use ClimateTrait;
 
 	public const NETWORK_ID = self::CHICKEN;
 
@@ -86,6 +88,7 @@ class Chicken extends ClimateAnimal{
 		$this->timeUntilNextEgg = $this->level->random->nextBoundedInt(6000) + 6000;
 
 		parent::initEntity();
+		$this->initClimateNBT();
 	}
 
 	public function getName() : string{
@@ -97,8 +100,8 @@ class Chicken extends ClimateAnimal{
 	}
 
 	public function getDrops() : array{
-		return [
-			($this->isOnFire() ? ItemFactory::get(ItemIds::COOKED_CHICKEN, 0, 1) : ItemFactory::get(ItemIds::CHICKEN, 0, 1)),
+		return $this->isBaby() ? [] : [
+			($this->isOnFire() ? ItemFactory::get(ItemIds::COOKED_CHICKEN) : ItemFactory::get(ItemIds::CHICKEN)),
 			ItemFactory::get(ItemIds::FEATHER, 0, rand(0, 2))
 		];
 	}
@@ -107,6 +110,7 @@ class Chicken extends ClimateAnimal{
 		parent::saveNBT();
 
 		$this->namedtag->setByte("isChickenJockey", intval($this->isChickenJockey()));
+		$this->saveClimateNBT();
 	}
 
 	public function getRiderSeatPosition(int $seatNumber = 0) : Vector3{

@@ -39,19 +39,33 @@ use pocketmine\entity\behavior\StayWhileSittingBehavior;
 use pocketmine\entity\Entity;
 use pocketmine\entity\hostile\Skeleton;
 use pocketmine\entity\Tamable;
+use pocketmine\entity\BiommeVariantEntity;
 use pocketmine\item\Item;
 use pocketmine\item\ItemIds;
+use pocketmine\level\biome\Biome;
 use pocketmine\math\Vector3;
 use pocketmine\network\mcpe\protocol\ActorEventPacket;
 use pocketmine\Player;
 use function mt_rand;
 
-class Wolf extends Tamable{
+class Wolf extends Tamable implements BiommeVariantEntity{
 	public const NETWORK_ID = self::WOLF;
 
 	public $width = 0.6;
 	public $height = 0.8;
 	protected StayWhileSittingBehavior $behaviorSitting;
+
+	public const VARIANT_PALE = 0;
+	public const VARIANT_ASHEN = 1;
+	public const VARIANT_BLACK = 2;
+	public const VARIANT_CHESTNUT = 3;
+	public const VARIANT_RUSTY = 4;
+	public const VARIANT_SNOWY = 5;
+	public const VARIANT_SPOTTED = 6;
+	public const VARIANT_STRIPED = 7;
+	public const VARIANT_WOODS = 8;
+
+	protected int $variant = self::VARIANT_PALE;
 
 	protected function addBehaviors() : void{
 		$this->behaviorPool->setBehavior(0, new FloatBehavior($this));
@@ -147,6 +161,28 @@ class Wolf extends Tamable{
 
 		$this->setAttackDamage(4);
 	}
+
+	public function setVariantFromBiome(Biome $biome) : void{
+		$variant = match ($biome->getId()) {
+			Biome::ICE_PLAINS => self::VARIANT_SNOWY,
+			Biome::TAIGA => self::VARIANT_PALE,
+			Biome::FOREST => self::VARIANT_WOODS,
+			// Biome::SNOWY_TAIGA => self::VARIANT_ASHEN,
+			// Biome::SAVANNA     => self::VARIANT_SPOTTED,
+			// Biome::JUNGLE      => self::VARIANT_RUSTY,
+			// Biome::BADLANDS    => self::VARIANT_STRIPED,
+			Biome::BIRCH_FOREST,
+			Biome::MOUNTAINS,
+			Biome::SMALL_MOUNTAINS,
+			Biome::DESERT,
+			Biome::SWAMP,
+			Biome::PLAINS => self::VARIANT_PALE,
+			default => self::VARIANT_PALE
+		};
+
+		$this->setVariant($variant);
+	}
+
 
 	public function isBreedingItem(Item $item): bool{
 		return match ($item->getId()) {

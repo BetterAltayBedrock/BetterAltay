@@ -26,33 +26,35 @@ namespace pocketmine\network\mcpe\protocol\types;
 use pocketmine\utils\UUID;
 
 final class PersonaSkinPiece{
-	public const PIECE_TYPE_PERSONA_SKELETON = 0;
-	public const PIECE_TYPE_PERSONA_BODY = 1;
-	public const PIECE_TYPE_PERSONA_SKIN = 2;
-	public const PIECE_TYPE_PERSONA_BOTTOM = 3;
-	public const PIECE_TYPE_PERSONA_FEET = 4;
-	public const PIECE_TYPE_PERSONA_TOP = 6;
-	public const PIECE_TYPE_PERSONA_FACIAL_HAIR = 10;
-	public const PIECE_TYPE_PERSONA_MOUTH = 11;
-	public const PIECE_TYPE_PERSONA_EYES = 12;
-	public const PIECE_TYPE_PERSONA_HAIR = 13;
-	public const PIECE_TYPE_DRESS = 5;
-	public const PIECE_TYPE_HIGH_PANTS = 7;
-	public const PIECE_TYPE_HANDS = 8;
-	public const PIECE_TYPE_OUTERWEAR = 9;
-	public const PIECE_TYPE_HOOD = 14;
-	public const PIECE_TYPE_BACK = 15;
-	public const PIECE_TYPE_FACE_ACCESSORY = 16;
-	public const PIECE_TYPE_HEAD = 17;
-	public const PIECE_TYPE_LEGS = 18;
-	public const PIECE_TYPE_LEFT_LEG = 19;
-	public const PIECE_TYPE_RIGHT_LEG = 20;
-	public const PIECE_TYPE_ARMS = 21;
-	public const PIECE_TYPE_LEFT_ARM = 22;
-	public const PIECE_TYPE_RIGHT_ARM = 23;
-	public const PIECE_TYPE_CAPES = 24;
-	public const PIECE_TYPE_CLASSIC_SKIN = 25;
-	public const PIECE_TYPE_EMOTE = 26;
+	public const PIECE_TYPE_PERSONA_UNKNOWN = 0;
+	public const PIECE_TYPE_PERSONA_SKELETON = 1;
+	public const PIECE_TYPE_PERSONA_BODY = 2;
+	public const PIECE_TYPE_PERSONA_SKIN = 3;
+	public const PIECE_TYPE_PERSONA_BOTTOM = 4;
+	public const PIECE_TYPE_PERSONA_FEET = 5;
+	public const PIECE_TYPE_PERSONA_DRESS = 6;
+	public const PIECE_TYPE_PERSONA_TOP = 7;
+	public const PIECE_TYPE_PERSONA_HIGH_PANTS = 8;
+	public const PIECE_TYPE_PERSONA_HANDS = 9;
+	public const PIECE_TYPE_PERSONA_OUTERWEAR = 10;
+	public const PIECE_TYPE_PERSONA_FACIAL_HAIR = 11;
+	public const PIECE_TYPE_PERSONA_MOUTH = 12;
+	public const PIECE_TYPE_PERSONA_EYES = 13;
+	public const PIECE_TYPE_PERSONA_HAIR = 14;
+	public const PIECE_TYPE_PERSONA_HOOD = 15;
+	public const PIECE_TYPE_PERSONA_BACK = 16;
+	public const PIECE_TYPE_PERSONA_FACE_ACCESSORY = 17;
+	public const PIECE_TYPE_PERSONA_HEAD = 18;
+	public const PIECE_TYPE_PERSONA_LEGS = 19;
+	public const PIECE_TYPE_PERSONA_LEFT_LEG = 20;
+	public const PIECE_TYPE_PERSONA_RIGHT_LEG = 21;
+	public const PIECE_TYPE_PERSONA_ARMS = 22;
+	public const PIECE_TYPE_PERSONA_LEFT_ARM = 23;
+	public const PIECE_TYPE_PERSONA_RIGHT_ARM = 24;
+	public const PIECE_TYPE_PERSONA_CAPES = 25;
+	public const PIECE_TYPE_PERSONA_CLASSIC_SKIN = 26;
+	public const PIECE_TYPE_PERSONA_EMOTE = 27;
+	public const PIECE_TYPE_PERSONA_UNSUPPORTED = 28;
 
 
 	public function __construct(
@@ -61,6 +63,63 @@ final class PersonaSkinPiece{
 		private UUID $packId,
 		private bool $isDefaultPiece,
 		private string $productId){
+	}
+
+	public static function pieceTypeToId(int|string $pieceType) : int{
+		if(is_int($pieceType)){
+			return $pieceType;
+		}
+
+		$name = strtolower($pieceType);
+		if(str_starts_with($name, "persona_")){
+			$name = substr($name, strlen("persona_"));
+		}
+
+		$byName = [
+			"unknown" => 0,
+			"skeleton" => 1,
+			"body" => 2,
+			"skin" => 3,
+			"bottom" => 4,
+			"feet" => 5,
+			"dress" => 6,
+			"top" => 7,
+			"high_pants" => 8,
+			"hands" => 9,
+			"hand" => 9,
+			"outerwear" => 10,
+			"facialhair" => 11,
+			"facial_hair" => 11,
+			"mouth" => 12,
+			"eyes" => 13,
+			"hair" => 14,
+			"hood" => 15,
+			"back" => 16,
+			"faceaccessory" => 17,
+			"face_accessory" => 17,
+			"head" => 18,
+			"legs" => 19,
+			"leftleg" => 20,
+			"left_leg" => 20,
+			"rightleg" => 21,
+			"right_leg" => 21,
+			"arms" => 22,
+			"leftarm" => 23,
+			"left_arm" => 23,
+			"rightarm" => 24,
+			"right_arm" => 24,
+			"capes" => 25,
+			"classicskin" => 26,
+			"classic_skin" => 26,
+			"emote" => 27,
+			"unsupported" => 28,
+		];
+
+		if(isset($byName[$name])){
+			return $byName[$name];
+		}
+
+		throw new \InvalidArgumentException("Unknown persona piece type \"$pieceType\"");
 	}
 
 	public function getPieceId() : string{

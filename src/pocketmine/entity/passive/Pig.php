@@ -24,6 +24,7 @@ declare(strict_types=1);
 
 namespace pocketmine\entity\passive;
 
+use pocketmine\entity\Animal;
 use pocketmine\entity\behavior\FloatBehavior;
 use pocketmine\entity\behavior\FollowParentBehavior;
 use pocketmine\entity\behavior\LookAtPlayerBehavior;
@@ -32,7 +33,8 @@ use pocketmine\entity\behavior\PanicBehavior;
 use pocketmine\entity\behavior\RandomLookAroundBehavior;
 use pocketmine\entity\behavior\RandomStrollBehavior;
 use pocketmine\entity\behavior\TemptBehavior;
-use pocketmine\entity\ClimateAnimal;
+use pocketmine\entity\ClimateEntity;
+use pocketmine\entity\ClimateTrait;
 use pocketmine\entity\PlayerInventoryMount;
 use pocketmine\item\Item;
 use pocketmine\item\ItemFactory;
@@ -43,7 +45,8 @@ use function boolval;
 use function intval;
 use function rand;
 
-class Pig extends ClimateAnimal implements PlayerInventoryMount{
+class Pig extends Animal implements PlayerInventoryMount, ClimateEntity{
+	use ClimateTrait;
 
 	public const NETWORK_ID = self::PIG;
 
@@ -69,6 +72,7 @@ class Pig extends ClimateAnimal implements PlayerInventoryMount{
 		$this->setSaddled(boolval($this->namedtag->getByte("Saddle", 0)));
 
 		parent::initEntity();
+		$this->initClimateNBT();
 	}
 
 	public function getName() : string{
@@ -117,6 +121,7 @@ class Pig extends ClimateAnimal implements PlayerInventoryMount{
 		parent::saveNBT();
 
 		$this->namedtag->setByte("Saddle", intval($this->isSaddled()));
+		$this->saveClimateNBT();
 	}
 
 	public function getRiderSeatPosition(int $seatNumber = 0) : Vector3{

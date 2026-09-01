@@ -25,8 +25,11 @@ declare(strict_types=1);
 namespace pocketmine\tile;
 
 use pocketmine\block\Air;
+use pocketmine\entity\ClimateEntity;
 use pocketmine\entity\Entity;
 use pocketmine\entity\Mob;
+use pocketmine\entity\BiommeVariantEntity;
+use pocketmine\level\biome\Biome;
 use pocketmine\level\Level;
 use pocketmine\math\Vector3;
 use pocketmine\nbt\tag\CompoundTag;
@@ -257,6 +260,13 @@ class MobSpawner extends Spawnable{
 						if($this->isValidSpawnPosition($spawnPos)){
 							$mob = Entity::createEntity($this->entityId, $this->level, Entity::createBaseNBT($spawnPos->add(0.5, 0, 0.5)));
 							if($mob instanceof Entity){
+								$biome = $this->level->getBiome($spawnPos->getFloorX(), $spawnPos->getFloorZ());
+								if($mob instanceof ClimateEntity){
+									$mob->setClimateVariantFromBiome($biome);
+								}elseif($mob instanceof BiommeVariantEntity){
+									$mob->setVariantFromBiome($biome);
+								}
+
 								if($mob instanceof Mob){
 									if(Server::getInstance()->mobAiEnabled){
 										$mob->setImmobile(false);
