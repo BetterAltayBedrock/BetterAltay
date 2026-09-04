@@ -22,13 +22,13 @@
 
 namespace pocketmine\inventory;
 
-use pocketmine\entity\passive\AbstractHorse;
+use pocketmine\entity\passive\BaseHorse;
 use pocketmine\item\Item;
 use pocketmine\item\Saddle;
 use pocketmine\network\mcpe\protocol\LevelSoundEventPacket;
 
 abstract class AbstractHorseInventory extends ContainerInventory{
-	/** @var AbstractHorse */
+	/** @var BaseHorse */
 	protected $holder;
 
 	/**
@@ -58,7 +58,7 @@ abstract class AbstractHorseInventory extends ContainerInventory{
 	}
 
 	/**
-	 * @return AbstractHorse
+	 * @return BaseHorse
 	 */
 	public function getHolder(){
 		return $this->holder;

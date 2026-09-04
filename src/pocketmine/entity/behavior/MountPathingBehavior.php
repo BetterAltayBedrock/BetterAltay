@@ -24,17 +24,17 @@ declare(strict_types=1);
 
 namespace pocketmine\entity\behavior;
 
-use pocketmine\entity\passive\AbstractHorse;
+use pocketmine\entity\passive\BaseHorse;
 use pocketmine\entity\utils\RandomPositionGenerator;
 use pocketmine\network\mcpe\protocol\ActorEventPacket;
 
 class MountPathingBehavior extends Behavior{
 
 	protected $rideTime = 0;
-	/** @var AbstractHorse */
+	/** @var BaseHorse */
 	protected $mob;
 
-	public function __construct(AbstractHorse $mob){
+	public function __construct(BaseHorse $mob){
 		parent::__construct($mob);
 
 		$this->mutexBits = 7;

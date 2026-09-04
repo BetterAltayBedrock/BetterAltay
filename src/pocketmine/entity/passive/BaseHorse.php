@@ -40,7 +40,7 @@ use function boolval;
 use function intval;
 use function mt_rand;
 
-abstract class AbstractHorse extends Tamable{
+abstract class BaseHorse extends Tamable{
 
 	protected $jumpPower = 0.0;
 	protected $isJumpRearing = false;

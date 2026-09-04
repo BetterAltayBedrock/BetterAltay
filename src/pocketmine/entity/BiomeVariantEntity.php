@@ -6,7 +6,8 @@ namespace pocketmine\entity;
 
 use pocketmine\level\biome\Biome;
 
-interface BiommeVariantEntity{
+interface BiomeVariantEntity{
 
 	public function setVariantFromBiome(Biome $biome) : void;
+
 }

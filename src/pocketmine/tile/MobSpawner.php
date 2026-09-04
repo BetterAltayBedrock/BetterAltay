@@ -28,7 +28,7 @@ use pocketmine\block\Air;
 use pocketmine\entity\ClimateEntity;
 use pocketmine\entity\Entity;
 use pocketmine\entity\Mob;
-use pocketmine\entity\BiommeVariantEntity;
+use pocketmine\entity\BiomeVariantEntity;
 use pocketmine\level\biome\Biome;
 use pocketmine\level\Level;
 use pocketmine\math\Vector3;
@@ -263,7 +263,7 @@ class MobSpawner extends Spawnable{
 								$biome = $this->level->getBiome($spawnPos->getFloorX(), $spawnPos->getFloorZ());
 								if($mob instanceof ClimateEntity){
 									$mob->setClimateVariantFromBiome($biome);
-								}elseif($mob instanceof BiommeVariantEntity){
+								}elseif($mob instanceof BiomeVariantEntity){
 									$mob->setVariantFromBiome($biome);
 								}
 

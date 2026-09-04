@@ -41,7 +41,7 @@ use pocketmine\entity\Human;
 use pocketmine\entity\InvalidSkinException;
 use pocketmine\entity\Living;
 use pocketmine\entity\object\ItemEntity;
-use pocketmine\entity\passive\AbstractHorse;
+use pocketmine\entity\passive\BaseHorse;
 use pocketmine\entity\PlayerInventoryMount;
 use pocketmine\entity\projectile\Arrow;
 use pocketmine\entity\projectile\FishingHook;
@@ -3324,7 +3324,7 @@ class Player extends Human implements CommandSender, ChunkLoader, IPlayer{
 					$this->sendDataPacket($pk);
 					break;
 				}elseif($target instanceof InventoryHolder){
-					if(!($target instanceof AbstractHorse and !$target->isTamed())){
+					if(!($target instanceof BaseHorse and !$target->isTamed())){
 						$this->addWindow($target->getInventory());
 					}
 				}
