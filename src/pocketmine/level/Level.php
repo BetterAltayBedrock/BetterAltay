@@ -636,20 +636,6 @@ class Level implements ChunkManager, Metadatable{
 		$this->broadcastPacketToViewers($pos, $pk);
 	}
 
-
-	public function broadcastPlaySound(Vector3 $pos, string $soundName, int $volume = 1, int $pitch = 1, bool $bypassListenerRangeCheck = false, int $serverSoundHandle = 0): void{
-		$pk = new PlaySoundPacket();
-		$pk->soundName = $soundName;
-		$pk->x = $pos->x;
-		$pk->y = $pos->y;
-		$pk->z = $pos->z;
-		$pk->volume = $volume;
-		$pk->pitch = $pitch;
-		$pk->bypassListenerRangeCheck = $bypassListenerRangeCheck;
-		$pk->serverSoundHandle = $serverSoundHandle;
-		$this->broadcastPacketToViewers($pos, $pk);
-	}
-
 	public function getAutoSave() : bool{
 		return $this->autoSave;
 	}

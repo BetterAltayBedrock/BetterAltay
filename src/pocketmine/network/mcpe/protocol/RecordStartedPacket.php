@@ -17,6 +17,21 @@ class RecordStartedPacket extends DataPacket{
 	public int $z;
 	public int $serverSoundHandle;
 
+	public static function create(
+		int $x,
+		int $y,
+		int $z,
+		int $serverSoundHandle
+	) : self{
+		$result = new self;
+		$result->x = $x;
+		$result->y = $y;
+		$result->z = $z;
+		$result->serverSoundHandle = $serverSoundHandle;
+
+		return $result;
+	}
+
 	protected function decodePayload() : void{
 		$this->getBlockPosition($this->x, $this->y, $this->z);
 		$this->serverSoundHandle = $this->getLLong();

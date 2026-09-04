@@ -41,6 +41,33 @@ class PlaySoundPacket extends DataPacket{
 	public ?int $serverSoundHandle = null;
 	public ?float $playbackPositionSeconds = null;
 
+	public static function create(
+		string $soundName,
+		float $x,
+		float $y,
+		float $z,
+		float $volume = 1.0,
+		float $pitch = 1.0,
+		int $loopCount = 0,
+		bool $bypassListenerRangeCheck = false,
+		?int $serverSoundHandle = null,
+		?float $playbackPositionSeconds = null
+	) : self{
+		$result = new self;
+		$result->soundName = $soundName;
+		$result->x = $x;
+		$result->y = $y;
+		$result->z = $z;
+		$result->volume = $volume;
+		$result->pitch = $pitch;
+		$result->loopCount = $loopCount;
+		$result->bypassListenerRangeCheck = $bypassListenerRangeCheck;
+		$result->serverSoundHandle = $serverSoundHandle;
+		$result->playbackPositionSeconds = $playbackPositionSeconds;
+
+		return $result;
+	}
+
 	protected function decodePayload() : void{
 		$this->soundName = $this->getString();
 		$this->getBlockPosition($this->x, $this->y, $this->z);
