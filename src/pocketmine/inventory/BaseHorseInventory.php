@@ -27,7 +27,7 @@ use pocketmine\item\Item;
 use pocketmine\item\Saddle;
 use pocketmine\network\mcpe\protocol\LevelSoundEventPacket;
 
-abstract class AbstractHorseInventory extends ContainerInventory{
+abstract class BaseHorseInventory extends ContainerInventory{
 	/** @var BaseHorse */
 	protected $holder;
 
