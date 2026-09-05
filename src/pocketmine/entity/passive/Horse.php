@@ -43,7 +43,7 @@ use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\IntTag;
 use pocketmine\Player;
 
-class Horse extends AbstractHorse implements InventoryHolder{
+class Horse extends BaseHorse implements InventoryHolder{
 
 	public const NETWORK_ID = self::HORSE;
 

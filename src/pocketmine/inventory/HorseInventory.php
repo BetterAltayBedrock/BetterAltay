@@ -37,7 +37,7 @@ use pocketmine\network\mcpe\protocol\types\WindowTypes;
 use pocketmine\network\mcpe\protocol\UpdateEquipPacket;
 use pocketmine\Player;
 
-class HorseInventory extends AbstractHorseInventory{
+class HorseInventory extends BaseHorseInventory{
 	/** @var Horse */
 	protected $holder;
 

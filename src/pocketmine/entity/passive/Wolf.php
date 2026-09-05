@@ -39,7 +39,7 @@ use pocketmine\entity\behavior\StayWhileSittingBehavior;
 use pocketmine\entity\Entity;
 use pocketmine\entity\hostile\Skeleton;
 use pocketmine\entity\Tamable;
-use pocketmine\entity\BiommeVariantEntity;
+use pocketmine\entity\BiomeVariantEntity;
 use pocketmine\item\Item;
 use pocketmine\item\ItemIds;
 use pocketmine\level\biome\Biome;
@@ -48,7 +48,7 @@ use pocketmine\network\mcpe\protocol\ActorEventPacket;
 use pocketmine\Player;
 use function mt_rand;
 
-class Wolf extends Tamable implements BiommeVariantEntity{
+class Wolf extends Tamable implements BiomeVariantEntity{
 	public const NETWORK_ID = self::WOLF;
 
 	public $width = 0.6;
