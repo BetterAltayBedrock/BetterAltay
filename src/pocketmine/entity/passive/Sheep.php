@@ -87,7 +87,7 @@ class Sheep extends Animal{
 
 				$i = 1 + $this->level->random->nextBoundedInt(3);
 				for($a = 0; $a < $i; $a++){
-					$this->level->dropItem($this, ItemFactory::get(Item::WOOL, intval($this->propertyManager->getByte(self::DATA_COLOR)), 1));
+					$this->level->dropItem($this, ItemFactory::get(Item::WOOL, intval($this->propertyManager->getByte(self::DATA_COLOR))));
 
 					$this->motion->y += $this->level->random->nextFloat() * 0.05;
 					$this->motion->x += ($this->level->random->nextFloat() - $this->level->random->nextFloat()) * 0.1;
@@ -101,8 +101,17 @@ class Sheep extends Animal{
 				if($player->isSurvival()){
 					$item->pop();
 				}
+				$damage = $item->getDamage();
 
-				$this->propertyManager->setByte(self::DATA_COLOR, $item->getDamage());
+				$woolColor = match($damage) {
+					16 => Color::COLOR_SHEEP_BLACK,
+					17 => Color::COLOR_SHEEP_BROWN,
+					18 => Color::COLOR_SHEEP_BLUE,
+					19 => Color::COLOR_SHEEP_WHITE,
+					default => $damage ^ 0x0f
+				};
+
+				$this->propertyManager->setByte(self::DATA_COLOR, $woolColor);
 				return true;
 			}
 		}
