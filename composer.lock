@@ -553,6 +553,7 @@
                 "issues": "https://github.com/pmmp/RakLib/issues",
                 "source": "https://github.com/pmmp/RakLib/tree/0.12.12"
             },
+            "abandoned": true,
             "time": "2021-11-01T20:52:51+00:00"
         },
         {
@@ -593,6 +594,7 @@
                 "issues": "https://github.com/pmmp/Snooze/issues",
                 "source": "https://github.com/pmmp/Snooze/tree/0.1.6"
             },
+            "abandoned": true,
             "time": "2021-11-01T20:48:46+00:00"
         },
         {
