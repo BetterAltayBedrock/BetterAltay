@@ -1081,12 +1081,12 @@ class Level implements ChunkManager, Metadatable{
 
 				if($b instanceof Block){
 					$pk->blockRuntimeId = $b->getRuntimeId();
-				}else{
-					$fullBlock = $this->getFullBlock($b->x, $b->y, $b->z);
-					$pk->blockRuntimeId = RuntimeBlockMapping::toStaticRuntimeId($fullBlock >> 4, $fullBlock & 0xf);
-				}
+			}else{
+				$fullBlock = $this->getFullBlock($b->x, $b->y, $b->z);
+				$pk->blockRuntimeId = RuntimeBlockMapping::toStaticRuntimeId($fullBlock >> Block::INTERNAL_METADATA_BITS, $fullBlock & Block::INTERNAL_METADATA_MASK);
+			}
 
-				$pk->flags = $first ? $flags : UpdateBlockPacket::FLAG_NONE;
+			$pk->flags = $first ? $flags : UpdateBlockPacket::FLAG_NONE;
 
 				$packets[] = $pk;
 			}
@@ -1103,14 +1103,14 @@ class Level implements ChunkManager, Metadatable{
 
 				if($b instanceof Block){
 					$pk->blockRuntimeId = $b->getRuntimeId();
-				}else{
-					$fullBlock = $this->getFullBlock($b->x, $b->y, $b->z);
-					$pk->blockRuntimeId = RuntimeBlockMapping::toStaticRuntimeId($fullBlock >> 4, $fullBlock & 0xf);
-				}
+			}else{
+				$fullBlock = $this->getFullBlock($b->x, $b->y, $b->z);
+				$pk->blockRuntimeId = RuntimeBlockMapping::toStaticRuntimeId($fullBlock >> Block::INTERNAL_METADATA_BITS, $fullBlock & Block::INTERNAL_METADATA_MASK);
+			}
 
-				$pk->flags = $flags;
+			$pk->flags = $flags;
 
-				$packets[] = $pk;
+			$packets[] = $pk;
 			}
 		}
 

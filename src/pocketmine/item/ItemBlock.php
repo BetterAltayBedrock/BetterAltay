@@ -42,7 +42,7 @@ class ItemBlock extends Item{
 	}
 
 	public function getBlock() : Block{
-		return BlockFactory::get($this->blockId, $this->meta === -1 ? 0 : $this->meta & 0xf);
+		return BlockFactory::get($this->blockId, $this->meta === -1 ? 0 : $this->meta & Block::INTERNAL_METADATA_MASK);
 	}
 
 	public function getVanillaName() : string{

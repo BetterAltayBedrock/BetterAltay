@@ -23,6 +23,7 @@ declare(strict_types=1);
 
 namespace pocketmine\level\format;
 
+use pocketmine\block\Block;
 use function assert;
 use function chr;
 use function define;
@@ -85,7 +86,7 @@ class SubChunk implements SubChunkInterface{
 	}
 
 	public function getBlockData(int $x, int $y, int $z) : int{
-		return (ord($this->data[($x << 7) | ($z << 3) | ($y >> 1)]) >> (($y & 1) << 2)) & 0xf;
+		return (ord($this->data[($x << 7) | ($z << 3) | ($y >> 1)]) >> (($y & 1) << Block::INTERNAL_METADATA_BITS)) & Block::INTERNAL_METADATA_MASK;
 	}
 
 	public function setBlockData(int $x, int $y, int $z, int $data) : bool{
@@ -93,14 +94,14 @@ class SubChunk implements SubChunkInterface{
 
 		$shift = ($y & 1) << 2;
 		$byte = ord($this->data[$i]);
-		$this->data[$i] = chr(($byte & ~(0xf << $shift)) | (($data & 0xf) << $shift));
+		$this->data[$i] = chr(($byte & ~(Block::INTERNAL_METADATA_MASK << $shift)) | (($data & Block::INTERNAL_METADATA_MASK) << $shift));
 
 		return true;
 	}
 
 	public function getFullBlock(int $x, int $y, int $z) : int{
 		$i = ($x << 8) | ($z << 4) | $y;
-		return (ord($this->ids[$i]) << 4) | ((ord($this->data[$i >> 1]) >> (($y & 1) << 2)) & 0xf);
+		return (ord($this->ids[$i]) << Block::INTERNAL_METADATA_BITS) | ((ord($this->data[$i >> 1]) >> (($y & 1) << 2)) & Block::INTERNAL_METADATA_MASK);
 	}
 
 	public function setBlock(int $x, int $y, int $z, ?int $id = null, ?int $data = null) : bool{
@@ -119,7 +120,7 @@ class SubChunk implements SubChunkInterface{
 
 			$shift = ($y & 1) << 2;
 			$oldPair = ord($this->data[$i]);
-			$newPair = ($oldPair & ~(0xf << $shift)) | (($data & 0xf) << $shift);
+			$newPair = ($oldPair & ~(Block::INTERNAL_METADATA_MASK << $shift)) | (($data & Block::INTERNAL_METADATA_MASK) << $shift);
 			if($newPair !== $oldPair){
 				$this->data[$i] = chr($newPair);
 				$changed = true;

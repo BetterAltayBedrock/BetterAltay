@@ -47,7 +47,8 @@ use function get_class;
 use const PHP_INT_MAX;
 
 class Block extends Position implements BlockIds, Metadatable{
-
+	public const INTERNAL_METADATA_BITS = 6;
+	public const INTERNAL_METADATA_MASK = ~(~0 << self::INTERNAL_METADATA_BITS);
 	/**
 	 * Returns a new Block instance with the specified ID, meta and position.
 	 *
@@ -113,8 +114,8 @@ class Block extends Position implements BlockIds, Metadatable{
 	}
 
 	final public function setDamage(int $meta) : void{
-		if($meta < 0 or $meta > 0xf){
-			throw new InvalidArgumentException("Block damage values must be 0-15, not $meta");
+		if($meta < 0 or $meta > self::INTERNAL_METADATA_MASK){
+			throw new InvalidArgumentException("Block damage values must be 0-" . self::INTERNAL_METADATA_MASK . ", not $meta");
 		}
 		$this->meta = $meta;
 	}

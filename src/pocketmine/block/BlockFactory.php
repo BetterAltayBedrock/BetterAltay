@@ -82,7 +82,7 @@ class BlockFactory{
 	 * this if you need to reset the block factory back to its original defaults for whatever reason.
 	 */
 	public static function init() : void{
-		self::$fullList = new SplFixedArray(4096);
+		self::$fullList = new \SplFixedArray(256 << Block::INTERNAL_METADATA_BITS);
 
 		self::$light = new SplFixedArray(256);
 		self::$lightFilter = new SplFixedArray(256);
@@ -343,8 +343,8 @@ class BlockFactory{
 
 		self::registerBlock(new Reserved6(Block::RESERVED6, 0, "reserved6"));
 
-		for($id = 0, $size = self::$fullList->getSize() >> 4; $id < $size; ++$id){
-			if(self::$fullList[$id << 4] === null){
+		for($id = 0, $size = self::$fullList->getSize() >> Block::INTERNAL_METADATA_BITS; $id < $size; ++$id){
+			if(self::$fullList[$id << Block::INTERNAL_METADATA_BITS] === null){
 				self::registerBlock(new UnknownBlock($id));
 			}
 		}
@@ -373,10 +373,10 @@ class BlockFactory{
 			throw new RuntimeException("Trying to overwrite an already registered block");
 		}
 
-		for($meta = 0; $meta < 16; ++$meta){
+		for($meta = 0; $meta < (1 << Block::INTERNAL_METADATA_BITS); ++$meta){
 			$variant = clone $block;
 			$variant->setDamage($meta);
-			self::$fullList[($id << 4) | $meta] = $variant;
+			self::$fullList[($id << Block::INTERNAL_METADATA_BITS) | $meta] = $variant;
 		}
 
 		self::$solid[$id] = $block->isSolid();
@@ -392,13 +392,13 @@ class BlockFactory{
 	 * Returns a new Block instance with the specified ID, meta and position.
 	 */
 	public static function get(int $id, int $meta = 0, Position $pos = null) : Block{
-		if($meta < 0 or $meta > 0xf){
+		if($meta < 0 or $meta > Block::INTERNAL_METADATA_MASK){
 			throw new InvalidArgumentException("Block meta value $meta is out of bounds");
 		}
 
 		try{
 			if(self::$fullList !== null){
-				$block = clone self::$fullList[($id << 4) | $meta];
+				$block = clone self::$fullList[($id << Block::INTERNAL_METADATA_BITS) | $meta];
 			}else{
 				$block = new UnknownBlock($id, $meta);
 			}
@@ -428,7 +428,7 @@ class BlockFactory{
 	 * Returns whether a specified block ID is already registered in the block factory.
 	 */
 	public static function isRegistered(int $id) : bool{
-		$b = self::$fullList[$id << 4];
+		$b = self::$fullList[$id << Block::INTERNAL_METADATA_BITS];
 		return $b !== null and !($b instanceof UnknownBlock);
 	}
 
