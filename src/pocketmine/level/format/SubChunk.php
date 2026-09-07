@@ -86,7 +86,7 @@ class SubChunk implements SubChunkInterface{
 	}
 
 	public function getBlockData(int $x, int $y, int $z) : int{
-		return (ord($this->data[($x << 7) | ($z << 3) | ($y >> 1)]) >> (($y & 1) << Block::INTERNAL_METADATA_BITS)) & Block::INTERNAL_METADATA_MASK;
+		return (ord($this->data[($x << 7) | ($z << 3) | ($y >> 1)]) >> (($y & 1) << 2)) & Block::INTERNAL_METADATA_MASK;
 	}
 
 	public function setBlockData(int $x, int $y, int $z, int $data) : bool{

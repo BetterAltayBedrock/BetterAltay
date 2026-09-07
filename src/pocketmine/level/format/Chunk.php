@@ -27,6 +27,7 @@ declare(strict_types=1);
 namespace pocketmine\level\format;
 
 use InvalidArgumentException;
+use pocketmine\block\Block;
 use pocketmine\block\BlockFactory;
 use pocketmine\entity\Entity;
 use pocketmine\level\biome\Biome;
@@ -212,7 +213,7 @@ class Chunk{
 	 * @param int|null $meta 0-15 if null, does not change
 	 */
 	public function setBlock(int $x, int $y, int $z, ?int $blockId = null, ?int $meta = null) : bool{
-		if($this->getSubChunk($y >> 4, true)->setBlock($x, $y & 0x0f, $z, $blockId !== null ? ($blockId & 0xff) : null, $meta !== null ? ($meta & 0x0f) : null)){
+		if($this->getSubChunk($y >> 4, true)->setBlock($x, $y & 0x0f, $z, $blockId !== null ? ($blockId & 0xff) : null, $meta !== null ? ($meta & Block::INTERNAL_METADATA_MASK) : null)){
 			$this->hasChanged = true;
 			return true;
 		}
