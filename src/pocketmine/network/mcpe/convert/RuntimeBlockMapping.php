@@ -104,7 +104,7 @@ final class RuntimeBlockMapping{
 			}
 			$data = $pair["meta"];
 			if($data > Block::INTERNAL_METADATA_MASK){
-				//we can't handle metadata with more than 4 bits
+				//we can't handle metadata with more than Block::INTERNAL_METADATA_BITS bits
 				continue;
 			}
 
