@@ -38,9 +38,6 @@ class UseItemTransactionData extends TransactionData{
 	public const TRIGGER_PLAYER_INPUT = 1;
 	public const TRIGGER_SIMULATION_TICK = 2;
 
-	public const HAND_SLOT_MAIN_HAND = 0;
-	public const HAND_SLOT_OFF_HAND = 1;
-
 	public const CLIENT_PREDICTION_FAILURE = 0;
 	public const CLIENT_PREDICTION_SUCCESS = 1;
 
