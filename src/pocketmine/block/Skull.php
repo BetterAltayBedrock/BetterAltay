@@ -105,7 +105,7 @@ class Skull extends Flowable{
 		return $this->getItem();
 	}
 
-	public function getRuntimeId() : int{
+	/*public function getRuntimeId() : int{
 		$tile = $this->level->getTile($this);
 		$type = ($tile instanceof TileSkull) ? $tile->getType() : $this->type;
 		$name = self::getSkullNameByType($type);
@@ -113,5 +113,5 @@ class Skull extends Flowable{
 			return RuntimeBlockMapping::getSkullMapping()[$name][$this->meta] ?? parent::getRuntimeId();
 		}
 		return parent::getRuntimeId();
-	}
+	}*/
 }

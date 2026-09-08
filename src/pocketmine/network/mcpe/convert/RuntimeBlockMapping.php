@@ -23,14 +23,15 @@ declare(strict_types=1);
 
 namespace pocketmine\network\mcpe\convert;
 
+use pocketmine\block\Block;
 use pocketmine\block\BlockIds;
-use pocketmine\item\ItemIds;
-use pocketmine\nbt\NetworkLittleEndianNBTStream;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\network\mcpe\NetworkBinaryStream;
 use pocketmine\utils\AssumptionFailedError;
 use RuntimeException;
+use function count;
 use function file_get_contents;
+use function is_bool;
 use function json_decode;
 use const pocketmine\RESOURCE_PATH;
 
@@ -48,7 +49,6 @@ final class RuntimeBlockMapping{
 	/** @var int[]|null runtime id -> block state network hash (from the game's own data) */
 	private static $runtimeToHashMap = null;
 	private static $unknownRid = 0;
-	private static array $skullMapping;
 
 	private function __construct(){
 		//NOOP
@@ -79,22 +79,12 @@ final class RuntimeBlockMapping{
 	private static function setupLegacyMappings() : void{
 		$legacyIdMap = json_decode(file_get_contents(RESOURCE_PATH . "vanilla/block_id_map.json"), true);
 
-		/** @var R12ToCurrentBlockMapEntry[] $legacyStateMap */
-		$legacyStateMap = [];
-		$legacyStateMapReader = new NetworkBinaryStream(file_get_contents(RESOURCE_PATH . "vanilla/r12_to_current_block_map.bin"));
-		$nbtReader = new NetworkLittleEndianNBTStream();
-		while(!$legacyStateMapReader->feof()){
-			$id = $legacyStateMapReader->getString();
-			$meta = $legacyStateMapReader->getLShort();
-
-			$offset = $legacyStateMapReader->getOffset();
-			$state = $nbtReader->read($legacyStateMapReader->getBuffer(), false, $offset);
-			$legacyStateMapReader->setOffset($offset);
-			if(!($state instanceof CompoundTag)){
-				throw new RuntimeException("Blockstate should be a TAG_Compound");
-			}
-			$legacyStateMap[] = new R12ToCurrentBlockMapEntry($id, $meta, $state);
+		$jsonPath = RESOURCE_PATH . "vanilla/r12_to_current_block_map.json";
+		$jsonRaw = file_get_contents($jsonPath);
+		if($jsonRaw === false){
+			throw new RuntimeException("Missing required resource file: r12_to_current_block_map.json");
 		}
+		$legacyStateMapJson = json_decode($jsonRaw, true);
 
 		/**
 		 * @var int[][] $idToStatesMap string id -> int[] list of candidate state indices
@@ -103,41 +93,77 @@ final class RuntimeBlockMapping{
 		foreach(self::$bedrockKnownStates as $k => $state){
 			$name = $state->getString("name");
 			$idToStatesMap[$name][] = $k;
-			if(ItemTranslator::getInstance()->fromStringId($name)[0] === ItemIds::SKULL){
-				$states = $state->getCompoundTag("states");
-				if($states !== null){
-					$facing = $states->getInt("facing_direction", 0);
-					self::$skullMapping[$name][$facing] = $k;
-				}
-			}
 		}
-		foreach($legacyStateMap as $pair){
-			$id = $legacyIdMap[$pair->getId()] ?? null;
+
+		foreach($legacyStateMapJson as $pair){
+			$stringId = $pair["id"];
+			$id = $legacyIdMap[$stringId] ?? null;
 			if($id === null){
-				throw new RuntimeException("No legacy ID matches " . $pair->getId());
+				throw new RuntimeException("No legacy ID matches " . $stringId);
 			}
-			$data = $pair->getMeta();
-			if($data > 15){
+			$data = $pair["meta"];
+			if($data > 0xf){
 				//we can't handle metadata with more than 4 bits
 				continue;
 			}
-			$mappedState = $pair->getBlockState();
 
-			//TODO HACK: idiotic NBT compare behaviour on 3.x compares keys which are stored by values
-			$mappedState->setName("");
-			$mappedName = $mappedState->getString("name");
+			$targetState = $pair["blockState"];
+			$mappedName = $targetState["name"] ?? "";
+
 			if(!isset($idToStatesMap[$mappedName])){
-				throw new RuntimeException("Mapped new state does not appear in network table");
+				throw new RuntimeException("Mapped new state '$mappedName' does not appear in network table");
 			}
+
+			$matched = false;
 			foreach($idToStatesMap[$mappedName] as $k){
 				$networkState = self::$bedrockKnownStates[$k];
-				if($mappedState->equals($networkState)){
+				if(self::compareJsonStateWithNbt($targetState, $networkState)){
 					self::registerMapping($k, $id, $data);
-					continue 2;
+					$matched = true;
+					break;
 				}
 			}
-			throw new RuntimeException("Mapped new state does not appear in network table");
+
+			if(!$matched){
+				throw new RuntimeException("Mapped new state '$mappedName' (meta $data) does not appear in network table");
+			}
 		}
+	}
+
+	private static function compareJsonStateWithNbt(array $jsonState, CompoundTag $nbtState) : bool{
+		if(($jsonState["name"] ?? "") !== $nbtState->getString("name")){
+			return false;
+		}
+
+		$jsonStates = $jsonState["states"] ?? [];
+		$nbtStatesTag = $nbtState->getCompoundTag("states");
+
+		if(empty($jsonStates)){
+			return $nbtStatesTag === null || count($nbtStatesTag->getValue()) === 0;
+		}
+
+		if($nbtStatesTag === null){
+			return false;
+		}
+
+		foreach($jsonStates as $key => $val){
+			if(!$nbtStatesTag->hasTag((string)$key)){
+				return false;
+			}
+
+			$tag = $nbtStatesTag->getTag((string)$key);
+			$tagValue = $tag->getValue();
+
+			if(is_bool($val)){
+				$val = $val ? 1 : 0;
+			}
+
+			if($tagValue != $val){
+				return false;
+			}
+		}
+
+		return true;
 	}
 
 	private static function lazyInit() : void{
@@ -176,10 +202,6 @@ final class RuntimeBlockMapping{
 	public static function getBedrockKnownStates() : array{
 		self::lazyInit();
 		return self::$bedrockKnownStates;
-	}
-
-	public static function getSkullMapping() : array{
-		return self::$skullMapping;
 	}
 
 	public static function toStaticRuntimeHash(int $runtimeId) : int{
