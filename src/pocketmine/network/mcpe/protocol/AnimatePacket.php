@@ -26,6 +26,7 @@ namespace pocketmine\network\mcpe\protocol;
 #include <rules/DataPacket.h>
 
 use pocketmine\network\mcpe\NetworkSession;
+use pocketmine\network\mcpe\protocol\types\HandSlot;
 use pocketmine\network\mcpe\protocol\types\SwingSource;
 
 class AnimatePacket extends DataPacket{
@@ -41,7 +42,7 @@ class AnimatePacket extends DataPacket{
 	public int $entityRuntimeId;
 	public float $data = 0.0;
 	public string $swingSource = SwingSource::NONE;
-	public int $handSlot = 0; //0 = main, 1 = offhand
+	public int $handSlot = HandSlot::MAIN_HAND;
 
 	protected function decodePayload() : void{
 		$this->action = $this->getByte();
