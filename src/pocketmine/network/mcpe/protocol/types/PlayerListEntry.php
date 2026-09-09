@@ -35,6 +35,7 @@ class PlayerListEntry{
 	public string $username;
 	public SkinData $skinData;
 	public string $xboxUserId;
+	public string $playFabId = "";
 	public string $platformChatId = "";
 	public int $buildPlatform = DeviceOS::ANDROID;
 	public bool $isTeacher = false;
@@ -50,7 +51,7 @@ class PlayerListEntry{
 		return $entry;
 	}
 
-	public static function createAdditionEntry(UUID $uuid, int $entityUniqueId, string $username, SkinData $skinData, string $xboxUserId = "", string $platformChatId = "", int $buildPlatform = DeviceOS::ANDROID, bool $isTeacher = false, bool $isHost = false, bool $isSubClient = false, ?Color $color = null) : PlayerListEntry{
+	public static function createAdditionEntry(UUID $uuid, int $entityUniqueId, string $username, SkinData $skinData, string $xboxUserId = "", string $playFabId = "", string $platformChatId = "", int $buildPlatform = DeviceOS::ANDROID, bool $isTeacher = false, bool $isHost = false, bool $isSubClient = false, ?Color $color = null) : PlayerListEntry{
 		$entry = new PlayerListEntry();
 		$entry->type = PlayerListPacket::TYPE_ADD;
 		$entry->uuid = $uuid;
@@ -58,6 +59,7 @@ class PlayerListEntry{
 		$entry->username = $username;
 		$entry->skinData = $skinData;
 		$entry->xboxUserId = $xboxUserId;
+		$entry->playFabId = $playFabId;
 		$entry->platformChatId = $platformChatId;
 		$entry->buildPlatform = $buildPlatform;
 		$entry->isTeacher = $isTeacher;

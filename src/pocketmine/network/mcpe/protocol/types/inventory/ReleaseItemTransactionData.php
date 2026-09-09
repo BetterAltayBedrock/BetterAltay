@@ -40,6 +40,7 @@ class ReleaseItemTransactionData extends TransactionData{
 	private $itemInHand;
 	/** @var Vector3 */
 	private $headPos;
+	private int $handSlot;
 
 	public function getActionType() : int{
 		return $this->actionType;
@@ -57,6 +58,10 @@ class ReleaseItemTransactionData extends TransactionData{
 		return $this->headPos;
 	}
 
+	public function getHandSlot() : int{
+		return $this->handSlot;
+	}
+
 	public function getTypeId() : int{
 		return InventoryTransactionPacket::TYPE_RELEASE_ITEM;
 	}
@@ -66,6 +71,7 @@ class ReleaseItemTransactionData extends TransactionData{
 		$this->hotbarSlot = $stream->getVarInt();
 		$this->itemInHand = ItemStackWrapper::read($stream, true);
 		$this->headPos = $stream->getVector3();
+		$this->handSlot = $stream->getByte();
 	}
 
 	protected function encodeData(PacketSerializer $stream) : void{
@@ -73,18 +79,20 @@ class ReleaseItemTransactionData extends TransactionData{
 		$stream->putVarInt($this->hotbarSlot);
 		$this->itemInHand->write($stream, true);
 		$stream->putVector3($this->headPos);
+		$stream->putByte($this->handSlot);
 	}
 
 	/**
 	 * @param NetworkInventoryAction[] $actions
 	 */
-	public static function new(array $actions, int $actionType, int $hotbarSlot, ItemStackWrapper $itemInHand, Vector3 $headPos) : self{
+	public static function new(array $actions, int $actionType, int $hotbarSlot, ItemStackWrapper $itemInHand, Vector3 $headPos, int $handSlot) : self{
 		$result = new self;
 		$result->actions = $actions;
 		$result->actionType = $actionType;
 		$result->hotbarSlot = $hotbarSlot;
 		$result->itemInHand = $itemInHand;
 		$result->headPos = $headPos;
+		$result->handSlot = $handSlot;
 
 		return $result;
 	}
