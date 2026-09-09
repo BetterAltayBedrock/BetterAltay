@@ -41,6 +41,7 @@ class AnimatePacket extends DataPacket{
 	public int $entityRuntimeId;
 	public float $data = 0.0;
 	public string $swingSource = SwingSource::NONE;
+	public int $handSlot = 0; //0 = main, 1 = offhand
 
 	protected function decodePayload() : void{
 		$this->action = $this->getByte();
@@ -49,6 +50,7 @@ class AnimatePacket extends DataPacket{
 		if($this->getBool()){
 			$this->swingSource = $this->getString();
 		}
+		$this->handSlot = $this->getByte();
 	}
 
 	protected function encodePayload() : void{
@@ -59,6 +61,7 @@ class AnimatePacket extends DataPacket{
 		if($this->swingSource !== SwingSource::NONE){
 			$this->putString($this->swingSource);
 		}
+		$this->putByte($this->handSlot);
 	}
 
 	public function handle(NetworkSession $session) : bool{

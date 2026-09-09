@@ -72,7 +72,8 @@ class ChunkRequestTask extends AsyncTask{
 			null,
 			false,
 			[],
-			$chunk->networkSerialize($this->tiles, $this->dimensionId)
+			$chunk->networkSerialize($this->tiles, $this->dimensionId),
+			false
 		);
 
 		$batch = new BatchPacket();

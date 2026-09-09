@@ -41,6 +41,7 @@ class LevelChunkPacket extends DataPacket/* implements ClientboundPacket*/
 	/** @var int[] */
 	private array $usedBlobHashes = [];
 	private string $extraPayload;
+	private bool $isClientBiomeUpdate = false;
 
 	/**
 	 * @generate-create-func
@@ -55,7 +56,8 @@ class LevelChunkPacket extends DataPacket/* implements ClientboundPacket*/
 		?int $clientRequestSubChunkLimit,
 		bool $cacheEnabled,
 		array $usedBlobHashes,
-		string $extraPayload
+		string $extraPayload,
+		bool $isClientBiomeUpdate,
 	): self{
 		$result = new self;
 		$result->chunkX = $chunkX;
@@ -66,6 +68,8 @@ class LevelChunkPacket extends DataPacket/* implements ClientboundPacket*/
 		$result->cacheEnabled = $cacheEnabled;
 		$result->usedBlobHashes = $usedBlobHashes;
 		$result->extraPayload = $extraPayload;
+		$result->isClientBiomeUpdate = $isClientBiomeUpdate;
+
 		return $result;
 	}
 
@@ -108,6 +112,10 @@ class LevelChunkPacket extends DataPacket/* implements ClientboundPacket*/
 		return $this->extraPayload;
 	}
 
+	public function isClientBiomeUpdate() : bool{
+		return $this->isClientBiomeUpdate;
+	}
+
 	protected function decodePayload() : void{
 		$this->chunkX = $this->getVarInt();
 		$this->chunkZ = $this->getVarInt();
@@ -127,6 +135,7 @@ class LevelChunkPacket extends DataPacket/* implements ClientboundPacket*/
 		}
 
 		$this->extraPayload = $this->getString();
+		$this->isClientBiomeUpdate = $this->getBool();
 	}
 
 	protected function encodePayload() : void{
@@ -147,6 +156,7 @@ class LevelChunkPacket extends DataPacket/* implements ClientboundPacket*/
 		}
 
 		$this->putString($this->extraPayload);
+		$this->putBool($this->isClientBiomeUpdate);
 	}
 
 	public function handle(NetworkSession $session) : bool{

@@ -38,8 +38,6 @@ class SkinData{
 	/** @var string */
 	private $skinId;
 	/** @var string */
-	private $playFabId;
-	/** @var string */
 	private $resourcePatch;
 	/** @var SkinImage */
 	private $skinImage;
@@ -84,7 +82,6 @@ class SkinData{
 	 * @param PersonaPieceTintColor[] $pieceTintColors
 	 */
 	public function __construct(string $skinId,
-		string $playFabId,
 		string $resourcePatch,
 		SkinImage $skinImage,
 		array $animations = [],
@@ -108,7 +105,6 @@ class SkinData{
 		string $profileHash = ""
 	){
 		$this->skinId = $skinId;
-		$this->playFabId = $playFabId;
 		$this->resourcePatch = $resourcePatch;
 		$this->skinImage = $skinImage;
 		$this->animations = $animations;
@@ -136,8 +132,6 @@ class SkinData{
 	public function getSkinId() : string{
 		return $this->skinId;
 	}
-
-	public function getPlayFabId() : string{ return $this->playFabId; }
 
 	public function getResourcePatch() : string{
 		return $this->resourcePatch;
