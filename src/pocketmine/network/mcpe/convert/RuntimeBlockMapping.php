@@ -23,15 +23,14 @@ declare(strict_types=1);
 
 namespace pocketmine\network\mcpe\convert;
 
-use pocketmine\block\Block;
 use pocketmine\block\BlockIds;
+use pocketmine\nbt\BigEndianNBTStream;
+use pocketmine\nbt\NetworkLittleEndianNBTStream;
 use pocketmine\nbt\tag\CompoundTag;
-use pocketmine\network\mcpe\NetworkBinaryStream;
 use pocketmine\utils\AssumptionFailedError;
 use RuntimeException;
 use function count;
 use function file_get_contents;
-use function is_bool;
 use function json_decode;
 use const pocketmine\RESOURCE_PATH;
 
@@ -41,28 +40,55 @@ use const pocketmine\RESOURCE_PATH;
 final class RuntimeBlockMapping{
 
 	/** @var int[] */
-	private static $legacyToRuntimeMap = [];
+	private static array $legacyToRuntimeMap = [];
 	/** @var int[] */
-	private static $runtimeToLegacyMap = [];
+	private static array $runtimeToLegacyMap = [];
 	/** @var CompoundTag[]|null */
-	private static $bedrockKnownStates = null;
-	/** @var int[]|null runtime id -> block state network hash (from the game's own data) */
-	private static $runtimeToHashMap = null;
-	private static $unknownRid = 0;
+	private static ?array $bedrockKnownStates = null;
+	/** @var int[] runtime id -> block state network hash */
+	private static array $runtimeIdToHashMap = [];
+	private static int $unknownRid = 0;
+	/** @var array<string, array<int, int>> */
+	private static array $skullFacingToRuntimeIdMap = [];
 
 	private function __construct(){
 		//NOOP
 	}
 
 	public static function init() : void{
-		$canonicalBlockStatesFile = file_get_contents(RESOURCE_PATH . "vanilla/canonical_block_states.nbt");
-		if($canonicalBlockStatesFile === false){
-			throw new AssumptionFailedError("Missing required resource file");
+		$paletteRaw = file_get_contents(RESOURCE_PATH . "vanilla/block_palette.nbt");
+		if($paletteRaw === false){
+			throw new AssumptionFailedError("Missing required resource file: block_palette.nbt");
 		}
-		$stream = new NetworkBinaryStream($canonicalBlockStatesFile);
+
+		$nbtStream = new BigEndianNBTStream();
+		$root = $nbtStream->readCompressed($paletteRaw);
+
+		if(!($root instanceof CompoundTag)){
+			throw new RuntimeException("Root NBT tag must be a CompoundTag");
+		}
+
+		$blocksList = $root->getListTag("blocks");
+		if($blocksList === null){
+			throw new RuntimeException("Missing 'blocks' tag in block_palette.nbt");
+		}
+
+		$netStream = new NetworkLittleEndianNBTStream();
+
+		/** @var CompoundTag[] $list */
 		$list = [];
-		while(!$stream->feof()){
-			$list[] = $stream->getNbtCompoundRoot();
+		foreach($blocksList->getValue() as $k => $blockCompound){
+			if($blockCompound instanceof CompoundTag){
+				if($blockCompound->hasTag("network_id")){
+					self::$runtimeIdToHashMap[$k] = $blockCompound->getInt("network_id");
+					$blockCompound->removeTag("network_id");
+				}
+
+				$state = $netStream->read($netStream->write($blockCompound));
+				if($state instanceof CompoundTag){
+					$list[] = $state;
+				}
+			}
 		}
 		self::$bedrockKnownStates = $list;
 
@@ -86,6 +112,10 @@ final class RuntimeBlockMapping{
 		}
 		$legacyStateMapJson = json_decode($jsonRaw, true);
 
+		if(self::$bedrockKnownStates === null){
+			throw new RuntimeException("Bedrock known states are not initialized");
+		}
+
 		/**
 		 * @var int[][] $idToStatesMap string id -> int[] list of candidate state indices
 		 */
@@ -93,6 +123,13 @@ final class RuntimeBlockMapping{
 		foreach(self::$bedrockKnownStates as $k => $state){
 			$name = $state->getString("name");
 			$idToStatesMap[$name][] = $k;
+			if(str_ends_with($name, "_head") || str_ends_with($name, "_skull")){
+				$states = $state->getCompoundTag("states");
+				if($states !== null){
+					$facing = $states->getInt("facing_direction", 0);
+					self::$skullFacingToRuntimeIdMap[$name][$facing] = $k;
+				}
+			}
 		}
 
 		foreach($legacyStateMapJson as $pair){
@@ -138,7 +175,7 @@ final class RuntimeBlockMapping{
 		$jsonStates = $jsonState["states"] ?? [];
 		$nbtStatesTag = $nbtState->getCompoundTag("states");
 
-		if(empty($jsonStates)){
+		if(count($jsonStates) === 0){
 			return $nbtStatesTag === null || count($nbtStatesTag->getValue()) === 0;
 		}
 
@@ -153,10 +190,6 @@ final class RuntimeBlockMapping{
 
 			$tag = $nbtStatesTag->getTag((string)$key);
 			$tagValue = $tag->getValue();
-
-			if(is_bool($val)){
-				$val = $val ? 1 : 0;
-			}
 
 			if($tagValue != $val){
 				return false;
@@ -201,15 +234,24 @@ final class RuntimeBlockMapping{
 	 */
 	public static function getBedrockKnownStates() : array{
 		self::lazyInit();
-		return self::$bedrockKnownStates;
+		return self::$bedrockKnownStates ?? [];
+	}
+
+	/**
+	 * @return int[]
+	 */
+	public static function getRuntimeIdToHashMap() : array{
+		self::lazyInit();
+		return self::$runtimeIdToHashMap;
 	}
 
 	public static function toStaticRuntimeHash(int $runtimeId) : int{
 		self::lazyInit();
-		if(self::$runtimeToHashMap === null){
-			$map = json_decode(file_get_contents(RESOURCE_PATH . "vanilla/runtime_to_current_hash_map.json"), true);
-			self::$runtimeToHashMap = is_array($map) ? $map : [];
-		}
-		return self::$runtimeToHashMap[$runtimeId] ?? $runtimeId;
+		return self::$runtimeIdToHashMap[$runtimeId] ?? throw new RuntimeException("Unknown runtime ID $runtimeId");
+	}
+
+	public static function fromSkullFacing(string $name, int $facing) : ?int{
+		self::lazyInit();
+		return self::$skullFacingToRuntimeIdMap[$name][$facing] ?? null;
 	}
 }
