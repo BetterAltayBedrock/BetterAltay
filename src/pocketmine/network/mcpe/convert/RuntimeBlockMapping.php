@@ -84,6 +84,10 @@ final class RuntimeBlockMapping{
 					$blockCompound->removeTag("network_id");
 				}
 
+				if($blockCompound->hasTag("name_hash")){
+					$blockCompound->removeTag("name_hash");
+				}
+
 				$state = $netStream->read($netStream->write($blockCompound));
 				if($state instanceof CompoundTag){
 					$list[] = $state;
