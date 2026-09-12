@@ -38,14 +38,14 @@ final class GatheringJoinInfo{
 	public function getServerId() : ?string{ return $this->serverId; }
 
 	public static function read(NetworkBinaryStream $in) : self{
-		$experienceId = $in->getUUID();
-		$experienceName = $in->getString();
-		$experienceWorldId = $in->getUUID();
-		$experienceWorldName = $in->getString();
-		$creatorId = $in->getString();
-		$targetId = $in->getUUID();
-		$scenarioId = $in->getString();
-		$serverId = $in->getString();
+		$experienceId = $in->readOptional(fn() => $in->getUUID());
+		$experienceName = $in->readOptional(fn() => $in->getString());
+		$experienceWorldId = $in->readOptional(fn() => $in->getUUID());
+		$experienceWorldName = $in->readOptional(fn() => $in->getString());
+		$creatorId = $in->readOptional(fn() => $in->getString());
+		$targetId = $in->readOptional(fn() => $in->getUUID());
+		$scenarioId = $in->readOptional(fn() => $in->getString());
+		$serverId = $in->readOptional(fn() => $in->getString());
 
 		return new self(
 			$experienceId,
