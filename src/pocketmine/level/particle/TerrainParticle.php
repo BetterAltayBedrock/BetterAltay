@@ -25,7 +25,6 @@ namespace pocketmine\level\particle;
 
 use pocketmine\block\Block;
 use pocketmine\math\Vector3;
-use pocketmine\network\mcpe\convert\RuntimeBlockMapping;
 
 class TerrainParticle extends GenericParticle{
 	public function __construct(Vector3 $pos, Block $b){
