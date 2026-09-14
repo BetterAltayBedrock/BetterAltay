@@ -98,7 +98,7 @@ final class RuntimeBlockMapping{
 
 		foreach(self::$bedrockKnownStates as $k => $state){
 			if($state->getString("name") === "minecraft:info_update"){
-				self::$unknownRid = $k;
+				self::$unknownRid = self::toStaticRuntimeHash($k);
 				break;
 			}
 		}
