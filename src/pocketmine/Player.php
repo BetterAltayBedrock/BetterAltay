@@ -124,7 +124,6 @@ use pocketmine\nbt\tag\ListTag;
 use pocketmine\nbt\tag\StringTag;
 use pocketmine\network\mcpe\auth\task\VerifyLoginTask;
 use pocketmine\network\mcpe\convert\ItemTypeDictionary;
-use pocketmine\network\mcpe\convert\RuntimeBlockMapping;
 use pocketmine\network\mcpe\encryption\EncryptionContext;
 use pocketmine\network\mcpe\encryption\PrepareEncryptionTask;
 use pocketmine\network\mcpe\PlayerNetworkSessionAdapter;
@@ -2938,7 +2937,7 @@ class Player extends Human implements CommandSender, ChunkLoader, IPlayer{
 				break;
 			case PlayerActionPacket::ACTION_CRACK_BREAK:
 				$block = $this->level->getBlock($pos);
-				$this->level->broadcastLevelEvent($pos, LevelEventPacket::EVENT_PARTICLE_PUNCH_BLOCK, RuntimeBlockMapping::toStaticRuntimeHash($block->getRuntimeId()) | ($face << 24));
+				$this->level->broadcastLevelEvent($pos, LevelEventPacket::EVENT_PARTICLE_PUNCH_BLOCK, $block->getRuntimeId() | ($face << 24));
 				//TODO: destroy-progress level event
 				break;
 			case PlayerActionPacket::ACTION_INTERACT_BLOCK: //TODO: ignored (for now)

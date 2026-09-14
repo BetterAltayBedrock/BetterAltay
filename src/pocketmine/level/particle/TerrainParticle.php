@@ -29,6 +29,6 @@ use pocketmine\network\mcpe\convert\RuntimeBlockMapping;
 
 class TerrainParticle extends GenericParticle{
 	public function __construct(Vector3 $pos, Block $b){
-		parent::__construct($pos, Particle::TYPE_TERRAIN, RuntimeBlockMapping::toStaticRuntimeHash($b->getRuntimeId()));
+		parent::__construct($pos, Particle::TYPE_TERRAIN, $b->getRuntimeId());
 	}
 }

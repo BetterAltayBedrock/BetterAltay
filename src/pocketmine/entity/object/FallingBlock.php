@@ -33,7 +33,6 @@ use pocketmine\item\ItemFactory;
 use pocketmine\level\Position;
 use pocketmine\nbt\tag\ByteTag;
 use pocketmine\nbt\tag\IntTag;
-use pocketmine\network\mcpe\convert\RuntimeBlockMapping;
 use UnexpectedValueException;
 use function abs;
 use function get_class;
@@ -74,7 +73,7 @@ class FallingBlock extends Entity{
 		$damage = $this->namedtag->getByte("Data", 0);
 
 		$this->block = BlockFactory::get($blockId, $damage);
-		$this->propertyManager->setInt(self::DATA_VARIANT, RuntimeBlockMapping::toStaticRuntimeHash($this->block->getRuntimeId()));
+		$this->propertyManager->setInt(self::DATA_VARIANT, $this->block->getRuntimeId());
 	}
 
 	public function canCollideWith(Entity $entity) : bool{

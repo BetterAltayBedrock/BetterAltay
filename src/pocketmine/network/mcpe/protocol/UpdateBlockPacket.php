@@ -25,7 +25,6 @@ namespace pocketmine\network\mcpe\protocol;
 
 #include <rules/DataPacket.h>
 
-use pocketmine\network\mcpe\convert\RuntimeBlockMapping;
 use pocketmine\network\mcpe\NetworkSession;
 
 class UpdateBlockPacket extends DataPacket{
@@ -65,7 +64,7 @@ class UpdateBlockPacket extends DataPacket{
 
 	protected function encodePayload(){
 		$this->putBlockPosition($this->x, $this->y, $this->z);
-		$this->putUnsignedVarInt(RuntimeBlockMapping::toStaticRuntimeHash($this->blockRuntimeId));
+		$this->putUnsignedVarInt($this->blockRuntimeId);
 		$this->putUnsignedVarInt($this->flags);
 		$this->putUnsignedVarInt($this->dataLayerId);
 	}

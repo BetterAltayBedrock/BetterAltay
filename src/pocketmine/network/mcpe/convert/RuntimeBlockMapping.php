@@ -131,7 +131,7 @@ final class RuntimeBlockMapping{
 				$states = $state->getCompoundTag("states");
 				if($states !== null){
 					$facing = $states->getInt("facing_direction", 0);
-					self::$skullFacingToRuntimeIdMap[$name][$facing] = $k;
+					self::$skullFacingToRuntimeIdMap[$name][$facing] = self::toStaticRuntimeHash($k);
 				}
 			}
 		}
@@ -229,8 +229,9 @@ final class RuntimeBlockMapping{
 	}
 
 	private static function registerMapping(int $staticRuntimeId, int $legacyId, int $legacyMeta) : void{
-		self::$legacyToRuntimeMap[($legacyId << 4) | $legacyMeta] = $staticRuntimeId;
-		self::$runtimeToLegacyMap[$staticRuntimeId] = ($legacyId << 4) | $legacyMeta;
+		$networkId = self::toStaticRuntimeHash($staticRuntimeId);
+		self::$legacyToRuntimeMap[($legacyId << 4) | $legacyMeta] = $networkId;
+		self::$runtimeToLegacyMap[$networkId] = ($legacyId << 4) | $legacyMeta;
 	}
 
 	/**

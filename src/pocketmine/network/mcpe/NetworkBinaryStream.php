@@ -42,7 +42,6 @@ use pocketmine\nbt\tag\IntTag;
 use pocketmine\nbt\tag\NamedTag;
 use pocketmine\network\mcpe\convert\ItemTranslator;
 use pocketmine\network\mcpe\convert\ItemTypeDictionary;
-use pocketmine\network\mcpe\convert\RuntimeBlockMapping;
 use pocketmine\network\mcpe\protocol\types\CommandOriginData;
 use pocketmine\network\mcpe\protocol\types\EntityLink;
 use pocketmine\network\mcpe\protocol\types\GameRuleType;
@@ -365,9 +364,9 @@ class NetworkBinaryStream extends BinaryStream{
 			}
 		}
 		if($net){
-			$this->putUnsignedVarInt(RuntimeBlockMapping::toStaticRuntimeHash($blockRuntimeId)); //blockRuntimeId
+			$this->putUnsignedVarInt($blockRuntimeId); //blockRuntimeId
 		}else{
-			$this->putVarInt(RuntimeBlockMapping::toStaticRuntimeHash($blockRuntimeId)); //blockRuntimeId
+			$this->putVarInt($blockRuntimeId); //blockRuntimeId
 		}
 		$nbt = null;
 		if($item->hasCompoundTag()){

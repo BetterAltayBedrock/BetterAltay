@@ -88,7 +88,6 @@ use pocketmine\network\mcpe\protocol\DataPacket;
 use pocketmine\network\mcpe\protocol\GameRulesChangedPacket;
 use pocketmine\network\mcpe\protocol\LevelEventPacket;
 use pocketmine\network\mcpe\protocol\LevelSoundEventPacket;
-use pocketmine\network\mcpe\protocol\PlaySoundPacket;
 use pocketmine\network\mcpe\protocol\SetDifficultyPacket;
 use pocketmine\network\mcpe\protocol\SetTimePacket;
 use pocketmine\network\mcpe\protocol\types\DimensionIds;
@@ -2123,7 +2122,7 @@ class Level implements ChunkManager, Metadatable{
 		}
 
 		if($playSound){
-			$this->broadcastLevelSoundEvent($hand, LevelSoundEventPacket::SOUND_PLACE, RuntimeBlockMapping::toStaticRuntimeHash($hand->getRuntimeId()));
+			$this->broadcastLevelSoundEvent($hand, LevelSoundEventPacket::SOUND_PLACE, $hand->getRuntimeId());
 		}
 
 		$item->pop();
