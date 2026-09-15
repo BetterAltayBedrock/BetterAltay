@@ -92,15 +92,12 @@ class NetworkInventoryAction{
 	 */
 	public function read(NetworkBinaryStream $packet) : static{
 		$this->sourceType = $packet->getUnsignedVarInt();
-		// @phpstan-ignore-next-line
-		if($packet->getBool() && $packet->getBool()){
+		if($packet->getBool()){
 			$this->windowId = Binary::signByte($packet->getByte());
 		}
-		// @phpstan-ignore-next-line
-		if($packet->getBool() && $packet->getBool()){
+		if($packet->getBool()){
 			$this->sourceFlags = $packet->getUnsignedVarInt();
 		}
-
 		$this->inventorySlot = $packet->getUnsignedVarInt();
 		$this->oldItem = ItemStackWrapper::read($packet, true);
 		$this->newItem = ItemStackWrapper::read($packet, true);

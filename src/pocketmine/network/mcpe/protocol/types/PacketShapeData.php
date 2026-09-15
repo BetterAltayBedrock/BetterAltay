@@ -35,6 +35,7 @@ final class PacketShapeData{
 		private ?string $text,
 		private ?bool $useRotation,
 		private ?Color $backgroundColor,
+		private ?int $lineGapHeight,
 		private ?bool $depthTest,
 		private ?bool $showBackface,
 		private ?bool $showTextBackface,
@@ -49,7 +50,7 @@ final class PacketShapeData{
 	}
 
 	public static function remove(int $networkId, ?int $dimensionId = null) : self{
-		return new self($networkId, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, $dimensionId, null);
+		return new self($networkId, null, null, null, null, null, null, null, null, null, null, 0, null, null, null, null, null, null, null, null, $dimensionId, null);
 	}
 
 	public static function line(int $networkId, Vector3 $location, Vector3 $lineEndLocation, ?Color $color = null, ?int $dimensionId = null, ?int $attachedToEntityId = null) : self{
@@ -65,6 +66,7 @@ final class PacketShapeData{
 			text: null,
 			useRotation: null,
 			backgroundColor: null,
+			lineGapHeight: null,
 			depthTest: null,
 			showBackface: null,
 			showTextBackface: null,
@@ -91,6 +93,7 @@ final class PacketShapeData{
 			text: null,
 			useRotation: null,
 			backgroundColor: null,
+			lineGapHeight: null,
 			depthTest: null,
 			showBackface: null,
 			showTextBackface: null,
@@ -117,6 +120,7 @@ final class PacketShapeData{
 			text: null,
 			useRotation: null,
 			backgroundColor: null,
+			lineGapHeight: null,
 			depthTest: null,
 			showBackface: null,
 			showTextBackface: null,
@@ -143,6 +147,7 @@ final class PacketShapeData{
 			text: null,
 			useRotation: null,
 			backgroundColor: null,
+			lineGapHeight: null,
 			depthTest: null,
 			showBackface: null,
 			showTextBackface: null,
@@ -156,7 +161,7 @@ final class PacketShapeData{
 		);
 	}
 
-	public static function text(int $networkId, Vector3 $location, string $text, bool $useRotation = false, ?Color $backgroundColor = null, bool $depthTest = true, bool $showBackface = true, bool $showTextBackface = true, ?Color $color = null, ?int $dimensionId = null, ?int $attachedToEntityId = null) : self{
+	public static function text(int $networkId, Vector3 $location, string $text, bool $useRotation = false, ?Color $backgroundColor = null, int $lineGapHeight = 1, bool $depthTest = true, bool $showBackface = true, bool $showTextBackface = true, ?Color $color = null, ?int $dimensionId = null, ?int $attachedToEntityId = null) : self{
 		return new self(
 			networkId: $networkId,
 			type: ScriptDebugShapeType::TEXT,
@@ -169,6 +174,7 @@ final class PacketShapeData{
 			text: $text,
 			useRotation: $useRotation,
 			backgroundColor: $backgroundColor,
+			lineGapHeight: $lineGapHeight,
 			depthTest: $depthTest,
 			showBackface: $showBackface,
 			showTextBackface: $showTextBackface,
@@ -195,6 +201,7 @@ final class PacketShapeData{
 			text: null,
 			useRotation: null,
 			backgroundColor: null,
+			lineGapHeight: null,
 			depthTest: null,
 			showBackface: null,
 			showTextBackface: null,
@@ -267,6 +274,7 @@ final class PacketShapeData{
 		$text = null;
 		$useRotation = null;
 		$backgroundColor = null;
+		$lineGapHeight = null;
 		$depthTest = null;
 		$showBackface = null;
 		$showTextBackface = null;
@@ -289,6 +297,7 @@ final class PacketShapeData{
 				$text = $in->getString();
 				$useRotation = $in->getBool();
 				$backgroundColor = $in->readOptional(fn() => Color::fromARGB($in->getLInt()));
+				$lineGapHeight = $in->getLInt();
 				$depthTest = $in->getBool();
 				$showBackface = $in->getBool();
 				$showTextBackface = $in->getBool();
@@ -306,7 +315,7 @@ final class PacketShapeData{
 
 		return new self(
 			$networkId, $type, $location, $scale, $rotation, $totalTimeLeft, $maximumRenderDistance,
-			$color, $text, $useRotation, $backgroundColor, $depthTest, $showBackface, $showTextBackface,
+			$color, $text, $useRotation, $backgroundColor, $lineGapHeight, $depthTest, $showBackface, $showTextBackface,
 			$boxBound, $lineEndLocation, $arrowHeadLength, $arrowHeadRadius, $segments, $dimensionId, $attachedToEntityId
 		);
 	}
@@ -337,6 +346,7 @@ final class PacketShapeData{
 				$out->putString($this->text ?? "");
 				$out->putBool($this->useRotation ?? false);
 				$out->writeOptional($this->backgroundColor, fn(Color $c) => $out->putLInt($c->toARGB()));
+				$out->putLInt($this->lineGapHeight ?? 0);
 				$out->putBool($this->depthTest ?? true);
 				$out->putBool($this->showBackface ?? true);
 				$out->putBool($this->showTextBackface ?? true);

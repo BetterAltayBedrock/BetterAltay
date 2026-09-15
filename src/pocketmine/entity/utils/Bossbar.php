@@ -188,7 +188,6 @@ class Bossbar extends Vector3{
 	protected function sendBossEventPacket(Player $player, int $eventType) : void{
 		$pk = new BossEventPacket();
 		$pk->bossEid = $this->entityId;
-		$pk->playerEid = $player->getId();
 		$pk->eventType = $eventType;
 		$pk->title = $this->title;
 		$pk->filteredTitle = $this->title;

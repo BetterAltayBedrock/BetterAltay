@@ -26,8 +26,10 @@ namespace pocketmine\tile;
 
 use pocketmine\item\Item;
 use pocketmine\item\Record;
+use pocketmine\level\sound\RecordSound;
+use pocketmine\level\sound\RecordStopSound;
 use pocketmine\nbt\tag\CompoundTag;
-use pocketmine\network\mcpe\protocol\{LevelSoundEventPacket, TextPacket};
+use pocketmine\network\mcpe\protocol\TextPacket;
 use pocketmine\Player;
 
 class Jukebox extends Spawnable{
@@ -35,7 +37,8 @@ class Jukebox extends Spawnable{
 	public const TAG_RECORD_ITEM = "RecordItem";
 
 	/** @var Record|null */
-	protected $recordItem = null;
+	protected ?Record $recordItem = null;
+	private ?int $soundHandle = null;
 
 	public function setRecordItem(?Record $item) : void{
 		$this->recordItem = $item;
@@ -46,10 +49,19 @@ class Jukebox extends Spawnable{
 		return $this->recordItem;
 	}
 
+	public function getSoundHandle() : ?int{
+		return $this->soundHandle;
+	}
+
+	public function setSoundHandle(?int $soundHandle) : void{
+		$this->soundHandle = $soundHandle;
+	}
+
 	public function playDisc(?Player $player = null) : void{
 		if($this->getRecordItem() instanceof Record){
-			$this->level->broadcastLevelSoundEvent($this, $this->getRecordItem()->getSoundId());
-
+			$sound = new RecordSound($this, $this->getRecordItem()->getSoundId());
+			$this->setSoundHandle($sound->getServerSoundHandle());
+			$this->getLevel()->addSound($sound);
 			if($player instanceof Player){
 				$pk = new TextPacket();
 				$pk->type = TextPacket::TYPE_JUKEBOX_POPUP;
@@ -57,10 +69,10 @@ class Jukebox extends Spawnable{
 				$pk->message = "record.nowPlaying";
 				$pk->parameters = [
 					ucwords(str_ireplace([
-						"record", "."
+						"record", ".", "_"
 					], [
-						"", ""
-					], (string) $this->getRecordItem()->getSoundId()))
+						"", "", " "
+					], $this->getRecordItem()->getSoundId()))
 				];
 				$player->sendDataPacket($pk);
 			}
@@ -70,8 +82,10 @@ class Jukebox extends Spawnable{
 	}
 
 	public function stopDisc() : void{
-		if($this->getRecordItem() instanceof Record){
-			$this->level->broadcastLevelSoundEvent($this, LevelSoundEventPacket::SOUND_STOP_RECORD);
+		if($this->getRecordItem() instanceof Record && $this->soundHandle !== null){
+			$sound = new RecordStopSound($this, $this->getSoundHandle());
+			$this->getLevel()->addSound($sound);
+			$this->setSoundHandle(null);
 		}
 	}
 
@@ -93,7 +107,8 @@ class Jukebox extends Spawnable{
 
 	protected function readSaveData(CompoundTag $nbt) : void{
 		if($nbt->hasTag(self::TAG_RECORD_ITEM)){
-			$this->recordItem = Item::nbtDeserialize($nbt->getCompoundTag(self::TAG_RECORD_ITEM));
+			$item = Item::nbtDeserialize($nbt->getCompoundTag(self::TAG_RECORD_ITEM));
+			$this->recordItem = $item instanceof Record ? $item : null;
 
 			$this->scheduleUpdate();
 		}
@@ -110,12 +125,9 @@ class Jukebox extends Spawnable{
 	}
 
 	public function spawnTo(Player $player) : bool{
-		if($this->hasRecordItem()){
-			$pk = new LevelSoundEventPacket();
-			$pk->sound = $this->getRecordItem()->getSoundId();
-			$pk->position = $this;
-
-			$player->sendDataPacket($pk);
+		if($this->hasRecordItem() && $this->soundHandle !== null){
+			$sound = new RecordSound($this, $this->getRecordItem()->getSoundId(), $this->soundHandle);
+			$this->getLevel()->addSound($sound, [$player]);
 		}
 		return parent::spawnTo($player);
 	}

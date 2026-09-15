@@ -79,7 +79,7 @@ class AvailableCommandsPacket extends DataPacket{
 
 	public const ARG_TYPE_BLOCK_STATES = 84;
 
-	public const ARG_TYPE_COMMAND = 88;
+	public const ARG_TYPE_COMMAND = 90;
 	/**
 	 * Enums are a little different: they are composed as follows:
 	 * ARG_FLAG_ENUM | ARG_FLAG_VALID | (enum index)

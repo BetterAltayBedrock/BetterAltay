@@ -110,7 +110,7 @@ class Skull extends Flowable{
 		$type = ($tile instanceof TileSkull) ? $tile->getType() : $this->type;
 		$name = self::getSkullNameByType($type);
 		if($name !== null){
-			return RuntimeBlockMapping::getSkullMapping()[$name][$this->meta] ?? parent::getRuntimeId();
+			return RuntimeBlockMapping::fromSkullFacing($name, $this->meta) ?? parent::getRuntimeId();
 		}
 		return parent::getRuntimeId();
 	}

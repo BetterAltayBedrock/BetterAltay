@@ -26,20 +26,38 @@ namespace pocketmine\item;
 
 class Record extends Item{
 
-	/** @var int */
-	protected $soundId;
+	public const SOUND_RECORD_13 = "record.13";
+	public const SOUND_RECORD_CAT = "record.cat";
+	public const SOUND_RECORD_BLOCKS = "record.blocks";
+	public const SOUND_RECORD_CHIRP = "record.chirp";
+	public const SOUND_RECORD_FAR = "record.far";
+	public const SOUND_RECORD_MALL = "record.mall";
+	public const SOUND_RECORD_MELLOHI = "record.mellohi";
+	public const SOUND_RECORD_STAL = "record.stal";
+	public const SOUND_RECORD_STRAD = "record.strad";
+	public const SOUND_RECORD_WARD = "record.ward";
+	public const SOUND_RECORD_11 = "record.11";
+	public const SOUND_RECORD_WAIT = "record.wait";
+	public const SOUND_RECORD_OTHERSIDE = "record.otherside";
+	public const SOUND_RECORD_5 = "record.5";
+	public const SOUND_RECORD_PIGSTEP = "record.pigstep";
+	public const SOUND_RECORD_RELIC = "record.relic";
+	public const SOUND_RECORD_CREATOR = "record.creator";
+	public const SOUND_RECORD_CREATOR_MUSIC_BOX = "record.creator_music_box";
+	public const SOUND_RECORD_PRECIPICE = "record.precipice";
+	public const SOUND_RECORD_TEARS = "record.tears";
+	public const SOUND_RECORD_LAVA_CHICKEN = "record.lava_chicken";
+	public const SOUND_RECORD_BOUNCE = "record.bounce";
 
-	public function __construct(int $id, int $soundId){
+	public function __construct(int $id, protected string $soundId){
 		parent::__construct($id, 0, "Music Disc");
-
-		$this->soundId = $soundId;
 	}
 
 	public function getMaxStackSize() : int{
 		return 1;
 	}
 
-	public function getSoundId() : int{
+	public function getSoundId() : string{
 		return $this->soundId;
 	}
 }

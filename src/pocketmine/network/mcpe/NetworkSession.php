@@ -57,6 +57,7 @@ use pocketmine\network\mcpe\protocol\ClientboundDataStorePacket;
 use pocketmine\network\mcpe\protocol\ClientboundDebugRendererPacket;
 use pocketmine\network\mcpe\protocol\ClientboundMapItemDataPacket;
 use pocketmine\network\mcpe\protocol\ClientboundTextureShiftPacket;
+use pocketmine\network\mcpe\protocol\ClientboundUpdateSoundDataPacket;
 use pocketmine\network\mcpe\protocol\ClientCacheBlobStatusPacket;
 use pocketmine\network\mcpe\protocol\ClientCacheMissResponsePacket;
 use pocketmine\network\mcpe\protocol\ClientCacheStatusPacket;
@@ -82,6 +83,7 @@ use pocketmine\network\mcpe\protocol\EducationSettingsPacket;
 use pocketmine\network\mcpe\protocol\EduUriResourcePacket;
 use pocketmine\network\mcpe\protocol\EmoteListPacket;
 use pocketmine\network\mcpe\protocol\EmotePacket;
+use pocketmine\network\mcpe\protocol\JigsawStructureDataPacket;
 use pocketmine\network\mcpe\protocol\LegacyTelemetryEventPacket;
 use pocketmine\network\mcpe\protocol\GameRulesChangedPacket;
 use pocketmine\network\mcpe\protocol\GameTestRequestPacket;
@@ -141,6 +143,7 @@ use pocketmine\network\mcpe\protocol\PlayStatusPacket;
 use pocketmine\network\mcpe\protocol\PositionTrackingDBClientRequestPacket;
 use pocketmine\network\mcpe\protocol\PositionTrackingDBServerBroadcastPacket;
 use pocketmine\network\mcpe\protocol\PurchaseReceiptPacket;
+use pocketmine\network\mcpe\protocol\RecordStartedPacket;
 use pocketmine\network\mcpe\protocol\RemoveActorPacket;
 use pocketmine\network\mcpe\protocol\RemoveObjectivePacket;
 use pocketmine\network\mcpe\protocol\RemoveVolumeEntityPacket;
@@ -174,6 +177,7 @@ use pocketmine\network\mcpe\protocol\SetHealthPacket;
 use pocketmine\network\mcpe\protocol\SetHudPacket;
 use pocketmine\network\mcpe\protocol\SetLastHurtByPacket;
 use pocketmine\network\mcpe\protocol\SetLocalPlayerAsInitializedPacket;
+use pocketmine\network\mcpe\protocol\SetPlayerFurnaceOptionsPacket;
 use pocketmine\network\mcpe\protocol\SetPlayerGameTypePacket;
 use pocketmine\network\mcpe\protocol\SetPlayerInventoryOptionsPacket;
 use pocketmine\network\mcpe\protocol\SetScoreboardIdentityPacket;
@@ -931,6 +935,10 @@ abstract class NetworkSession{
 		return false;
 	}
 
+	public function handleJigsawStructureData(JigsawStructureDataPacket $packet) : bool{
+		return false;
+	}
+
 	public function handleUpdateClientOptions(UpdateClientOptionsPacket $packet) : bool{
 		return false;
 	}
@@ -990,4 +998,17 @@ abstract class NetworkSession{
 	public function handleLocatorBar(LocatorBarPacket $packet) : bool{
 		return false;
 	}
+
+	public function handleClientboundUpdateSoundData(ClientboundUpdateSoundDataPacket $packet) : bool{
+		return false;
+	}
+
+	public function handleSetPlayerFurnaceOptions(SetPlayerFurnaceOptionsPacket $packet) : bool{
+		return false;
+	}
+
+	public function handleRecordStarted(RecordStartedPacket $packet) : bool{
+		return false;
+	}
+
 }

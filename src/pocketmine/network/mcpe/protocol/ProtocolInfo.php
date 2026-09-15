@@ -37,11 +37,11 @@ interface ProtocolInfo{
 	 */
 
 	/** Actual Minecraft: PE protocol version */
-	public const CURRENT_PROTOCOL = 2169;
+	public const CURRENT_PROTOCOL = 2193;
 	/** Current Minecraft PE version reported by the server. This is usually the earliest currently supported version. */
 	public const MINECRAFT_VERSION = 'v' . self::MINECRAFT_VERSION_NETWORK;
 	/** Version number sent to clients in ping responses. */
-	public const MINECRAFT_VERSION_NETWORK = '1.26.45';
+	public const MINECRAFT_VERSION_NETWORK = '1.26.50';
 
 	public const LOGIN_PACKET = 0x01;
 	public const PLAY_STATUS_PACKET = 0x02;
@@ -225,6 +225,9 @@ interface ProtocolInfo{
 	public const SET_HUD_PACKET = 0x134;
 	public const AWARD_ACHIEVEMENT_PACKET = 0x135;
 	public const CLIENTBOUND_CLOSE_FORM_PACKET = 0x136;
+
+	public const JIGSAW_STRUCTURE_DATA_PACKET = 0x139;
+
 	public const UPDATE_CLIENT_OPTIONS_PACKET = 0x143;
 	public const PLAYER_LOCATION_PACKET = 0x146;
 	public const CLIENTBOUND_CONTROL_SCHEME_SET_PACKET = 0x147;
@@ -253,5 +256,11 @@ interface ProtocolInfo{
 	public const SERVERBOUND_DATA_DRIVEN_SCREEN_CLOSED_PACKET = 0x157; //343
 	/**
 	 * public const SYNC_WORLD_CLOCKS_PACKET = 0x158; //344
+	 * public const CLIENTBOUND_ATTRIBUTE_LAYER_SYNC_PACKET = 0x159;
+	 * public const SERVER_STORE_INFO_PACKET = 0x15a;
+	 * public const SERVER_PRESENCE_INFO_PACKET = 0x15b;
 	 */
+	public const CLIENTBOUND_UPDATE_SOUND_DATA_PACKET = 0x15c;
+	public const SET_PLAYER_FURNACE_OPTIONS_PACKET = 0x15f;
+	public const RECORD_STARTED_PACKET = 0x160;
 }
