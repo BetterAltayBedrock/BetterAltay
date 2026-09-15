@@ -36,6 +36,6 @@ const NAME = "BetterAltay";
 //Do not modify this. Change FORK_VERSION instead.
 const BASE_VERSION = "3.28.0";
 const FORK_VERSION = "1.45.0";
-const IS_DEVELOPMENT_BUILD = true;
+const IS_DEVELOPMENT_BUILD = false;
 const BUILD_CHANNEL = "master";
 
