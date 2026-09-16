@@ -25,7 +25,6 @@ namespace pocketmine\network\mcpe\convert;
 
 use pocketmine\block\BlockIds;
 use pocketmine\nbt\BigEndianNBTStream;
-use pocketmine\nbt\NetworkLittleEndianNBTStream;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\utils\AssumptionFailedError;
 use RuntimeException;
@@ -73,35 +72,21 @@ final class RuntimeBlockMapping{
 			throw new RuntimeException("Missing 'blocks' tag in block_palette.nbt");
 		}
 
-		$netStream = new NetworkLittleEndianNBTStream();
-
 		/** @var CompoundTag[] $list */
 		$list = [];
-		foreach($blocksList->getValue() as $k => $blockCompound){
-			if($blockCompound instanceof CompoundTag){
-				if($blockCompound->hasTag("network_id")){
-					self::$runtimeIdToHashMap[$k] = $blockCompound->getInt("network_id");
-					$blockCompound->removeTag("network_id");
-				}
+		foreach($blocksList->getValue() as $k => $state){
+			if($state instanceof CompoundTag){
+				self::$runtimeIdToHashMap[$k] = $state->getInt("network_id");
+				$state->removeTag("network_id", "name_hash");
+				$list[$k] = $state;
 
-				if($blockCompound->hasTag("name_hash")){
-					$blockCompound->removeTag("name_hash");
-				}
-
-				$state = $netStream->read($netStream->write($blockCompound));
-				if($state instanceof CompoundTag){
-					$list[] = $state;
+				if($state->getString("name") === "minecraft:info_update"){
+					self::$unknownRid = self::$runtimeIdToHashMap[$k];
 				}
 			}
 		}
+
 		self::$bedrockKnownStates = $list;
-
-		foreach(self::$bedrockKnownStates as $k => $state){
-			if($state->getString("name") === "minecraft:info_update"){
-				self::$unknownRid = self::toStaticRuntimeHash($k);
-				break;
-			}
-		}
 
 		self::setupLegacyMappings();
 	}
@@ -188,11 +173,11 @@ final class RuntimeBlockMapping{
 		}
 
 		foreach($jsonStates as $key => $val){
-			if(!$nbtStatesTag->hasTag((string)$key)){
+			if(!$nbtStatesTag->hasTag((string) $key)){
 				return false;
 			}
 
-			$tag = $nbtStatesTag->getTag((string)$key);
+			$tag = $nbtStatesTag->getTag((string) $key);
 			$tagValue = $tag->getValue();
 
 			if($tagValue != $val){
