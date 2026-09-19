@@ -88,7 +88,7 @@ class Sheep extends Animal{
 
 				$i = 1 + $this->level->random->nextBoundedInt(3);
 				for($a = 0; $a < $i; $a++){
-					$this->level->dropItem($this, ItemFactory::get(Item::WOOL, intval($this->propertyManager->getByte(self::DATA_COLOR)), 1));
+					$this->level->dropItem($this, ItemFactory::get(ItemIds::WOOL, intval($this->propertyManager->getByte(self::DATA_COLOR))));
 
 					$this->motion->y += $this->level->random->nextFloat() * 0.05;
 					$this->motion->x += ($this->level->random->nextFloat() - $this->level->random->nextFloat()) * 0.1;

@@ -27,7 +27,7 @@ use pocketmine\block\Block;
 use pocketmine\entity\ClimateEntity;
 use pocketmine\entity\Entity;
 use pocketmine\entity\Mob;
-use pocketmine\entity\BiommeVariantEntity;
+use pocketmine\entity\BiomeVariantEntity;
 use pocketmine\math\Vector3;
 use pocketmine\Player;
 use pocketmine\Server;
@@ -48,7 +48,7 @@ class SpawnEgg extends Item{
 			$biome = $player->getLevelNonNull()->getBiome($entity->getFloorX(), $entity->getFloorZ());
 			if($entity instanceof ClimateEntity){
 				$entity->setClimateVariantFromBiome($biome);
-			}elseif($entity instanceof BiommeVariantEntity){
+			}elseif($entity instanceof BiomeVariantEntity){
 				$entity->setVariantFromBiome($biome);
 			}
 

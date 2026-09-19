@@ -30,28 +30,18 @@ use pocketmine\network\mcpe\NetworkSession;
 class MoveActorDeltaPacket extends DataPacket{
 	public const NETWORK_ID = ProtocolInfo::MOVE_ACTOR_DELTA_PACKET;
 
-	/** @var int */
-	public $entityRuntimeId;
-	/** @var float|null */
-	public $xPos = null;
-	/** @var float|null */
-	public $yPos = null;
-	/** @var float|null */
-	public $zPos = null;
-	/** @var float|null */
-	public $xRot = null;
-	/** @var float|null */
-	public $yRot = null;
-	/** @var float|null */
-	public $zRot = null;
-	/** @var bool */
-	public $onGround = false;
-	/** @var bool */
-	public $teleport = false;
-	/** @var bool */
-	public $forceMoveLocalEntity = false;
-	/** @var bool */
-	public $forceCompletion = false;
+	public int $entityRuntimeId;
+	public ?float $xPos = null;
+	public ?float $yPos = null;
+	public ?float $zPos = null;
+	public ?float $xRot = null;
+	public ?float $yRot = null;
+	public ?float $zRot = null;
+	public bool $onGround = false;
+	public bool $teleport = false;
+	public bool $forceMoveLocalEntity = false;
+	public bool $forceCompletion = false;
+	public int $ticks = 0;
 
 	private function maybeReadCoord() : ?float{
 		if($this->getBool()){
@@ -67,7 +57,7 @@ class MoveActorDeltaPacket extends DataPacket{
 		return null;
 	}
 
-	protected function decodePayload(){
+	protected function decodePayload() : void{
 		$this->entityRuntimeId = $this->getEntityRuntimeId();
 		$this->xPos = $this->maybeReadCoord();
 		$this->yPos = $this->maybeReadCoord();
@@ -79,6 +69,7 @@ class MoveActorDeltaPacket extends DataPacket{
 		$this->teleport = $this->getBool();
 		$this->forceMoveLocalEntity = $this->getBool();
 		$this->forceCompletion = $this->getBool();
+		$this->ticks = $this->getUnsignedVarLong();
 	}
 
 	private function maybeWriteCoord(?float $val) : void{
@@ -95,7 +86,7 @@ class MoveActorDeltaPacket extends DataPacket{
 		}
 	}
 
-	protected function encodePayload(){
+	protected function encodePayload() : void{
 		$this->putEntityRuntimeId($this->entityRuntimeId);
 		$this->maybeWriteCoord($this->xPos);
 		$this->maybeWriteCoord($this->yPos);
@@ -107,6 +98,7 @@ class MoveActorDeltaPacket extends DataPacket{
 		$this->putBool($this->teleport);
 		$this->putBool($this->forceMoveLocalEntity);
 		$this->putBool($this->forceCompletion);
+		$this->putUnsignedVarLong($this->ticks);
 	}
 
 	public function handle(NetworkSession $session) : bool{

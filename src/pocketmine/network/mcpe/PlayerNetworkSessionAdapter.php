@@ -68,6 +68,7 @@ use pocketmine\network\mcpe\protocol\RespawnPacket;
 use pocketmine\network\mcpe\protocol\ServerSettingsRequestPacket;
 use pocketmine\network\mcpe\protocol\SetActorMotionPacket;
 use pocketmine\network\mcpe\protocol\SetLocalPlayerAsInitializedPacket;
+use pocketmine\network\mcpe\protocol\SetPlayerFurnaceOptionsPacket;
 use pocketmine\network\mcpe\protocol\SetPlayerGameTypePacket;
 use pocketmine\network\mcpe\protocol\SetPlayerInventoryOptionsPacket;
 use pocketmine\network\mcpe\protocol\SettingsCommandPacket;
@@ -397,5 +398,9 @@ class PlayerNetworkSessionAdapter extends NetworkSession{
 
 	public function handlePartyChanged(PartyChangedPacket $packet) : bool{
 		return true; //do we have to handle this?
+	}
+
+	public function handleSetPlayerFurnaceOptions(SetPlayerFurnaceOptionsPacket $packet) : bool{
+		return true; //silence debug spam
 	}
 }

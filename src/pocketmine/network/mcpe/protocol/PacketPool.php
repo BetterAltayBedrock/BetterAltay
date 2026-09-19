@@ -214,6 +214,7 @@ class PacketPool{
 		static::registerPacket(new SetHudPacket());
 		static::registerPacket(new AwardAchievementPacket());
 		static::registerPacket(new ClientboundCloseFormPacket());
+		static::registerPacket(new JigsawStructureDataPacket());
 		static::registerPacket(new UpdateClientOptionsPacket());
 		static::registerPacket(new PlayerLocationPacket());
 		static::registerPacket(new ClientboundControlSchemeSetPacket());
@@ -228,6 +229,9 @@ class PacketPool{
 		static::registerPacket(new ResourcePacksReadyForValidationPacket());
 		static::registerPacket(new ServerboundDataDrivenScreenClosedPacket());
 		static::registerPacket(new PartyChangedPacket());
+		static::registerPacket(new ClientboundUpdateSoundDataPacket());
+		static::registerPacket(new SetPlayerFurnaceOptionsPacket());
+		static::registerPacket(new RecordStartedPacket());
 	}
 
 	/**

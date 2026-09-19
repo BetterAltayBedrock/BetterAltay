@@ -24,14 +24,12 @@ final class PlayerAuthInputVehicleInfo{
 	public static function read(NetworkBinaryStream $in) : self{
 		$self = new self();
 
-		// @phpstan-ignore-next-line
-		if($in->getBool() && $in->getBool()){
+		if($in->getBool()){
 			$self->vehicleRotationX = $in->getLFloat();
 			$self->vehicleRotationZ = $in->getLFloat();
 		}
 
-		// @phpstan-ignore-next-line
-		if($in->getBool() && $in->getBool()){
+		if($in->getBool()){
 			$self->predictedVehicleActorUniqueId = $in->getEntityUniqueId();
 		}
 
@@ -42,20 +40,16 @@ final class PlayerAuthInputVehicleInfo{
 
 		if ($this->vehicleRotationX !== null && $this->vehicleRotationZ !== null) {
 			$out->putBool(true);
-			$out->putBool(true);
 			$out->putLFloat($this->vehicleRotationX);
 			$out->putLFloat($this->vehicleRotationZ);
 		} else {
-			$out->putBool(false);
 			$out->putBool(false);
 		}
 
 		if ($this->predictedVehicleActorUniqueId !== null) {
 			$out->putBool(true);
-			$out->putBool(true);
 			$out->putEntityUniqueId($this->predictedVehicleActorUniqueId);
 		} else {
-			$out->putBool(false);
 			$out->putBool(false);
 		}
 	}

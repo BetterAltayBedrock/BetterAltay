@@ -51,7 +51,6 @@ class BossEventPacket extends DataPacket{
 
 	public int $bossEid;
 	public int $eventType;
-	public int $playerEid;
 	public float $healthPercent;
 	public string $title;
 	public string $filteredTitle = "";
@@ -60,7 +59,6 @@ class BossEventPacket extends DataPacket{
 
 	protected function decodePayload() : void{
 		$this->bossEid = $this->getEntityUniqueId();
-		$this->playerEid = $this->getEntityUniqueId();
 		$this->eventType = $this->getByte();
 		$this->title = $this->getString();
 		$this->filteredTitle = $this->getString();
@@ -71,7 +69,6 @@ class BossEventPacket extends DataPacket{
 
 	protected function encodePayload() : void{
 		$this->putEntityUniqueId($this->bossEid);
-		$this->putEntityUniqueId($this->playerEid);
 		$this->putByte($this->eventType);
 		$this->putString($this->title);
 		$this->putString($this->filteredTitle);
