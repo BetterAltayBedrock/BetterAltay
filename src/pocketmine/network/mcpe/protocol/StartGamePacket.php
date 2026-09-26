@@ -39,6 +39,7 @@ use pocketmine\network\mcpe\protocol\types\MultiplayerGameVisibility;
 use pocketmine\network\mcpe\protocol\types\PlayerMovementSettings;
 use pocketmine\network\mcpe\protocol\types\PlayerPermissions;
 use pocketmine\network\mcpe\protocol\types\SpawnSettings;
+use pocketmine\utils\Binary;
 use pocketmine\utils\UUID;
 use function count;
 
@@ -167,7 +168,7 @@ class StartGamePacket extends DataPacket{
 		$this->editorWorldType = $this->getVarInt();
 		$this->createdInEditor = $this->getBool();
 		$this->exportedFromEditor = $this->getBool();
-		$this->editorLevelMigrationVersion = $this->getByte();
+		$this->editorLevelMigrationVersion = Binary::signByte($this->getByte());
 		$this->time = $this->getVarInt();
 		$this->eduEditionOffer = $this->getUnsignedVarInt();
 		$this->hasEduFeaturesEnabled = $this->getBool();

@@ -97,7 +97,6 @@ class UseItemOnEntityTransactionData extends TransactionData{
 		$stream->putVector3($this->playerPos);
 		$stream->putVector3($this->clickPos);
 		$stream->putByte($this->handSlot);
-
 	}
 
 	/**
