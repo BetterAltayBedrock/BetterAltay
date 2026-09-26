@@ -67,6 +67,7 @@ class StartGamePacket extends DataPacket{
 	public int $editorWorldType = 0; //non editor
 	public bool $createdInEditor = false;
 	public bool $exportedFromEditor = false;
+	public int $editorLevelMigrationVersion = 0; //legacy
 	public int $time = -1;
 	public int $eduEditionOffer = EducationEditionOffer::NONE;
 	public bool $hasEduFeaturesEnabled = false;
@@ -166,6 +167,7 @@ class StartGamePacket extends DataPacket{
 		$this->editorWorldType = $this->getVarInt();
 		$this->createdInEditor = $this->getBool();
 		$this->exportedFromEditor = $this->getBool();
+		$this->editorLevelMigrationVersion = $this->getByte();
 		$this->time = $this->getVarInt();
 		$this->eduEditionOffer = $this->getUnsignedVarInt();
 		$this->hasEduFeaturesEnabled = $this->getBool();
@@ -267,6 +269,7 @@ class StartGamePacket extends DataPacket{
 		$this->putVarInt($this->editorWorldType);
 		$this->putBool($this->createdInEditor);
 		$this->putBool($this->exportedFromEditor);
+		$this->putByte($this->editorLevelMigrationVersion);
 		$this->putVarInt($this->time);
 		$this->putUnsignedVarInt($this->eduEditionOffer);
 		$this->putBool($this->hasEduFeaturesEnabled);
