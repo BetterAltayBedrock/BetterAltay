@@ -24,8 +24,10 @@ declare(strict_types=1);
 namespace pocketmine\network\mcpe\convert;
 
 use pocketmine\block\BlockIds;
+use pocketmine\nbt\BigEndianNBTStream;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\network\mcpe\NetworkBinaryStream;
+use pocketmine\network\mcpe\protocol\types\BlockPaletteEntry;
 use pocketmine\utils\AssumptionFailedError;
 use RuntimeException;
 use function file_get_contents;
@@ -49,6 +51,8 @@ final class RuntimeBlockMapping{
 	private static $airRid = -1;
 	/** @var int */
 	private static $unknownRid = -1;
+	/** @var BlockPaletteEntry[]|null */
+	private static ?array $dataDrivenBlockPalette = null;
 
 	private function __construct(){
 		//NOOP
@@ -80,6 +84,30 @@ final class RuntimeBlockMapping{
 			}
 			$rid++;
 		}
+		self::initDataDrivenBlocks();
+	}
+
+	private static function initDataDrivenBlocks() : void{
+		$stream = file_get_contents(RESOURCE_PATH . "vanilla/data_driven_blocks.nbt");
+		if($stream === false){
+			throw new AssumptionFailedError("Missing required resource file: data_driven_blocks.nbt");
+		}
+
+		$nbtStream = new BigEndianNBTStream();
+		$root = $nbtStream->readCompressed($stream);
+
+		if(!($root instanceof CompoundTag)){
+			throw new RuntimeException("Root NBT tag must be a CompoundTag");
+		}
+
+		$palette = [];
+		foreach($root->getValue() as $name => $tag){
+			if($tag instanceof CompoundTag){
+				$palette[] = new BlockPaletteEntry($name, $tag);
+			}
+		}
+
+		self::$dataDrivenBlockPalette = $palette;
 	}
 
 	private static function lazyInit() : void{
@@ -114,6 +142,14 @@ final class RuntimeBlockMapping{
 	public static function getBedrockKnownStates() : array{
 		self::lazyInit();
 		return self::$bedrockKnownStates;
+	}
+
+	/**
+	 * @return BlockPaletteEntry[]
+	 */
+	public static function getDataDrivenBlockPalette() : array{
+		self::lazyInit();
+		return self::$dataDrivenBlockPalette ?? [];
 	}
 
 	public static function fromBlockStateNBT(CompoundTag $nbt) : int{

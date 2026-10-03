@@ -6,7 +6,7 @@
 	<br>
 	This is a fork of <a href="https://github.com/pmmp/PocketMine-MP/tree/3.28.0">PocketMine-MP</a> and <a href="https://github.com/unresolved3169/Altay">Altay</a>.
 	<br><br>
-	<i>This fork was created due to the inactivity of Altay and currently supports Minecraft: Bedrock Edition v26.50</i>
+	<i>This fork was created due to the inactivity of Altay and currently supports Minecraft: Bedrock Edition v26.52</i>
 	<br><br>
 
 <p align="center">
