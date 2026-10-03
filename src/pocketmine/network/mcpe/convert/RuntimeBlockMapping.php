@@ -26,11 +26,13 @@ namespace pocketmine\network\mcpe\convert;
 use pocketmine\block\BlockIds;
 use pocketmine\nbt\BigEndianNBTStream;
 use pocketmine\nbt\tag\CompoundTag;
+use pocketmine\network\mcpe\protocol\types\BlockPaletteEntry;
 use pocketmine\utils\AssumptionFailedError;
 use RuntimeException;
 use function count;
 use function file_get_contents;
 use function json_decode;
+use function str_ends_with;
 use const pocketmine\RESOURCE_PATH;
 
 /**
@@ -49,6 +51,8 @@ final class RuntimeBlockMapping{
 	private static int $unknownRid = 0;
 	/** @var array<string, array<int, int>> */
 	private static array $skullFacingToRuntimeIdMap = [];
+	/** @var BlockPaletteEntry[]|null */
+	private static ?array $dataDrivenBlockPalette = null;
 
 	private function __construct(){
 		//NOOP
@@ -88,7 +92,31 @@ final class RuntimeBlockMapping{
 
 		self::$bedrockKnownStates = $list;
 
+		self::initDataDrivenBlocks();
 		self::setupLegacyMappings();
+	}
+
+	private static function initDataDrivenBlocks() : void{
+		$stream = file_get_contents(RESOURCE_PATH . "vanilla/data_driven_blocks.nbt");
+		if($stream === false){
+			throw new AssumptionFailedError("Missing required resource file: data_driven_blocks.nbt");
+		}
+
+		$nbtStream = new BigEndianNBTStream();
+		$root = $nbtStream->readCompressed($stream);
+
+		if(!($root instanceof CompoundTag)){
+			throw new RuntimeException("Root NBT tag must be a CompoundTag");
+		}
+
+		$palette = [];
+		foreach($root->getValue() as $name => $tag){
+			if($tag instanceof CompoundTag){
+				$palette[] = new BlockPaletteEntry($name, $tag);
+			}
+		}
+
+		self::$dataDrivenBlockPalette = $palette;
 	}
 
 	private static function setupLegacyMappings() : void{
@@ -225,6 +253,14 @@ final class RuntimeBlockMapping{
 	public static function getBedrockKnownStates() : array{
 		self::lazyInit();
 		return self::$bedrockKnownStates ?? [];
+	}
+
+	/**
+	 * @return BlockPaletteEntry[]
+	 */
+	public static function getDataDrivenBlockPalette() : array{
+		self::lazyInit();
+		return self::$dataDrivenBlockPalette ?? [];
 	}
 
 	/**

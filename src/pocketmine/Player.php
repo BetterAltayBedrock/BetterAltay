@@ -124,6 +124,7 @@ use pocketmine\nbt\tag\ListTag;
 use pocketmine\nbt\tag\StringTag;
 use pocketmine\network\mcpe\auth\task\VerifyLoginTask;
 use pocketmine\network\mcpe\convert\ItemTypeDictionary;
+use pocketmine\network\mcpe\convert\RuntimeBlockMapping;
 use pocketmine\network\mcpe\encryption\EncryptionContext;
 use pocketmine\network\mcpe\encryption\PrepareEncryptionTask;
 use pocketmine\network\mcpe\PlayerNetworkSessionAdapter;
@@ -2634,7 +2635,8 @@ class Player extends Human implements CommandSender, ChunkLoader, IPlayer{
 		$pk->blockPaletteChecksum = 0;
 		$pk->blockNetworkIdsAreHashes = true;
 		$pk->worldTemplateId = new UUID();
-		$this->dataPacket($pk);
+		$pk->blockPalette = RuntimeBlockMapping::getDataDrivenBlockPalette();
+		$this->sendDataPacket($pk);
 
 		foreach(SyncActorPropertyPacket::fromJson() as $packet){
 			$this->sendDataPacket($packet);
