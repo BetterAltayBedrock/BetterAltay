@@ -49,7 +49,7 @@ class CreativeItemMapper{
 			$icon = $group["icon"];
 
 			try{
-				$iconValue = ItemFactory::get($icon["id"]);
+				$iconValue = ItemFactory::get($icon["id"] === "minecraft:empty" ? "minecraft:air" : $icon["id"]);
 			}catch(InvalidArgumentException $ignore){
 				$iconValue = ItemFactory::get("minecraft:air");
 			}
