@@ -33,6 +33,7 @@ use pocketmine\block\material\SandstoneType;
 use pocketmine\block\material\StoneType;
 use pocketmine\block\material\WoodType;
 use pocketmine\block\state\BlockState;
+use pocketmine\block\state\BlockStateApplicator;
 use pocketmine\block\state\BlockStateSerializer;
 use pocketmine\level\Position;
 use pocketmine\nbt\tag\CompoundTag;
@@ -319,14 +320,11 @@ class BlockFactory{
 			$block->setDamage($meta);
 			if ($block instanceof BlockState) {
 				if ($nbt === null) {
-					$nbt = RuntimeBlockMapping::getBedrockKnownStates()[$block->getRuntimeId()] ?? new CompoundTag(
-						"",
-						[new CompoundTag("states")]
-					);
+					BlockStateApplicator::apply($block, RuntimeBlockMapping::getStatesForRuntime($block->getRuntimeId()) ?? []);
+				} else {
+					$states = BlockStateSerializer::readFromNBT($nbt->getCompoundTag("states"));
+					$block->onDeserialize($states);
 				}
-
-				$states = BlockStateSerializer::readFromNBT($nbt->getCompoundTag("states"));
-				$block->onDeserialize($states);
 			}
 		}catch(RuntimeException $e){
 			throw new InvalidArgumentException("Block ID $id is out of bounds");

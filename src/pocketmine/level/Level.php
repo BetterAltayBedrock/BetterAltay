@@ -37,7 +37,7 @@ use pocketmine\block\BlockFactory;
 use pocketmine\block\BlockIds;
 use pocketmine\block\Liquid;
 use pocketmine\block\state\BlockState;
-use pocketmine\block\state\BlockStateSerializer;
+use pocketmine\block\state\BlockStateApplicator;
 use pocketmine\block\UnknownBlock;
 use pocketmine\block\Water;
 use pocketmine\entity\CreatureType;
@@ -84,7 +84,6 @@ use pocketmine\math\VoxelRayTrace;
 use pocketmine\metadata\BlockMetadataStore;
 use pocketmine\metadata\Metadatable;
 use pocketmine\metadata\MetadataValue;
-use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\ListTag;
 use pocketmine\nbt\tag\StringTag;
 use pocketmine\network\mcpe\convert\RuntimeBlockMapping;
@@ -1612,12 +1611,7 @@ class Level implements ChunkManager, Metadatable{
 			$block = clone $this->blockStates[$id];
 			$block->setDamage($meta);
 			if ($block instanceof BlockState) {
-				$nbt = RuntimeBlockMapping::getBedrockKnownStates()[$rid] ?? new CompoundTag(
-					"",
-					[new CompoundTag("states")]
-				);
-				$states = BlockStateSerializer::readFromNBT($nbt->getCompoundTag("states"));
-				$block->onDeserialize($states);
+				BlockStateApplicator::apply($block, RuntimeBlockMapping::getStatesForRuntime($rid) ?? []);
 			}
 		} else {
 			$block = new UnknownBlock();
