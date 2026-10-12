@@ -26,12 +26,20 @@ namespace pocketmine\network\mcpe\convert;
 use pocketmine\block\BlockIds;
 use pocketmine\nbt\BigEndianNBTStream;
 use pocketmine\nbt\tag\CompoundTag;
+use pocketmine\nbt\tag\StringTag;
 use pocketmine\network\mcpe\NetworkBinaryStream;
 use pocketmine\network\mcpe\protocol\types\BlockPaletteEntry;
 use pocketmine\utils\AssumptionFailedError;
 use RuntimeException;
+use Throwable;
+use function count;
 use function file_get_contents;
+use function get_class;
+use function is_array;
+use function is_int;
+use function is_string;
 use function json_decode;
+use function ksort;
 use const pocketmine\RESOURCE_PATH;
 
 /**
@@ -40,17 +48,17 @@ use const pocketmine\RESOURCE_PATH;
 final class RuntimeBlockMapping{
 
 	/** @var CompoundTag[]|null */
-	private static $bedrockKnownStates = null;
+	private static ?array $bedrockKnownStates = null;
 	/** @var int[]|null */
-	private static $stateToRuntimeMap = [];
+	private static ?array $stateToRuntimeMap = null;
 
-	private static $runtimeToId = [];
-	private static $idToRuntime = [];
+	private static ?array $runtimeToId = null;
+	private static ?array $idToRuntime = null;
 
 	/** @var int */
-	private static $airRid = -1;
+	private static int $airRid = -1;
 	/** @var int */
-	private static $unknownRid = -1;
+	private static int $unknownRid = -1;
 	/** @var BlockPaletteEntry[]|null */
 	private static ?array $dataDrivenBlockPalette = null;
 
@@ -58,33 +66,68 @@ final class RuntimeBlockMapping{
 		//NOOP
 	}
 
+	public static function isInitialized() : bool{
+		return self::$bedrockKnownStates !== null;
+	}
+
 	public static function init() : void{
-		$canonicalBlockStatesFile = file_get_contents(RESOURCE_PATH . "vanilla/canonical_block_states.nbt");
-		if($canonicalBlockStatesFile === false){
-			throw new AssumptionFailedError("Missing required resource file");
+		if(self::$bedrockKnownStates !== null){
+			return;
 		}
 
-		$metaMap = json_decode(file_get_contents(RESOURCE_PATH . "vanilla/block_state_meta_map.json"));
-		$stream = new NetworkBinaryStream($canonicalBlockStatesFile);
-		self::$bedrockKnownStates = [];
-
-		$rid = 0;
-		while(!$stream->feof()){
-			$state = $stream->getNbtCompoundRoot();
-			self::$bedrockKnownStates[] = $state;
-
-			$name = $state->getString("name");
-			self::$stateToRuntimeMap[self::hashBlockStateNBT($name, $state->getCompoundTag("states"))] = $rid;
-			self::registerMapping($name, $metaMap[$rid], $rid);
-
-			if (self::$airRid === -1 && $name === "minecraft:air") {
-				self::$airRid = $rid;
-			} elseif (self::$unknownRid === -1 && $name === "minecraft:unknown") {
-				self::$unknownRid = $rid;
+		try{
+			$canonicalBlockStatesFile = file_get_contents(RESOURCE_PATH . "vanilla/canonical_block_states.nbt");
+			if($canonicalBlockStatesFile === false){
+				throw new AssumptionFailedError("Missing required resource file: canonical_block_states.nbt");
 			}
-			$rid++;
+
+			$metaMapRaw = file_get_contents(RESOURCE_PATH . "vanilla/block_state_meta_map.json");
+			if($metaMapRaw === false){
+				throw new AssumptionFailedError("Missing required resource file: block_state_meta_map.json");
+			}
+
+			$metaMap = json_decode($metaMapRaw, true);
+			if(!is_array($metaMap)){
+				throw new RuntimeException("Invalid block_state_meta_map.json: expected a JSON array");
+			}
+
+			$stream = new NetworkBinaryStream($canonicalBlockStatesFile);
+			self::$bedrockKnownStates = [];
+			self::$stateToRuntimeMap = [];
+			self::$runtimeToId = [];
+			self::$idToRuntime = [];
+
+			$rid = 0;
+			while(!$stream->feof()){
+				$state = $stream->getNbtCompoundRoot();
+				self::$bedrockKnownStates[] = $state;
+
+				$name = $state->getString("name");
+				self::$stateToRuntimeMap[self::blockStateKey($state)] = $rid;
+
+				if(!isset($metaMap[$rid]) || !is_int($metaMap[$rid])){
+					throw new RuntimeException("block_state_meta_map.json is out of sync with canonical_block_states.nbt at index " . $rid);
+				}
+				self::registerMapping($name, $metaMap[$rid], $rid);
+
+				if (self::$airRid === -1 && $name === "minecraft:air") {
+					self::$airRid = $rid;
+				} elseif (self::$unknownRid === -1 && $name === "minecraft:unknown") {
+					self::$unknownRid = $rid;
+				}
+				$rid++;
+			}
+			self::initDataDrivenBlocks();
+		}catch(Throwable $e){
+			self::$bedrockKnownStates = null;
+			self::$stateToRuntimeMap = null;
+			self::$runtimeToId = null;
+			self::$idToRuntime = null;
+			self::$dataDrivenBlockPalette = null;
+			self::$airRid = -1;
+			self::$unknownRid = -1;
+			throw $e;
 		}
-		self::initDataDrivenBlocks();
 	}
 
 	private static function initDataDrivenBlocks() : void{
@@ -110,79 +153,118 @@ final class RuntimeBlockMapping{
 		self::$dataDrivenBlockPalette = $palette;
 	}
 
-	private static function lazyInit() : void{
-		if(self::$bedrockKnownStates === null){
-			self::init();
-		}
-	}
-
 	private static function registerMapping(string $id, int $meta, int $runtimeId) : void{
 		self::$idToRuntime[$id][$meta] = $runtimeId;
 		self::$runtimeToId[$runtimeId] = [$id, $meta];
 	}
 
 	public static function toRuntimeId(string $id, int $meta = 0) : int{
-		self::lazyInit();
-		return self::$idToRuntime[$id][$meta] ?? self::UNKNOWN();
+		if(self::$idToRuntime === null){
+			self::init();
+		}
+		return self::$idToRuntime[$id][$meta] ?? self::$unknownRid;
 	}
 
 	public static function fromRuntimeId(int $runtimeId) : array{
-		self::lazyInit();
+		if(self::$runtimeToId === null){
+			self::init();
+		}
 		return self::$runtimeToId[$runtimeId] ?? [BlockIds::UNKNOWN, 0];
 	}
 
 	public static function getIdFromRuntimeId(int $runtimeId) : string{
-		return self::fromRuntimeId($runtimeId)[0];
+		if(self::$runtimeToId === null){
+			self::init();
+		}
+		return self::$runtimeToId[$runtimeId][0] ?? BlockIds::UNKNOWN;
 	}
 
 	public static function getMetaFromRuntimeId(int $runtimeId) : int{
-		return self::fromRuntimeId($runtimeId)[1];
+		if(self::$runtimeToId === null){
+			self::init();
+		}
+		return self::$runtimeToId[$runtimeId][1] ?? 0;
 	}
 
 	public static function getBedrockKnownStates() : array{
-		self::lazyInit();
+		if(self::$bedrockKnownStates === null){
+			self::init();
+		}
 		return self::$bedrockKnownStates;
+	}
+
+	public static function getBedrockKnownState(int $runtimeId) : ?CompoundTag{
+		if(self::$bedrockKnownStates === null){
+			self::init();
+		}
+		return self::$bedrockKnownStates[$runtimeId] ?? null;
 	}
 
 	/**
 	 * @return BlockPaletteEntry[]
 	 */
 	public static function getDataDrivenBlockPalette() : array{
-		self::lazyInit();
+		if(self::$bedrockKnownStates === null){
+			self::init();
+		}
 		return self::$dataDrivenBlockPalette ?? [];
 	}
 
 	public static function fromBlockStateNBT(CompoundTag $nbt) : int{
-		self::lazyInit();
-		$hash = self::hashBlockStateNBT($nbt->getString("name"), $nbt->getCompoundTag("states"));
-		return self::$stateToRuntimeMap[$hash] ?? self::UNKNOWN();
+		if(self::$stateToRuntimeMap === null){
+			self::init();
+		}
+		return self::$stateToRuntimeMap[self::blockStateKey($nbt)] ?? self::$unknownRid;
 	}
 
 	public static function AIR() : int{
-		self::lazyInit();
+		if(self::$bedrockKnownStates === null){
+			self::init();
+		}
 		return self::$airRid;
 	}
 
 	public static function UNKNOWN() : int{
-		self::lazyInit();
+		if(self::$bedrockKnownStates === null){
+			self::init();
+		}
 		return self::$unknownRid;
 	}
 
-	/**
-	 * @param string           $name
-	 * @param CompoundTag|null $blockState
-	 *
-	 * @return string
-	 */
-	private static function hashBlockStateNBT(string $name, ?CompoundTag $blockState = null) : string{
-		$states = [];
-		if($blockState !== null){
-			foreach($blockState->getValue() as $key => $tag){
-				$states[$key] = $tag->getValue();
-			}
-			ksort($states);
+	private static function blockStateKey(CompoundTag $nbt) : string{
+		$children = $nbt->getValue();
+
+		$nameTag = $children["name"] ?? null;
+		if($nameTag instanceof StringTag){
+			$name = $nameTag->getValue();
+		}elseif($nameTag === null){
+			throw new RuntimeException('Tag with name "name" not found and no valid default value given');
+		}else{
+			throw new RuntimeException('Tag with name "name" not of expected type and no valid default value given');
 		}
 
-		return hash('fnv1a64', $name . ":" . json_encode($states));
+		$statesTag = $children["states"] ?? null;
+		if($statesTag !== null && !$statesTag instanceof CompoundTag){
+			throw new RuntimeException("Expected a tag of type " . CompoundTag::class . ", got " . get_class($statesTag));
+		}
+		if($statesTag === null){
+			return $name;
+		}
+
+		$states = [];
+		foreach($statesTag->getValue() as $stateName => $stateTag){
+			$stateValue = $stateTag->getValue();
+			$states[$stateName] = is_int($stateValue) ? "i" . $stateValue : (is_string($stateValue) ? "s" . $stateValue : "f" . $stateValue);
+		}
+		if(count($states) === 0){
+			return $name;
+		}
+
+		ksort($states, SORT_STRING);
+		$key = $name;
+		foreach($states as $stateName => $stateValue){
+			$key .= "\x00" . $stateName . "\x00" . $stateValue;
+		}
+		return $key;
 	}
 }

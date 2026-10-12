@@ -286,7 +286,9 @@ class SubChunk implements SubChunkInterface{
 	public function diskSerialize(BinaryStream $stream) : void{
 		$stream->putByte(LevelDB::CURRENT_SUBCHUNK_VERSION);
 		$stream->putByte(count($this->layers));
-		$unknownBlock = RuntimeBlockMapping::getBedrockKnownStates()[RuntimeBlockMapping::UNKNOWN()];
+		$knownStates = RuntimeBlockMapping::getBedrockKnownStates();
+		$unknownBlock = $knownStates[RuntimeBlockMapping::UNKNOWN()];
+
 		foreach($this->layers as $layer) {
 			$stream->putByte($layer->getBitsPerBlock() << 1);
 			$stream->put($layer->getWordArray());
@@ -298,7 +300,7 @@ class SubChunk implements SubChunkInterface{
 
 			$tags = [];
 			foreach($palette as $block) {
-				$tags[] = RuntimeBlockMapping::getBedrockKnownStates()[$block] ?? $unknownBlock;
+				$tags[] = $knownStates[$block] ?? $unknownBlock;
 			}
 
 			$nbt = new LittleEndianNBTStream();
