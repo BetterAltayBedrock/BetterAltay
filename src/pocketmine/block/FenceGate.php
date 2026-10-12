@@ -24,7 +24,6 @@ declare(strict_types=1);
 namespace pocketmine\block;
 
 use pocketmine\block\material\WoodType;
-use pocketmine\block\state\BlockState;
 use pocketmine\block\state\StateData;
 use pocketmine\item\Item;
 use pocketmine\level\sound\DoorSound;
@@ -32,7 +31,7 @@ use pocketmine\math\AxisAlignedBB;
 use pocketmine\math\Vector3;
 use pocketmine\Player;
 
-class FenceGate extends Transparent implements BlockState{
+class FenceGate extends StatefulBlock{
 
 	protected string $direction = "south";
 	protected bool $open = false;
@@ -53,6 +52,14 @@ class FenceGate extends Transparent implements BlockState{
 
 	public function getToolType() : int{
 		return BlockToolType::TYPE_AXE;
+	}
+
+	public function isTransparent() : bool{
+		return true;
+	}
+
+	public function getLightFilter() : int{
+		return 0;
 	}
 
 	public function isPassable() : bool{

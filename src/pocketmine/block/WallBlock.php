@@ -23,13 +23,12 @@ declare(strict_types=1);
 
 namespace pocketmine\block;
 
-use pocketmine\block\state\BlockState;
 use pocketmine\block\state\StateData;
 use pocketmine\item\Item;
 use pocketmine\math\Vector3;
 use pocketmine\Player;
 
-class WallBlock extends Block implements BlockState{
+class WallBlock extends StatefulBlock{
 
 	protected string $north = "none";
 	protected string $east = "none";
@@ -50,8 +49,11 @@ class WallBlock extends Block implements BlockState{
 	public function onNearbyBlockChange() : void{
 		if($this->getLevel() === null) return;
 
+		$before = $this->getRuntimeId();
 		$this->calculateConnections();
-		$this->getLevelNonNull()->setBlock($this, $this, true, false);
+		if($this->getRuntimeId() !== $before){
+			$this->getLevelNonNull()->setBlock($this, $this, true, false);
+		}
 	}
 
 	public function calculateConnections() : void{

@@ -24,6 +24,7 @@ declare(strict_types=1);
 namespace pocketmine\network\mcpe\convert;
 
 use pocketmine\block\BlockIds;
+use pocketmine\block\state\BlockStateKeyEncoder;
 use pocketmine\nbt\BigEndianNBTStream;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\StringTag;
@@ -51,6 +52,8 @@ final class RuntimeBlockMapping{
 	private static ?array $bedrockKnownStates = null;
 	/** @var int[]|null */
 	private static ?array $stateToRuntimeMap = null;
+	/** @var array<string,int>|null */
+	private static ?array $hashToRuntimeMap = null;
 
 	private static ?array $runtimeToId = null;
 	private static ?array $idToRuntime = null;
@@ -94,6 +97,7 @@ final class RuntimeBlockMapping{
 			$stream = new NetworkBinaryStream($canonicalBlockStatesFile);
 			self::$bedrockKnownStates = [];
 			self::$stateToRuntimeMap = [];
+			self::$hashToRuntimeMap = [];
 			self::$runtimeToId = [];
 			self::$idToRuntime = [];
 
@@ -102,8 +106,18 @@ final class RuntimeBlockMapping{
 				$state = $stream->getNbtCompoundRoot();
 				self::$bedrockKnownStates[] = $state;
 
-				$name = $state->getString("name");
-				self::$stateToRuntimeMap[self::blockStateKey($state)] = $rid;
+                $name = $state->getString("name");
+                self::$stateToRuntimeMap[self::blockStateKey($state)] = $rid;
+
+				$rawStates = [];
+				$statesTag = $state->getCompoundTag("states");
+				if($statesTag !== null){
+				    foreach($statesTag->getValue() as $stateName => $stateTag){
+					    $rawStates[$stateName] = $stateTag->getValue();
+				    }
+				}
+
+				self::$hashToRuntimeMap[BlockStateKeyEncoder::hash($name, $rawStates)] = $rid;
 
 				if(!isset($metaMap[$rid]) || !is_int($metaMap[$rid])){
 					throw new RuntimeException("block_state_meta_map.json is out of sync with canonical_block_states.nbt at index " . $rid);
@@ -121,6 +135,7 @@ final class RuntimeBlockMapping{
 		}catch(Throwable $e){
 			self::$bedrockKnownStates = null;
 			self::$stateToRuntimeMap = null;
+				self::$hashToRuntimeMap = null;
 			self::$runtimeToId = null;
 			self::$idToRuntime = null;
 			self::$dataDrivenBlockPalette = null;
@@ -215,6 +230,13 @@ final class RuntimeBlockMapping{
 			self::init();
 		}
 		return self::$stateToRuntimeMap[self::blockStateKey($nbt)] ?? self::$unknownRid;
+	}
+
+	public static function fromStateHash(string $hash) : int{
+		if(self::$hashToRuntimeMap === null){
+			self::init();
+		}
+		return self::$hashToRuntimeMap[$hash] ?? self::$unknownRid;
 	}
 
 	public static function AIR() : int{

@@ -29,7 +29,7 @@ namespace pocketmine\block;
 
 use InvalidArgumentException;
 use pocketmine\block\state\BlockState;
-use pocketmine\block\state\BlockStateSerializer;
+use pocketmine\block\state\BlockStateKeyEncoder;
 use pocketmine\block\state\StateData;
 use pocketmine\entity\Entity;
 use pocketmine\item\enchantment\Enchantment;
@@ -41,8 +41,6 @@ use pocketmine\math\RayTraceResult;
 use pocketmine\math\Vector3;
 use pocketmine\metadata\Metadatable;
 use pocketmine\metadata\MetadataValue;
-use pocketmine\nbt\tag\CompoundTag;
-use pocketmine\nbt\tag\StringTag;
 use pocketmine\network\mcpe\convert\RuntimeBlockMapping;
 use pocketmine\Player;
 use pocketmine\plugin\Plugin;
@@ -114,13 +112,7 @@ class Block extends Position implements BlockIds, Metadatable{
 			$states = new StateData();
 			$this->onSerialize($states);
 
-			$nbt = new CompoundTag("states");
-			BlockStateSerializer::writeToNBT($states, $nbt);
-
-			return RuntimeBlockMapping::fromBlockStateNBT(new CompoundTag("", [
-				new StringTag("name", $this->id),
-				$nbt
-			]));
+			return RuntimeBlockMapping::fromStateHash(BlockStateKeyEncoder::hashStateData($this->id, $states));
 		}
 		return RuntimeBlockMapping::toRuntimeId($this->getId(), $this->getDamage());
 	}
