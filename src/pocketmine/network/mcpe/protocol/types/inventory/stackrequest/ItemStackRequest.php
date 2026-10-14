@@ -56,54 +56,58 @@ final class ItemStackRequest{
 
 	public function getFilterStringCause() : int{ return $this->filterStringCause; }
 
-	private static function readAction(NetworkBinaryStream $in, int $typeId) : ItemStackRequestAction{
-		switch($typeId){
-			case TakeStackRequestAction::getTypeId():
-				return TakeStackRequestAction::read($in);
-			case PlaceStackRequestAction::getTypeId():
-				return PlaceStackRequestAction::read($in);
-			case SwapStackRequestAction::getTypeId():
-				return SwapStackRequestAction::read($in);
-			case DropStackRequestAction::getTypeId():
-				return DropStackRequestAction::read($in);
-			case DestroyStackRequestAction::getTypeId():
-				return DestroyStackRequestAction::read($in);
-			case CraftingConsumeInputStackRequestAction::getTypeId():
-				return CraftingConsumeInputStackRequestAction::read($in);
-			case CraftingCreateSpecificResultStackRequestAction::getTypeId():
-				return CraftingCreateSpecificResultStackRequestAction::read($in);
-			case LabTableCombineStackRequestAction::getTypeId():
-				return LabTableCombineStackRequestAction::read($in);
-			case BeaconPaymentStackRequestAction::getTypeId():
-				return BeaconPaymentStackRequestAction::read($in);
-			case MineBlockStackRequestAction::getTypeId():
-				return MineBlockStackRequestAction::read($in);
-			case CraftRecipeStackRequestAction::getTypeId():
-				return CraftRecipeStackRequestAction::read($in);
-			case CraftRecipeAutoStackRequestAction::getTypeId():
-				return CraftRecipeAutoStackRequestAction::read($in);
-			case CreativeCreateStackRequestAction::getTypeId():
-				return CreativeCreateStackRequestAction::read($in);
-			case CraftRecipeOptionalStackRequestAction::getTypeId():
-				return CraftRecipeOptionalStackRequestAction::read($in);
-			case GrindstoneStackRequestAction::getTypeId():
-				return GrindstoneStackRequestAction::read($in);
-			case LoomStackRequestAction::getTypeId():
-				return LoomStackRequestAction::read($in);
-			case DeprecatedCraftingNonImplementedStackRequestAction::getTypeId():
-				return DeprecatedCraftingNonImplementedStackRequestAction::read($in);
-			case DeprecatedCraftingResultsStackRequestAction::getTypeId():
-				return DeprecatedCraftingResultsStackRequestAction::read($in);
+	private static function readAction(NetworkBinaryStream $in, int $outerTypeId) : ItemStackRequestAction{
+		$innerTypeId = $in->getByte();
+		$expectedInner = ItemStackRequestActionType::INNER_TYPES[$outerTypeId] ?? null;
+		if($expectedInner === null || $expectedInner !== $innerTypeId){
+			throw new UnexpectedValueException("Unhandled item stack request action type $outerTypeId (inner $innerTypeId)");
 		}
-		throw new UnexpectedValueException("Unhandled item stack request action type $typeId");
+		switch($innerTypeId){
+			case ItemStackRequestActionType::TAKE:
+				return TakeStackRequestAction::read($in);
+			case ItemStackRequestActionType::PLACE:
+				return PlaceStackRequestAction::read($in);
+			case ItemStackRequestActionType::SWAP:
+				return SwapStackRequestAction::read($in);
+			case ItemStackRequestActionType::DROP:
+				return DropStackRequestAction::read($in);
+			case ItemStackRequestActionType::DESTROY:
+				return DestroyStackRequestAction::read($in);
+			case ItemStackRequestActionType::CRAFTING_CONSUME_INPUT:
+				return CraftingConsumeInputStackRequestAction::read($in);
+			case ItemStackRequestActionType::CRAFTING_CREATE_SPECIFIC_RESULT:
+				return CraftingCreateSpecificResultStackRequestAction::read($in);
+			case ItemStackRequestActionType::LAB_TABLE_COMBINE:
+				return LabTableCombineStackRequestAction::read($in);
+			case ItemStackRequestActionType::BEACON_PAYMENT:
+				return BeaconPaymentStackRequestAction::read($in);
+			case ItemStackRequestActionType::MINE_BLOCK:
+				return MineBlockStackRequestAction::read($in);
+			case ItemStackRequestActionType::CRAFTING_RECIPE:
+				return CraftRecipeStackRequestAction::read($in);
+			case ItemStackRequestActionType::CRAFTING_RECIPE_AUTO:
+				return CraftRecipeAutoStackRequestAction::read($in);
+			case ItemStackRequestActionType::CREATIVE_CREATE:
+				return CreativeCreateStackRequestAction::read($in);
+			case ItemStackRequestActionType::CRAFTING_RECIPE_OPTIONAL:
+				return CraftRecipeOptionalStackRequestAction::read($in);
+			case ItemStackRequestActionType::CRAFTING_LOOM:
+				return LoomStackRequestAction::read($in);
+			case ItemStackRequestActionType::CRAFTING_NON_IMPLEMENTED_DEPRECATED_ASK_TY_LAING:
+				return DeprecatedCraftingNonImplementedStackRequestAction::read($in);
+			case ItemStackRequestActionType::CRAFTING_RESULTS_DEPRECATED_ASK_TY_LAING:
+				return DeprecatedCraftingResultsStackRequestAction::read($in);
+			default:
+				throw new UnexpectedValueException("Unhandled item stack request action type $outerTypeId");
+		}
 	}
 
 	public static function read(NetworkBinaryStream $in) : self{
 		$requestId = $in->readGenericTypeNetworkId();
 		$actions = [];
 		for($i = 0, $len = $in->getUnsignedVarInt(); $i < $len; ++$i){
-			$typeId = $in->getByte();
-			$actions[] = self::readAction($in, $typeId);
+			$outerTypeId = $in->getUnsignedVarInt();
+			$actions[] = self::readAction($in, $outerTypeId);
 		}
 		$filterStrings = [];
 		for($i = 0, $len = $in->getUnsignedVarInt(); $i < $len; ++$i){

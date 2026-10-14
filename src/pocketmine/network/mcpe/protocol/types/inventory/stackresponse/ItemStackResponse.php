@@ -57,7 +57,7 @@ final class ItemStackResponse{
 		$result = $in->getByte();
 		$requestId = $in->readGenericTypeNetworkId();
 		$containerInfos = [];
-		if($result === self::RESULT_OK){
+		if($in->getBool() && $result === self::RESULT_OK){
 			for($i = 0, $len = $in->getUnsignedVarInt(); $i < $len; ++$i){
 				$containerInfos[] = ItemStackResponseContainerInfo::read($in);
 			}
@@ -69,10 +69,13 @@ final class ItemStackResponse{
 		$out->putByte($this->result);
 		$out->writeGenericTypeNetworkId($this->requestId);
 		if($this->result === self::RESULT_OK){
+			$out->putBool(true);
 			$out->putUnsignedVarInt(count($this->containerInfos));
 			foreach($this->containerInfos as $containerInfo){
 				$containerInfo->write($out);
 			}
+		}else{
+			$out->putBool(false);
 		}
 	}
 }

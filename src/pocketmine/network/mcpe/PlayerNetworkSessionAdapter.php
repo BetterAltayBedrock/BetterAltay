@@ -47,6 +47,7 @@ use pocketmine\network\mcpe\protocol\EmotePacket;
 use pocketmine\network\mcpe\protocol\InteractPacket;
 use pocketmine\network\mcpe\protocol\InventoryTransactionPacket;
 use pocketmine\network\mcpe\protocol\ItemFrameDropItemPacket;
+use pocketmine\network\mcpe\protocol\ItemStackRequestPacket;
 use pocketmine\network\mcpe\protocol\LevelSoundEventPacket;
 use pocketmine\network\mcpe\protocol\LoginPacket;
 use pocketmine\network\mcpe\protocol\MapInfoRequestPacket;
@@ -164,6 +165,10 @@ class PlayerNetworkSessionAdapter extends NetworkSession{
 
 	public function handleInventoryTransaction(InventoryTransactionPacket $packet) : bool{
 		return $this->player->handleInventoryTransaction($packet);
+	}
+
+	public function handleItemStackRequest(ItemStackRequestPacket $packet) : bool{
+		return ItemStackRequestHandler::handle($this->player, $packet);
 	}
 
 	public function handleMobEquipment(MobEquipmentPacket $packet) : bool{
