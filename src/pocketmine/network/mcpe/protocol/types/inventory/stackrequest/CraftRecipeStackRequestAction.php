@@ -42,13 +42,13 @@ final class CraftRecipeStackRequestAction extends ItemStackRequestAction{
 	public static function getTypeId() : int{ return ItemStackRequestActionType::CRAFTING_RECIPE; }
 
 	public static function read(NetworkBinaryStream $in) : self{
-		$recipeId = $in->readGenericTypeNetworkId();
+		$recipeId = $in->getUnsignedVarInt();
 		$repetitions = $in->getByte();
 		return new self($recipeId, $repetitions);
 	}
 
 	public function write(NetworkBinaryStream $out) : void{
-		$out->writeGenericTypeNetworkId($this->recipeId);
+		$out->putUnsignedVarInt($this->recipeId);
 		$out->putByte($this->repetitions);
 	}
 }

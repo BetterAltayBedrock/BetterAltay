@@ -21,32 +21,20 @@
 
 declare(strict_types=1);
 
-namespace pocketmine\network\mcpe\protocol;
+namespace pocketmine\event\entity;
 
-#include <rules/DataPacket.h>
+use pocketmine\entity\projectile\Egg;
+use pocketmine\event\Cancellable;
 
-use pocketmine\network\mcpe\NetworkSession;
+class EggHatchEvent extends EntityEvent implements Cancellable{
+	protected $entity;
 
-class ItemFrameDropItemPacket extends DataPacket{
-
-	public const NETWORK_ID = ProtocolInfo::ITEM_FRAME_DROP_ITEM_PACKET;
-
-	/** @var int */
-	public $x;
-	/** @var int */
-	public $y;
-	/** @var int */
-	public $z;
-
-	protected function decodePayload(){
-		$this->getBlockPosition($this->x, $this->y, $this->z);
+	public function __construct(Egg $egg){
+		$this->entity = $egg;
 	}
 
-	protected function encodePayload(){
-		$this->putBlockPosition($this->x, $this->y, $this->z);
-	}
-
-	public function handle(NetworkSession $session) : bool{
-		return $session->handleItemFrameDropItem($this);
+	public function getEntity() : Egg{
+		/* @var Egg */
+		return $this->entity;
 	}
 }

@@ -29,6 +29,8 @@ use pocketmine\inventory\EnchantInventory;
 use pocketmine\inventory\FakeInventory;
 use pocketmine\inventory\FakeResultInventory;
 use pocketmine\inventory\PlayerUIInventory;
+use pocketmine\inventory\TradeInventory;
+use pocketmine\network\mcpe\protocol\types\inventory\UIInventorySlotOffset;
 use pocketmine\inventory\transaction\action\CreativeInventoryAction;
 use pocketmine\inventory\transaction\action\DropItemAction;
 use pocketmine\inventory\transaction\action\EnchantAction;
@@ -70,6 +72,9 @@ class NetworkInventoryAction{
 	public const SOURCE_TYPE_TRADING_INPUT_2 = -21;
 	public const SOURCE_TYPE_TRADING_USE_INPUTS = -22;
 	public const SOURCE_TYPE_TRADING_OUTPUT = -23;
+
+	public const SOURCE_TYPE_TRADE_COMPANION_INVENTORY = -30;
+	public const SOURCE_TYPE_TRADE_COMPANION_UI = -31;
 
 	/** Any client-side window dropping its contents when the player closes it */
 	public const SOURCE_TYPE_CONTAINER_DROP_CONTENTS = -100;
@@ -201,6 +206,21 @@ class NetworkInventoryAction{
 								throw new InvalidStateException("Unexpected fake inventory given. Expected " . EnchantInventory::class . " , given " . get_class($window));
 							}
 						}
+					case self::SOURCE_TYPE_TRADE_COMPANION_INVENTORY:
+					    return null;
+					case self::SOURCE_TYPE_TRADE_COMPANION_UI:
+						return null;
+					case self::SOURCE_TYPE_TRADING_INPUT_1:
+					case self::SOURCE_TYPE_TRADING_INPUT_2:
+					case self::SOURCE_TYPE_TRADING_USE_INPUTS:
+						return null;
+					case self::SOURCE_TYPE_TRADING_OUTPUT:
+						$tradeWindow = $player->findWindow(TradeInventory::class);
+						if($tradeWindow instanceof TradeInventory){
+							$oldItem = $player->getUIInventory()->getItem(UIInventorySlotOffset::CREATED_ITEM_OUTPUT);
+							return new SlotChangeAction($player->getUIInventory(), UIInventorySlotOffset::CREATED_ITEM_OUTPUT, $oldItem, $newItem);
+						}
+						throw new UnexpectedValueException("Player " . $player->getName() . " has no open trade window for trading output");
 					case self::SOURCE_TYPE_FAKE_INVENTORY_INPUT:
 					case self::SOURCE_TYPE_FAKE_INVENTORY_MATERIAL:
 						return null; // useless noise

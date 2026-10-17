@@ -44,13 +44,13 @@ final class ItemStackRequestSlotInfo{
 	public static function read(NetworkBinaryStream $in) : self{
 		$containerName = FullContainerName::read($in);
 		$slotId = $in->getByte();
-		$stackId = $in->readGenericTypeNetworkId();
+		$stackId = $in->getLInt();
 		return new self($containerName, $slotId, $stackId);
 	}
 
 	public function write(NetworkBinaryStream $out) : void{
 		$this->containerName->write($out);
 		$out->putByte($this->slotId);
-		$out->writeGenericTypeNetworkId($this->stackId);
+		$out->putLInt($this->stackId);
 	}
 }

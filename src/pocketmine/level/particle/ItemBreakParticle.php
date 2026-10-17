@@ -25,9 +25,11 @@ namespace pocketmine\level\particle;
 
 use pocketmine\item\Item;
 use pocketmine\math\Vector3;
+use pocketmine\network\mcpe\convert\ItemTranslator;
 
 class ItemBreakParticle extends GenericParticle{
 	public function __construct(Vector3 $pos, Item $item){
-		parent::__construct($pos, Particle::TYPE_ITEM_BREAK, ($item->getId() << 16) | $item->getDamage());
+		[$id, $meta] = ItemTranslator::getInstance()->toNetworkId($item->getId(), $item->getDamage());
+		parent::__construct($pos, Particle::TYPE_ITEM_BREAK, ($id << 16) | $meta);
 	}
 }

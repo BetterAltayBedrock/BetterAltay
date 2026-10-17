@@ -25,7 +25,9 @@ namespace pocketmine\entity\projectile;
 
 use pocketmine\entity\ClimateEntity;
 use pocketmine\entity\ClimateTrait;
+use pocketmine\entity\ClimateVariant;
 use pocketmine\entity\Entity;
+use pocketmine\event\entity\EggHatchEvent;
 use pocketmine\event\entity\ProjectileHitEvent;
 use pocketmine\item\ItemFactory;
 use pocketmine\item\ItemIds;
@@ -44,10 +46,21 @@ class Egg extends Throwable implements ClimateEntity{
 
 	protected function onHit(ProjectileHitEvent $event) : void{
 		for($i = 0; $i < 6; ++$i){
-			$this->level->addParticle(new ItemBreakParticle($this, ItemFactory::get(ItemIds::EGG)));
+			$this->level->addParticle(new ItemBreakParticle($this, ItemFactory::get(match ($this->getClimateVariant()) {
+				ClimateVariant::VARIANT_WARM => ItemIds::BROWN_EGG,
+				ClimateVariant::VARIANT_COLD => ItemIds::BLUE_EGG,
+				default => ItemIds::EGG
+			})));
 		}
 
 		if(mt_rand(1, 8) === 1){
+			$ev = new EggHatchEvent($this);
+			$ev->call();
+
+			if($ev->isCancelled()){
+				return;
+			}
+
 			$nbt = Entity::createBaseNBT($this);
 			$nbt->setInt("ClimateVariant", $this->getClimateVariant());
 

@@ -107,7 +107,6 @@ interface ProtocolInfo{
 	public const MAP_INFO_REQUEST_PACKET = 0x44;
 	public const REQUEST_CHUNK_RADIUS_PACKET = 0x45;
 	public const CHUNK_RADIUS_UPDATED_PACKET = 0x46;
-	public const ITEM_FRAME_DROP_ITEM_PACKET = 0x47;
 	public const GAME_RULES_CHANGED_PACKET = 0x48;
 	public const CAMERA_PACKET = 0x49;
 	public const BOSS_EVENT_PACKET = 0x4a;

@@ -91,7 +91,9 @@ use pocketmine\inventory\InventoryHolder;
 use pocketmine\inventory\PlayerCursorInventory;
 use pocketmine\inventory\PlayerOffHandInventory;
 use pocketmine\inventory\PlayerUIInventory;
+use pocketmine\inventory\TradeInventory;
 use pocketmine\inventory\transaction\action\InventoryAction;
+use pocketmine\inventory\transaction\action\SlotChangeAction;
 use pocketmine\inventory\transaction\CraftingTransaction;
 use pocketmine\inventory\transaction\InventoryTransaction;
 use pocketmine\inventory\transaction\TransactionValidationException;
@@ -102,6 +104,7 @@ use pocketmine\item\enchantment\EnchantmentInstance;
 use pocketmine\item\enchantment\MeleeWeaponEnchantment;
 use pocketmine\item\FoodSource;
 use pocketmine\item\Item;
+use pocketmine\item\ItemFactory;
 use pocketmine\item\MaybeConsumable;
 use pocketmine\item\WritableBook;
 use pocketmine\item\WrittenBook;
@@ -127,6 +130,7 @@ use pocketmine\network\mcpe\convert\ItemTypeDictionary;
 use pocketmine\network\mcpe\convert\RuntimeBlockMapping;
 use pocketmine\network\mcpe\encryption\EncryptionContext;
 use pocketmine\network\mcpe\encryption\PrepareEncryptionTask;
+use pocketmine\network\mcpe\ItemStackRequestHandler;
 use pocketmine\network\mcpe\PlayerNetworkSessionAdapter;
 use pocketmine\network\mcpe\protocol\ActorEventPacket;
 use pocketmine\network\mcpe\protocol\AnimatePacket;
@@ -2860,6 +2864,10 @@ class Player extends Human implements CommandSender, ChunkLoader, IPlayer{
 					$this->getServer()->getLogger()->debug("Unhandled transaction in PlayerAuthInputPacket (type " . $useItemTransaction->getTransactionData()->getActionType() . ")");
 				}
 			}
+			$itemStackRequest = $packet->getItemStackRequest();
+			if($itemStackRequest !== null){
+				ItemStackRequestHandler::handleRequests($this, [$itemStackRequest]);
+			}
 		}
 		return $packetHandled;
 	}
@@ -3006,12 +3014,331 @@ class Player extends Human implements CommandSender, ChunkLoader, IPlayer{
 				$this->server->broadcastPacket($this->getViewers(), $packet);
 				break;
 			case ActorEventPacket::COMPLETE_TRADE:
-				//TODO
 				break;
 			default:
 				return false;
 		}
 
+		return true;
+	}
+
+    /** @param InventoryAction[] $actions */
+	private static function takesTradeOutput(array $actions) : bool{
+		foreach($actions as $action){
+			if($action instanceof SlotChangeAction && $action->getInventory() instanceof PlayerUIInventory && $action->getSlot() === UIInventorySlotOffset::CREATED_ITEM_OUTPUT){
+				return true;
+			}
+		}
+		return false;
+	}
+
+    /** @param InventoryAction[] $actions */
+	private static function findGrantedTradeTake(array $actions, NormalTransactionData $trData, Item $preview) : ?SlotChangeAction{
+		if(count($actions) !== 1 || $preview->isNull()){
+			return null;
+		}
+		$candidate = $actions[0];
+		if(!($candidate instanceof SlotChangeAction) || $candidate->getTargetItem()->isNull() || $candidate->getInventory() instanceof TradeInventory){
+			return null;
+		}
+		$target = $candidate->getTargetItem();
+		$destCurrent = $candidate->getInventory()->slotExists($candidate->getSlot()) ? $candidate->getInventory()->getItem($candidate->getSlot()) : null;
+		if($destCurrent === null || !$target->equals($preview)){
+			return null;
+		}
+		if($destCurrent->isNull() ? !$target->equalsExact($preview) : $target->getCount() !== $destCurrent->getCount() + $preview->getCount()){
+			return null;
+		}
+		foreach($trData->getActions() as $rawAction){
+			$rawWid = isset($rawAction->windowId) ? $rawAction->windowId : null;
+			if($rawAction->sourceType !== NetworkInventoryAction::SOURCE_TODO || ($rawWid !== NetworkInventoryAction::SOURCE_TYPE_TRADING_OUTPUT && $rawWid !== NetworkInventoryAction::SOURCE_TYPE_TRADE_COMPANION_INVENTORY)){
+				continue;
+			}					$sourceItem = $rawAction->oldItem->getItemStack();
+					if(!$sourceItem->isNull() && $sourceItem->equalsExact($preview)){
+						return $candidate;
+					}
+		}
+		return null;
+	}
+
+	private function grantTradeResult(SlotChangeAction $take, TradeInventory $tradeWindow) : bool{
+		$target = $take->getTargetItem();
+		$destInventory = $take->getInventory();
+		$destSlot = $take->getSlot();
+		$destCurrent = $destInventory->slotExists($destSlot) ? $destInventory->getItem($destSlot) : null;
+		if($destCurrent === null){
+			$this->sendAllInventories();
+			return false;
+		}
+		$preview = $this->getUIInventory()->getItem(UIInventorySlotOffset::CREATED_ITEM_OUTPUT);
+		if($preview->isNull() || !$target->equals($preview)){
+			$this->sendAllInventories();
+			return false;
+		}
+		if($destCurrent->isNull()){
+			$expected = $target;
+		}elseif($destCurrent->equals($preview)){
+			$expected = (clone $destCurrent)->setCount($destCurrent->getCount() + $preview->getCount());
+		}else{
+			$this->sendAllInventories();
+			return false;
+		}
+		if($expected->getCount() > $expected->getMaxStackSize() || !$take->getTargetItem()->equalsExact($expected)){
+			$this->sendAllInventories();
+			return false;
+		}
+		if(!$take->getSourceItem()->isNull() && !$destCurrent->equalsExact($take->getSourceItem())){
+			$this->sendAllInventories();
+			return false;
+		}
+		if(!$destInventory->setItem($destSlot, $expected)){
+			$this->sendAllInventories();
+			return false;
+		}
+		if($tradeWindow->getVillager()->executeLegacyTrade($this, $tradeWindow) === null){
+			$this->sendAllInventories();
+			return false;
+		}
+		return true;
+	}
+
+	private function handleTradeInputMove(array $actions, NormalTransactionData $trData, TradeInventory $tradeWindow) : ?bool{
+		$uiOffsets = $tradeWindow->getUIOffsets();
+		/** @var array<int, array{delta: int, item: Item}> $compGains */
+		$compGains = [];
+		foreach($trData->getActions() as $rawAction){
+			$rawWid = isset($rawAction->windowId) ? $rawAction->windowId : null;
+			if($rawAction->sourceType !== NetworkInventoryAction::SOURCE_TODO || $rawWid !== NetworkInventoryAction::SOURCE_TYPE_TRADE_COMPANION_UI){
+				continue;
+			}
+			$slot = $rawAction->inventorySlot === 1 ? TradeInventory::SLOT_INPUT_B : TradeInventory::SLOT_INPUT_A;
+			$old = $rawAction->oldItem->getItemStack();
+			$new = $rawAction->newItem->getItemStack();
+			$typeItem = !$new->isNull() ? $new : $old;
+			if($typeItem->isNull()){
+				continue;
+			}
+			if(!isset($compGains[$slot])){
+				$compGains[$slot] = ["delta" => 0, "item" => $typeItem];
+			}
+			if(!$compGains[$slot]["item"]->equals($typeItem)){
+				$this->sendAllInventories();
+				return false;
+			}
+			$compGains[$slot]["delta"] += $new->getCount() - $old->getCount();
+		}
+
+		if(count($compGains) === 0){
+			return null;
+		}
+		$ui = $this->getUIInventory();
+
+		/** @var array<int, array{targets: Item[], loss: int, type: Item|null}> $perSlot */
+		$perSlot = [];
+		foreach($actions as $action){
+			if(!($action instanceof SlotChangeAction) || !($action->getInventory() instanceof PlayerUIInventory) || !isset($uiOffsets[$action->getSlot()])){
+				return null;
+			}
+			$uiSlot = $action->getSlot();
+			if(!$action->getSourceItem()->equalsExact($ui->getItem($uiSlot))){
+				$this->sendAllInventories();
+				return false;
+			}
+			$source = $action->getSourceItem();
+			$target = $action->getTargetItem();
+			$typeItem = !$source->isNull() ? $source : $target;
+			if($typeItem->isNull()){
+				continue;
+			}
+			if(!$source->isNull() && !$target->isNull() && !$source->equals($target)){
+				return false;
+			}
+			$windowSlot = $uiOffsets[$uiSlot];
+			if(!isset($perSlot[$windowSlot])){
+				$perSlot[$windowSlot] = ["targets" => [], "loss" => 0, "type" => $typeItem];
+			}
+			if(!$perSlot[$windowSlot]["type"]->equals($typeItem)){
+				return false;
+			}
+			$perSlot[$windowSlot]["targets"][$uiSlot] = $target;
+			$perSlot[$windowSlot]["loss"] += $source->getCount() - $target->getCount();
+		}
+
+		foreach($compGains as $windowSlot => $gain){
+			$loss = $perSlot[$windowSlot]["loss"] ?? 0;
+			$uiType = $perSlot[$windowSlot]["type"] ?? $gain["item"];
+			if($loss !== $gain["delta"] || !$gain["item"]->equals($uiType)){
+				$this->sendAllInventories();
+				return false;
+			}
+		}
+
+		foreach($perSlot as $windowSlot => $info){
+			if(!isset($compGains[$windowSlot]) && $info["loss"] !== 0){
+				$this->sendAllInventories();
+				return false;
+			}
+		}
+
+		/** @var array<int, Item> $newTrade */
+		$newTrade = [];
+		foreach($compGains as $windowSlot => $gain){
+			if($gain["delta"] === 0){
+				continue;
+			}
+			$current = $tradeWindow->getItem($windowSlot);
+			if(!$current->isNull() && !$current->equals($gain["item"])){
+				$this->sendAllInventories();
+				return false;
+			}
+			$newCount = $current->getCount() + $gain["delta"];
+			if($newCount < 0 || $newCount > $gain["item"]->getMaxStackSize()){
+				$this->sendAllInventories();
+				return false;
+			}
+			if($newCount === 0){
+				$newTrade[$windowSlot] = ItemFactory::get(Item::AIR, 0, 0);
+			}else{
+				$base = !$current->isNull() ? $current : $gain["item"];
+				$newTrade[$windowSlot] = (clone $base)->setCount($newCount);
+			}
+		}
+
+		foreach($perSlot as $info){
+			foreach($info["targets"] as $uiSlot => $target){
+				$ui->setItem($uiSlot, clone $target);
+			}
+		}
+
+		foreach($newTrade as $windowSlot => $item){
+			$tradeWindow->setItem($windowSlot, $item);
+		}
+		$this->sendAllInventories();
+		return true;
+	}
+
+	private function handleTradeStashTransfer(NormalTransactionData $trData) : ?bool{
+		$ui = $this->getUIInventory();
+		$inv = $this->getInventory();
+		$moves = [];
+		$seenSlots = [];
+
+		foreach($trData->getActions() as $rawAction){
+			$rawWid = isset($rawAction->windowId) ? $rawAction->windowId : null;
+			if($rawAction->sourceType === NetworkInventoryAction::SOURCE_TODO && ($rawWid === NetworkInventoryAction::SOURCE_TYPE_TRADE_COMPANION_UI || $rawWid === NetworkInventoryAction::SOURCE_TYPE_TRADE_COMPANION_INVENTORY || $rawWid === NetworkInventoryAction::SOURCE_TYPE_TRADING_OUTPUT)){
+				return null;
+			}
+			if($rawAction->sourceType !== NetworkInventoryAction::SOURCE_CONTAINER){
+				return null;
+			}
+
+			$target = $this->getWindow($rawAction->windowId);
+			if($target === null && $rawAction->windowId === ContainerIds::INVENTORY){
+				$target = $inv;
+			}
+			if($target !== $ui && $target !== $inv){
+				return null;
+			}
+
+			$old = $rawAction->oldItem->getItemStack();
+			$new = $rawAction->newItem->getItemStack();
+			if($old->equalsExact($new)){
+				continue;
+			}
+
+			if(!$target->slotExists($rawAction->inventorySlot)){
+				$this->sendAllInventories();
+				return false;
+			}
+
+			if(!$old->isNull() && !$new->isNull() && !$old->equals($new)){
+				return false;
+			}
+			$key = ($target === $ui ? "ui" : "inv") . "@" . $rawAction->inventorySlot;
+			if(isset($seenSlots[$key])){
+				return null;
+			}
+			$seenSlots[$key] = true;
+			$moves[] = ["inv" => $target, "slot" => $rawAction->inventorySlot, "old" => $old, "new" => $new];
+		}
+
+		if(count($moves) === 0){
+			return null;
+		}
+
+		$nets = [];
+		foreach($moves as $move){
+			foreach([["item" => $move["old"], "delta" => -$move["old"]->getCount()], ["item" => $move["new"], "delta" => $move["new"]->getCount()]] as $leg){
+				if($leg["item"]->isNull()){
+					continue;
+				}
+				$matched = false;
+				foreach($nets as &$entry){
+					if($entry["item"]->equals($leg["item"])){
+						$entry["net"] += $leg["delta"];
+						$matched = true;
+						break;
+					}
+				}
+				unset($entry);
+				if(!$matched){
+					$nets[] = ["item" => $leg["item"], "net" => $leg["delta"]];
+				}
+			}
+		}
+
+		foreach($nets as $entry){
+			if($entry["net"] !== 0){
+				$this->sendAllInventories();
+				return false;
+			}
+		}
+
+		$results = [];
+		foreach($moves as $move){
+			$server = $move["inv"]->getItem($move["slot"]);
+			if($move["old"]->isNull()){
+				if(!$server->isNull() && !$server->equals($move["new"])){
+					$this->sendAllInventories();
+					return false;
+				}
+
+				$count = $server->getCount() + $move["new"]->getCount();
+				if($count > $move["new"]->getMaxStackSize()){
+					$this->sendAllInventories();
+					return false;
+				}
+				$base = !$server->isNull() ? $server : $move["new"];
+				$results[] = ["inv" => $move["inv"], "slot" => $move["slot"], "item" => (clone $base)->setCount($count)];
+			}elseif($move["new"]->isNull()){
+				if($server->isNull() || !$server->equals($move["old"])){
+					$this->sendAllInventories();
+					return false;
+				}
+
+				$count = $server->getCount() - $move["old"]->getCount();
+				if($count < 0){
+					$this->sendAllInventories();
+					return false;
+				}
+				$results[] = ["inv" => $move["inv"], "slot" => $move["slot"], "item" => $count === 0 ? ItemFactory::get(Item::AIR, 0, 0) : (clone $server)->setCount($count)];
+			}else{
+				if($server->isNull() || !$server->equals($move["old"])){
+					$this->sendAllInventories();
+					return false;
+				}
+				$count = $server->getCount() - $move["old"]->getCount() + $move["new"]->getCount();
+				if($count < 0 || $count > $move["new"]->getMaxStackSize()){
+					$this->sendAllInventories();
+					return false;
+				}
+				$results[] = ["inv" => $move["inv"], "slot" => $move["slot"], "item" => $count === 0 ? ItemFactory::get(Item::AIR, 0, 0) : (clone $server)->setCount($count)];
+			}
+		}
+		foreach($results as $r){
+			$r["inv"]->setItem($r["slot"], $r["item"]);
+		}
+		$this->sendAllInventories();
 		return true;
 	}
 
@@ -3086,15 +3413,48 @@ class Player extends Human implements CommandSender, ChunkLoader, IPlayer{
 
 		if($packet->trData instanceof NormalTransactionData){
 			$this->setUsingItem(false);
+			$tradeWindow = $this->findWindow(TradeInventory::class);
+			$takesTradeOutput = $tradeWindow instanceof TradeInventory && self::takesTradeOutput($actions);
+
+			if($takesTradeOutput && $tradeWindow->getVillager()->findSatisfiedOffer($tradeWindow) === null){
+				$this->server->getLogger()->debug("Rejected trade output take from " . $this->getName() . ": no satisfied offer");
+				$this->sendAllInventories();
+				return false;
+			}
+
+			$tradeTake = ($tradeWindow instanceof TradeInventory && !$takesTradeOutput)
+				? self::findGrantedTradeTake($actions, $packet->trData, $this->getUIInventory()->getItem(UIInventorySlotOffset::CREATED_ITEM_OUTPUT))
+				: null;		if($tradeTake !== null){
+			return $this->grantTradeResult($tradeTake, $tradeWindow);
+		}
+		if($tradeWindow instanceof TradeInventory && !$takesTradeOutput){
+			$moveResult = $this->handleTradeInputMove($actions, $packet->trData, $tradeWindow);
+			if($moveResult !== null){
+				return $moveResult;
+			}
+			$stashResult = $this->handleTradeStashTransfer($packet->trData);
+			if($stashResult !== null){
+				return $stashResult;
+			}
+		}
 			$transaction = new InventoryTransaction($this, $actions);
 
 			try{
 				$transaction->execute();
 			}catch(TransactionValidationException $e){
 				$this->server->getLogger()->debug("Failed to execute inventory transaction from " . $this->getName() . ": " . $e->getMessage());
-				$this->server->getLogger()->debug("Actions: " . json_encode($packet->trData->getActions()));
+				$this->server->getLogger()->debug("Actions: " . json_encode($packet->trData->getActions()));				if($tradeWindow instanceof TradeInventory){
+					$this->sendAllInventories();
+				}
 
 				return false;
+			}
+
+			if($takesTradeOutput && $tradeWindow instanceof TradeInventory){
+				if($tradeWindow->getVillager()->executeLegacyTrade($this, $tradeWindow) === null){
+					$this->sendAllInventories();
+					return false;
+				}
 			}
 
 			//TODO: fix achievement for getting iron from furnace
@@ -3603,35 +3963,6 @@ class Player extends Human implements CommandSender, ChunkLoader, IPlayer{
 
 		$this->sendAdventureSettings();
 		$this->sendAbilities();
-		return true;
-	}
-
-	//TODO: ItemFrameDropItemPacket is deprecated
-	public function handleItemFrameDropItem(ItemFrameDropItemPacket $packet) : bool{
-		if(!$this->spawned or !$this->isAlive()){
-			return true;
-		}
-
-		$tile = $this->level->getTileAt($packet->x, $packet->y, $packet->z);
-		if($tile instanceof ItemFrame){
-			$ev = new PlayerInteractEvent($this, $this->inventory->getItemInHand(), $tile->getBlock(), null, 5 - $tile->getBlock()->getDamage(), PlayerInteractEvent::LEFT_CLICK_BLOCK);
-			if($this->isSpectator() or $this->level->checkSpawnProtection($this, $tile)){
-				$ev->setCancelled();
-			}
-
-			$ev->call();
-			if($ev->isCancelled()){
-				$tile->spawnTo($this);
-				return true;
-			}
-
-			if(lcg_value() <= $tile->getItemDropChance()){
-				$this->level->dropItem($tile->getBlock(), $tile->getItem());
-			}
-			$tile->setItem();
-			$tile->setItemRotation(0);
-		}
-
 		return true;
 	}
 
@@ -4584,6 +4915,11 @@ class Player extends Human implements CommandSender, ChunkLoader, IPlayer{
 			}
 
 			$this->craftingGrid->clearAll();
+		}
+
+		$tradeWindow = $this->findWindow(TradeInventory::class);
+		if($tradeWindow instanceof TradeInventory){
+			$tradeWindow->returnInputs($this);
 		}
 
 		if(!$this->uiInventory->isSlotEmpty(UIInventorySlotOffset::CURSOR)){
