@@ -256,10 +256,6 @@ class PlayerNetworkSessionAdapter extends NetworkSession{
 		return true;
 	}
 
-	public function handleItemFrameDropItem(ItemFrameDropItemPacket $packet) : bool{
-		return $this->player->handleItemFrameDropItem($packet);
-	}
-
 	public function handleBossEvent(BossEventPacket $packet) : bool{
 		return false; //TODO
 	}

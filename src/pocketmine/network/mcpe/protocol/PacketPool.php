@@ -99,7 +99,6 @@ class PacketPool{
 		static::registerPacket(new MapInfoRequestPacket());
 		static::registerPacket(new RequestChunkRadiusPacket());
 		static::registerPacket(new ChunkRadiusUpdatedPacket());
-		//static::registerPacket(new ItemFrameDropItemPacket());
 		static::registerPacket(new GameRulesChangedPacket());
 		static::registerPacket(new CameraPacket());
 		static::registerPacket(new BossEventPacket());

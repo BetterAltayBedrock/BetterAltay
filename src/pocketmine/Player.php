@@ -3967,35 +3967,6 @@ class Player extends Human implements CommandSender, ChunkLoader, IPlayer{
 		return true;
 	}
 
-	//TODO: ItemFrameDropItemPacket is deprecated
-	public function handleItemFrameDropItem(ItemFrameDropItemPacket $packet) : bool{
-		if(!$this->spawned or !$this->isAlive()){
-			return true;
-		}
-
-		$tile = $this->level->getTileAt($packet->x, $packet->y, $packet->z);
-		if($tile instanceof ItemFrame){
-			$ev = new PlayerInteractEvent($this, $this->inventory->getItemInHand(), $tile->getBlock(), null, 5 - $tile->getBlock()->getDamage(), PlayerInteractEvent::LEFT_CLICK_BLOCK);
-			if($this->isSpectator() or $this->level->checkSpawnProtection($this, $tile)){
-				$ev->setCancelled();
-			}
-
-			$ev->call();
-			if($ev->isCancelled()){
-				$tile->spawnTo($this);
-				return true;
-			}
-
-			if(lcg_value() <= $tile->getItemDropChance()){
-				$this->level->dropItem($tile->getBlock(), $tile->getItem());
-			}
-			$tile->setItem();
-			$tile->setItemRotation(0);
-		}
-
-		return true;
-	}
-
 	public function handleCommandRequest(CommandRequestPacket $packet) : bool{
 		if($packet->originData->type !== CommandOriginData::ORIGIN_PLAYER) return false;
 
