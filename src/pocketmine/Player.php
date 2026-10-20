@@ -1132,8 +1132,10 @@ class Player extends Human implements CommandSender, ChunkLoader, IPlayer{
 		$pk->position = $position ?? $this;
 		$pk->respawn = $respawn;
 		$this->sendDataPacket($pk);
+		$this->sendDimensionChangeAck();
+	}
 
-		//send this to the client??
+	public function sendDimensionChangeAck() : void{
 		$pk = new PlayerActionPacket();
 		$pk->entityRuntimeId = $this->id;
 		$pk->action = PlayerActionPacket::ACTION_DIMENSION_CHANGE_ACK;

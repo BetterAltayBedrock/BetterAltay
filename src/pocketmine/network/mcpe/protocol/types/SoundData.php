@@ -6,7 +6,7 @@ namespace pocketmine\network\mcpe\protocol\types;
 
 use LogicException;
 use pocketmine\network\mcpe\NetworkBinaryStream;
-use UnexpectedValueException;
+use UnexpectedValueException as PacketDecodeException;
 
 class SoundData{
 
@@ -56,7 +56,11 @@ class SoundData{
 	}
 
 	public static function read(NetworkBinaryStream $in) : self{
-		$type = $in->getLInt();
+		$type = $in->getUnsignedVarInt();
+
+		if($type !== $in->getByte()){
+			throw new PacketDecodeException("SoundDataType does not match");
+		}
 
 		return match($type){
 			SoundDataType::STOP => self::stop(),
@@ -66,12 +70,14 @@ class SoundData{
 			SoundDataType::SET_PITCH => self::setPitch($in->getLFloat()),
 			SoundDataType::FADE => self::fade($in->getLFloat(), $in->getLFloat()),
 			SoundDataType::SEEK_TO => self::seekTo($in->getLFloat()),
-			default => throw new UnexpectedValueException("Unknown SoundDataType: $type")
+			default => throw new PacketDecodeException("Unknown SoundDataType: $type")
 		};
 	}
 
 	public function write(NetworkBinaryStream $out) : void{
-		$out->putLInt($this->type);
+		$out->putUnsignedVarInt($this->type);
+		$out->putByte($this->type);//??
+
 		switch($this->type){
 			case SoundDataType::STOP:
 			case SoundDataType::PAUSE:
