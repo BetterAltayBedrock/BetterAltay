@@ -23,17 +23,24 @@ declare(strict_types=1);
 
 namespace pocketmine\inventory;
 
-use Closure;
 use Generator;
 use pocketmine\item\Item;
+use pocketmine\item\ItemFactory;
+use pocketmine\network\mcpe\convert\ItemTranslator;
 use pocketmine\network\mcpe\protocol\BatchPacket;
 use pocketmine\network\mcpe\protocol\CraftingDataPacket;
 use pocketmine\Server;
 use pocketmine\timings\Timings;
 use pocketmine\utils\AssumptionFailedError;
+use function array_fill;
+use function array_keys;
 use function array_map;
+use function array_values;
+use function base64_decode;
+use function count;
 use function file_get_contents;
 use function is_array;
+use function is_string;
 use function json_decode;
 use function json_encode;
 use function usort;
@@ -57,42 +64,254 @@ class CraftingManager{
 
 	public function init() : void{
 		$recipes = json_decode(file_get_contents(RESOURCE_PATH . "vanilla" . DIRECTORY_SEPARATOR . "recipes.json"), true);
-		if(!is_array($recipes)){
-			throw new AssumptionFailedError("recipes.json root should contain a map of recipe types");
+		if(!is_array($recipes) || !isset($recipes["recipes"]) || !is_array($recipes["recipes"])){
+			throw new AssumptionFailedError("recipes.json root should contain a list of recipes");
 		}
 
-		$itemDeserializerFunc = Closure::fromCallable([Item::class, 'jsonDeserialize']);
+		$itemTags = self::loadItemTags();
+		$skippedRecipes = 0;
 
-		foreach($recipes["shapeless"] as $recipe){
-			if($recipe["block"] !== "crafting_table"){ //TODO: filter others out for now to avoid breaking economics
+		foreach($recipes["recipes"] as $recipe){
+			if(!is_array($recipe) || !isset($recipe["type"])){
 				continue;
 			}
-			$this->registerShapelessRecipe(new ShapelessRecipe(
-				array_map($itemDeserializerFunc, $recipe["input"]),
-				array_map($itemDeserializerFunc, $recipe["output"])
-			));
+			if(!$this->initRecipe($recipe, $itemTags)){
+				$skippedRecipes++;
+			}
 		}
-		foreach($recipes["shaped"] as $recipe){
-			if($recipe["block"] !== "crafting_table"){ //TODO: filter others out for now to avoid breaking economics
-				continue;
-			}
-			$this->registerShapedRecipe(new ShapedRecipe(
-				$recipe["shape"],
-				array_map($itemDeserializerFunc, $recipe["input"]),
-				array_map($itemDeserializerFunc, $recipe["output"])
-			));
-		}
-		foreach($recipes["smelting"] as $recipe){
-			if($recipe["block"] !== "furnace"){ //TODO: filter others out for now to avoid breaking economics
-				continue;
-			}
-			$this->registerFurnaceRecipe(new FurnaceRecipe(
-					Item::jsonDeserialize($recipe["output"]),
-					Item::jsonDeserialize($recipe["input"]))
-			);
+
+		if($skippedRecipes > 0){
+			Server::getInstance()->getLogger()->debug("Skipped " . $skippedRecipes . " unsupported recipes while loading recipes.json");
 		}
 
 		$this->buildCraftingDataCache();
+	}
+
+	/**
+	 * @return string[][]
+	 * @phpstan-return array<string, list<string>>
+	 */
+	private static function loadItemTags() : array{
+		$data = file_get_contents(RESOURCE_PATH . "vanilla" . DIRECTORY_SEPARATOR . "item_tags.json");
+		if($data === false){
+			throw new AssumptionFailedError("Missing item_tags.json");
+		}
+		$tags = json_decode($data, true);
+		if(!is_array($tags)){
+			throw new AssumptionFailedError("item_tags.json root should contain a map of item tags");
+		}
+		return $tags;
+	}
+
+	/**
+	 * @param mixed[] $recipe
+	 * @param mixed[][] $itemTags
+	 */
+	private function initRecipe(array $recipe, array $itemTags) : bool{
+		$type = $recipe["type"];
+		$block = $recipe["block"] ?? "";
+
+		if($type === CraftingDataPacket::ENTRY_SHAPED){
+			if($block !== "crafting_table"){ //TODO: filter others out for now to avoid breaking economics
+				return true;
+			}
+			if(!isset($recipe["shape"], $recipe["input"], $recipe["output"]) || !is_array($recipe["input"]) || !is_array($recipe["output"])){
+				return false;
+			}
+
+			$ingredients = [];
+			foreach($recipe["input"] as $symbol => $descriptor){
+				$items = self::descriptorToItems($descriptor, $itemTags);
+				if($items === []){
+					return false;
+				}
+				$ingredients[(string) $symbol] = $items;
+			}
+
+			$results = self::outputToItems($recipe["output"]);
+			if($results === []){
+				return false;
+			}
+
+			foreach(self::combineIngredients($ingredients) as $combination){
+				$this->registerShapedRecipe(new ShapedRecipe($recipe["shape"], $combination, $results));
+			}
+			return true;
+		}
+
+		if($type === CraftingDataPacket::ENTRY_SHAPELESS || $type === CraftingDataPacket::ENTRY_USER_DATA_SHAPELESS){
+			if(!isset($recipe["input"], $recipe["output"]) || !is_array($recipe["input"]) || !is_array($recipe["output"])){
+				return false;
+			}
+
+			if($block === "furnace"){
+				$results = self::outputToItems($recipe["output"]);
+				if($results === []){
+					return false;
+				}
+				foreach($recipe["input"] as $descriptor){
+					foreach(self::descriptorToItems($descriptor, $itemTags) as $input){
+						$this->registerFurnaceRecipe(new FurnaceRecipe($results[0], $input));
+					}
+				}
+				return true;
+			}
+
+			if($block !== "crafting_table"){ //TODO: filter others out for now to avoid breaking economics
+				return true;
+			}
+
+			$inputLists = [];
+			foreach($recipe["input"] as $descriptor){
+				$items = self::descriptorToItems($descriptor, $itemTags);
+				if($items === []){
+					return false;
+				}
+				$inputLists[] = $items;
+			}
+
+			$results = self::outputToItems($recipe["output"]);
+			if($results === []){
+				return false;
+			}
+
+			foreach(self::combineIngredients($inputLists) as $combination){
+				$this->registerShapelessRecipe(new ShapelessRecipe(array_values($combination), $results));
+			}
+			return true;
+		}
+
+		if($type === CraftingDataPacket::ENTRY_MULTI || $type === CraftingDataPacket::ENTRY_SMITHING_TRANSFORM || $type === CraftingDataPacket::ENTRY_SMITHING_TRIM){
+			//TODO: multi recipes and smithing are not supported by the crafting system yet
+			return false;
+		}
+
+		return false;
+	}
+
+	/**
+	 * Resolves a recipe ingredient descriptor (a named item or an item tag) to the items it can match.
+	 *
+	 * @param mixed[] $descriptor
+	 * @param mixed[][] $itemTags
+	 *
+	 * @return Item[]
+	 */
+	private static function descriptorToItems(array $descriptor, array $itemTags) : array{
+		$type = $descriptor["type"] ?? "name";
+		$count = (int) ($descriptor["count"] ?? 1);
+		$damage = (int) ($descriptor["auxValue"] ?? -1);
+
+		if($type === "item_tag"){
+			$tag = $descriptor["itemTag"] ?? null;
+			if(!is_string($tag) || !isset($itemTags[$tag]) || !is_array($itemTags[$tag])){
+				return [];
+			}
+
+			$items = [];
+			foreach($itemTags[$tag] as $stringId){
+				if(!is_string($stringId)){
+					continue;
+				}
+				$item = self::itemFromStringId($stringId, $damage, $count);
+				if($item !== null){
+					$items[] = $item;
+				}
+			}
+			return $items;
+		}
+
+		if($type !== "name" || !isset($descriptor["itemId"]) || !is_string($descriptor["itemId"])){
+			return [];
+		}
+
+		$item = self::itemFromStringId($descriptor["itemId"], $damage, $count);
+		return $item !== null ? [$item] : [];
+	}
+
+	/**
+	 * @param mixed[][] $output
+	 *
+	 * @return Item[]
+	 */
+	private static function outputToItems(array $output) : array{
+		$items = [];
+		foreach($output as $entry){
+			if(!is_array($entry) || !isset($entry["id"]) || !is_string($entry["id"])){
+				return [];
+			}
+
+			$item = self::itemFromStringId($entry["id"], (int) ($entry["damage"] ?? 0), (int) ($entry["count"] ?? 1));
+			if($item === null){
+				return [];
+			}
+
+			if(isset($entry["nbt_b64"]) && is_string($entry["nbt_b64"])){
+				$nbt = base64_decode($entry["nbt_b64"], true);
+				if($nbt !== false){
+					$item->setCompoundTag($nbt);
+				}
+			}
+
+			$items[] = $item;
+		}
+
+		return $items;
+	}
+
+	private static function itemFromStringId(string $stringId, int $damage, int $count) : ?Item{
+		$translator = ItemTranslator::getInstance();
+		[$id, $meta] = $translator->fromStringId($stringId);
+		if($stringId === "minecraft:spruce_boat") var_dump($id, $meta);
+
+		$air = $translator->fromStringId("minecraft:air");
+		if($id === $air[0] && $meta === $air[1] && $stringId !== "minecraft:air"){
+			//unmapped item, usually from a newer version than the one this server implements
+			return null;
+		}
+
+		//fromStringId() already resolved the metadata for items with a complex (colour etc.) mapping.
+		//For all other items, the recipe data's aux value is authoritative (-1 = any damage value).
+		if(!$translator->hasComplexMapping($stringId)){
+			$meta = $damage;
+		}
+
+		return ItemFactory::get($id, $meta, $count);
+	}
+
+	/**
+	 * Expands item tags into all possible ingredient combinations. Shaped recipes use one item per symbol,
+	 * shapeless recipes one item per ingredient.
+	 *
+	 * @param Item[][] $ingredients
+	 *
+	 * @return Generator|Item[][]
+	 * @phpstan-return Generator<int, array<int|string, Item>, void, void>
+	 */
+	private static function combineIngredients(array $ingredients) : Generator{
+		$keys = array_keys($ingredients);
+		if($keys === []){
+			yield [];
+			return;
+		}
+
+		$indexes = array_fill(0, count($keys), 0);
+		while(true){
+			$combination = [];
+			foreach($keys as $i => $key){
+				$combination[$key] = $ingredients[$key][$indexes[$i]];
+			}
+			yield $combination;
+
+			for($i = count($keys) - 1; $i >= 0; --$i){
+				if($indexes[$i] + 1 < count($ingredients[$keys[$i]])){
+					$indexes[$i]++;
+					continue 2;
+				}
+				$indexes[$i] = 0;
+			}
+			return;
+		}
 	}
 
 	/**
