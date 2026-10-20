@@ -262,7 +262,6 @@ class CraftingManager{
 	private static function itemFromStringId(string $stringId, int $damage, int $count) : ?Item{
 		$translator = ItemTranslator::getInstance();
 		[$id, $meta] = $translator->fromStringId($stringId);
-		if($stringId === "minecraft:spruce_boat") var_dump($id, $meta);
 
 		$air = $translator->fromStringId("minecraft:air");
 		if($id === $air[0] && $meta === $air[1] && $stringId !== "minecraft:air"){
