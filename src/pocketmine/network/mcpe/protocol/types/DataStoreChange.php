@@ -26,7 +26,7 @@ final class DataStoreChange extends DataStore {
 		private string $name,
 		private string $property,
 		private int $updateCount,
-		private DataStoreValue $data
+		private DynamicDataStoreValue $data
 	){}
 
 	public function getTypeId() : int{
@@ -39,19 +39,14 @@ final class DataStoreChange extends DataStore {
 
 	public function getUpdateCount() : int{ return $this->updateCount; }
 
-	public function getData() : DataStoreValue{ return $this->data; }
+	public function getData() : DynamicDataStoreValue{ return $this->data; }
 
 	public static function read(NetworkBinaryStream $in) : self{
 		$name = $in->getString();
 		$property = $in->getString();
-		$updateCount = $in->getUnsignedVarInt();
+		$updateCount = $in->getLInt();
 
-		$data = match($in->getUnsignedVarInt()){
-			DataStoreValueType::DOUBLE => DoubleDataStoreValue::read($in),
-			DataStoreValueType::BOOL => BoolDataStoreValue::read($in),
-			DataStoreValueType::STRING => StringDataStoreValue::read($in),
-			default => throw new \UnexpectedValueException("Unknown DataStoreValueType"),
-		};
+		$data = DynamicDataStoreValue::read($in);
 
 		return new self(
 			$name,
@@ -64,8 +59,7 @@ final class DataStoreChange extends DataStore {
 	public function write(NetworkBinaryStream $out) : void{
 		$out->putString($this->name);
 		$out->putString($this->property);
-		$out->putUnsignedVarInt($this->updateCount);
-		$out->putUnsignedVarInt($this->data->getTypeId());
+		$out->putLInt($this->updateCount);
 		$this->data->write($out);
 	}
 }

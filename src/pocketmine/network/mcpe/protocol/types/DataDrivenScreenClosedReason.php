@@ -11,7 +11,7 @@ final class DataDrivenScreenClosedReason{
 	}
 
 	public const PROGRAMMATIC_CLOSE = "programmaticclose";
-	public const PROGRAMMATIC_CLOSE_ALL = "programaticcloseall";
+	public const PROGRAMMATIC_CLOSE_ALL = "programmaticcloseall";
 	public const CLIENT_CANCELED = "clientcanceled";
 	public const USER_BUSY = "userbusy";
 	public const INVALID_FORM = "invalidform";
