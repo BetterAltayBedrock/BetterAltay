@@ -142,19 +142,15 @@ $form->label("All done?")->closeButton("Done");
 $form->show();
 ```
 
-Calling `closeButton()` without a label uses `Close`. You can control its visibility with an observable:
+Calling `closeButton()` without a label uses `Close`. It accepts only a label, and the button is always visible:
 
 ```php
-$showClose = new Observable(true);
-
 $form = new DDUI($player, "Example");
-$form->closeButton("Done", ["visible" => $showClose]);
+$form->closeButton("Done");
 $form->show();
-
-$showClose->setData(false);
 ```
 
-Hiding that button does not stop the player from using Escape or Back. There is only one dedicated close button per form; calling `closeButton()` again replaces its configuration.
+The player can also close the form with Escape or Back. There is only one dedicated close button per form; calling `closeButton()` again replaces its label.
 
 ## Toggles
 
@@ -281,7 +277,7 @@ $form
 $form->show();
 ```
 
-Use boolean observables for these options. Text descriptions use string observables. The close button only exposes `visible` through its options; it doesn't support a `disabled` option.
+Use boolean observables for these options. Text descriptions use string observables. The close button has no options and is always visible.
 
 ## Live titles
 

@@ -115,7 +115,7 @@ class DDUI{
             $this->fields["closeButton." . $k] = $v;
         }
 
-        $this->buttons["closeButton.onClick"] = ["closeButton", function(Player $player) : void{
+        $this->buttons["closeButton.onClick"] = ["closeButton", function() : void{
 			$this->close();
 		}];
 
@@ -173,13 +173,15 @@ class DDUI{
 
         $extra = ["items.length" => count($labels)];
 
-        foreach(array_values($labels) as $i => $text){
-            if(!is_string($text)){
-				throw new \InvalidArgumentException("Dropdown labels must be strings");
+        foreach(array_values($labels) as $i => $item){
+            $text = is_array($item) ? ($item["label"] ?? null) : $item;
+            $description = is_array($item) ? ($item["description"] ?? "") : "";
+            if(!is_string($text) || !is_string($description)){
+				throw new \InvalidArgumentException("Dropdown labels and descriptions must be strings");
 			}
 
             $extra["items." . $i . ".label"] = $text;
-            $extra["items." . $i . ".description"] = "";
+            $extra["items." . $i . ".description"] = $description;
             $extra["items." . $i . ".value"] = $i;
         }
 
