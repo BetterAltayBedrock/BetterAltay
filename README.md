@@ -1,5 +1,5 @@
 <p align="center">
-	<img src="https://github.com/Benedikt05/BetterAltay/blob/master/.github/logo.png" alt="BetterAltay" width="200">
+	<img src="https://github.com/BetterAltayBedrock/BetterAltay/blob/master/.github/logo.png" alt="BetterAltay" width="200">
 	<br><br>
 	<h1 align="center">BetterAltay</h1>
 	<b>A feature-rich server software for Minecraft: Bedrock Edition</b>
@@ -19,10 +19,10 @@
 	<a href="https://github.com/Mojang/bedrock-protocol-docs">
 		<img src="https://img.shields.io/badge/protocol-2193-yellow?style=flat-square" alt="Protocol">
 	</a>
-	<a href="https://github.com/Benedikt05/BetterAltay/releases">
+	<a href="https://github.com/BetterAltayBedrock/BetterAltay/releases">
 		<img src="https://img.shields.io/github/v/release/Benedikt05/BetterAltay?color=green&label=Latest%20Release&logo=github" alt="Latest Release">
 	</a>
-	<a href="https://github.com/Benedikt05/BetterAltay/issues">
+	<a href="https://github.com/BetterAltayBedrock/BetterAltay/issues">
 		<img src="https://img.shields.io/github/issues/Benedikt05/BetterAltay?color=orange" alt="Issues">
 	</a>
 </p>
@@ -46,9 +46,9 @@ BetterAltay is a highly optimized and feature-rich server software designed for 
 
 To get started with BetterAltay, follow these steps:
 
-1. **Download the latest `BetterAltay.phar` file** from the [Releases](https://github.com/Benedikt05/BetterAltay/releases) page.
+1. **Download the latest `BetterAltay.phar` file** from the [Releases](https://github.com/BetterAltayBedrock/BetterAltay/releases) page.
 2. **Download the `start.sh`, `start.cmd`, or `start.ps1`** from this repository and place it in the same directory as the `BetterAltay.phar` file.
-3. **Obtain the PHP binaries** from [Benedikt05/PHP-Binaries](https://github.com/Benedikt05/PHP-Binaries) and extract them to your server directory.
+3. **Obtain the PHP binaries** from [Benedikt05/PHP-Binaries](https://github.com/BetterAltayBedrock/PHP-Binaries-Releases) and extract them to your server directory.
 4. **Run the server** using `start.sh` (Linux/macOS) or `start.cmd` (Windows).
 
 ---
@@ -63,6 +63,6 @@ For support, discussions, and the latest updates, join our community on Discord:
 
 ## 📄 License
 
-BetterAltay is licensed under the [LGPL-3.0 License](https://github.com/Benedikt05/BetterAltay/blob/master/LICENSE).
+BetterAltay is licensed under the [LGPL-3.0 License](https://github.com/BetterAltayBedrock/BetterAltay/blob/master/LICENSE).
 
 ---
