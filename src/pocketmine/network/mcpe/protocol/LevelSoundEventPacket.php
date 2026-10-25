@@ -537,7 +537,8 @@ class LevelSoundEventPacket extends DataPacket{
 	public const SOUND_MOUNT = 611;
 	public const SOUND_DISMOUNT = 612;
 	public const SOUND_STRAW_BED_BREAK_LEAVE = 613;
-	public const SOUND_UNDEFINED = 614;
+	public const SOUND_ICE_BALL_BREAK = 614;
+	public const SOUND_UNDEFINED = 615;
 
 	/** @var array<int, string> */
 	private static array $idToStringMap;

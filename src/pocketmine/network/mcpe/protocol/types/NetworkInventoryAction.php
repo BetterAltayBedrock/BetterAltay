@@ -86,8 +86,8 @@ class NetworkInventoryAction{
 	public const ACTION_MAGIC_SLOT_PICKUP_ITEM = 1;
 
 	public int $sourceType;
-	public int $windowId;
-	public int $sourceFlags = 0;
+	public ?int $windowId = null;
+	public ?int $sourceFlags = 0;
 	public int $inventorySlot;
 	public ItemStackWrapper $oldItem;
 	public ItemStackWrapper $newItem;
@@ -118,30 +118,10 @@ class NetworkInventoryAction{
 	 */
 	public function write(NetworkBinaryStream $packet) : void{
 		$packet->putUnsignedVarInt($this->sourceType);
-		switch($this->sourceType){
-			case self::SOURCE_TODO:
-			case self::SOURCE_UNTRACKED_INTERACTION_UI:
-			case self::SOURCE_CONTAINER:
-				$packet->putBool(true);
-				$packet->putBool(true);
-				$packet->putByte($this->windowId);
-				$packet->putBool(false);
-
-				break;
-			case self::SOURCE_CREATIVE:
-			case self::SOURCE_GLOBAL_INVENTORY:
-				break;
-			case self::SOURCE_WORLD:
-				$packet->putBool(false);
-				$packet->putBool(true);
-				$packet->putBool(true);
-				$packet->putUnsignedVarInt($this->sourceFlags);
-				break;
-			default:
-				$packet->putBool(false);
-				$packet->putBool(false);
-		}
-
+		$packet->putBool($this->windowId !== null);
+		$packet->putByte($this->windowId);
+		$packet->putBool($this->sourceFlags !== null);
+		$packet->putUnsignedVarInt($this->sourceFlags);
 		$packet->putUnsignedVarInt($this->inventorySlot);
 		$this->oldItem->write($packet, true);
 		$this->newItem->write($packet, true);
