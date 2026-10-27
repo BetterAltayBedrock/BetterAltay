@@ -59,6 +59,7 @@ class PlayerListPacket extends DataPacket{
 				$entry->entityUniqueId = $this->getEntityUniqueId();
 				$entry->username = $this->getString();
 				$entry->xboxUserId = $this->getString();
+				$entry->playFabId = $this->getString();
 				$entry->platformChatId = $this->getString();
 				$entry->buildPlatform = $this->getLInt();
 				$entry->skinData = $this->getSkin();
@@ -87,6 +88,7 @@ class PlayerListPacket extends DataPacket{
 				$this->putEntityUniqueId($entry->entityUniqueId);
 				$this->putString($entry->username);
 				$this->putString($entry->xboxUserId);
+				$this->putString($entry->playFabId);
 				$this->putString($entry->platformChatId);
 				$this->putLInt($entry->buildPlatform);
 				$this->putSkin($entry->skinData);

@@ -6,18 +6,18 @@
 	<br>
 	This is a fork of <a href="https://github.com/pmmp/PocketMine-MP/tree/3.28.0">PocketMine-MP</a> and <a href="https://github.com/unresolved3169/Altay">Altay</a>.
 	<br><br>
-	<i>This fork was created due to the inactivity of Altay and currently supports Minecraft: Bedrock Edition v26.52</i>
+	<i>This fork was created due to the inactivity of Altay and currently supports Minecraft: Bedrock Edition v26.60</i>
 	<br><br>
 
 <p align="center">
 	<a href="https://discord.gg/spquK3Q66W">
 		<img src="https://img.shields.io/discord/930544524655202317?color=5865F2&logo=discord&logoColor=white" alt="Discord">
 	</a>
-	<a href="https://www.minecraft.net/en-us/article/minecraft--bedrock-edition-26-50-changelog">
-		<img src="https://img.shields.io/badge/Minecraft_1.26.50-blue?style=flat-square" alt="Minecraft">
+	<a href="https://www.minecraft.net/en-us/article/minecraft--bedrock-edition-26-60-changelog">
+		<img src="https://img.shields.io/badge/Minecraft_1.26.60-blue?style=flat-square" alt="Minecraft">
 	</a>
 	<a href="https://github.com/Mojang/bedrock-protocol-docs">
-		<img src="https://img.shields.io/badge/protocol-2193-yellow?style=flat-square" alt="Protocol">
+		<img src="https://img.shields.io/badge/protocol-2225-yellow?style=flat-square" alt="Protocol">
 	</a>
 	<a href="https://github.com/BetterAltayBedrock/BetterAltay/releases">
 		<img src="https://img.shields.io/github/v/release/Benedikt05/BetterAltay?color=green&label=Latest%20Release&logo=github" alt="Latest Release">
@@ -48,7 +48,7 @@ To get started with BetterAltay, follow these steps:
 
 1. **Download the latest `BetterAltay.phar` file** from the [Releases](https://github.com/BetterAltayBedrock/BetterAltay/releases) page.
 2. **Download the `start.sh`, `start.cmd`, or `start.ps1`** from this repository and place it in the same directory as the `BetterAltay.phar` file.
-3. **Obtain the PHP binaries** from [Benedikt05/PHP-Binaries](https://github.com/BetterAltayBedrock/PHP-Binaries-Releases) and extract them to your server directory.
+3. **Obtain the PHP binaries** from [BetterAltayBedrock/PHP-Binaries](https://github.com/BetterAltayBedrock/PHP-Binaries/releases/tag/pm3-php-8.1-latest) and extract them to your server directory.
 4. **Run the server** using `start.sh` (Linux/macOS) or `start.cmd` (Windows).
 
 ---

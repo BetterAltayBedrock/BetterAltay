@@ -54,7 +54,8 @@ final class PersonaSkinPiece{
 	public const PIECE_TYPE_PERSONA_CAPES = 25;
 	public const PIECE_TYPE_PERSONA_CLASSIC_SKIN = 26;
 	public const PIECE_TYPE_PERSONA_EMOTE = 27;
-	public const PIECE_TYPE_PERSONA_UNSUPPORTED = 28;
+	public const PIECE_TYPE_PERSONA_COCO = 28;
+	public const PIECE_TYPE_PERSONA_UNSUPPORTED = 29;
 
 
 	public function __construct(
@@ -112,7 +113,8 @@ final class PersonaSkinPiece{
 			"classicskin" => 26,
 			"classic_skin" => 26,
 			"emote" => 27,
-			"unsupported" => 28,
+			"coco" => 28,
+			"unsupported" => 29,
 		];
 
 		if(isset($byName[$name])){

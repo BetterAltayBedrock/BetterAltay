@@ -12,8 +12,9 @@ Start by reviewing the official protocol documentation and pick the branch for t
 
 Because the official docs can sometimes be incomplete or contain mistakes, cross-check with additional sources:
 
-* [Kaooot/bedrock-protocol-docs](https://github.com/Kaooot/bedrock-protocol-docs)
-* [pmmp/BedrockProtocol](https://github.com/pmmp/BedrockProtocol)
+* [Kaooot/Protocol](https://github.com/Kaooot/Protocol)
+* [altayofficial/BedrockProtocol](https://github.com/altayofficial/BedrockProtocol)
+* [axolotl-pm/BedrockProtocol](https://github.com/axolotl-pm/BedrockProtocol)
 
 Compare these repositories to determine which packets or fields were added, removed or modified.
 
@@ -48,23 +49,17 @@ needs updating when the protocol changes.
 
 When Mojang introduces new content, several server-side data files must often be refreshed. The most important ones include:
 
-* **`runtime_item_states.json`** – Mainly contains item runtime IDs.
+* **`item_palette.json`** Can be taken from [Kaooot/bedrock-network-data](https://github.com/Kaooot/bedrock-network-data) or [altayofficial/BedrockData](https://github.com/altayofficial/BedrockData)
+* **`r16_to_current_item_map.json`** – Either updated manually or taken from [altayofficial/BedrockData](https://github.com/altayofficial/BedrockData).
+* **`item_components.nbt`** Obtained from [Kaooot/bedrock-network-data](https://github.com/Kaooot/bedrock-network-data) or [altayofficial/BedrockData](https://github.com/altayofficial/BedrockData)
+* **`creative_items.json`** – Can be pulled from [Kaooot/bedrock-network-data](https://github.com/Kaooot/bedrock-network-data/) or [altayofficial/BedrockData](https://github.com/altayofficial/BedrockData).
 
-  Sources:
-
-  * [Kaooot/bedrock-network-data – item\_palette.json](https://github.com/Kaooot/bedrock-network-data/blob/master/preview/1.21.110.26/item_palette.json) (renamed to `runtime_item_states.json` and sorted by [sort_item_palette.py](https://gist.github.com/Benedikt05/73e9970ba18b9d46cf9fbcf261f5448d))
-  * [CloudburstMC/Data](https://github.com/CloudburstMC/Data) or generated via ProxyPass – runtime_item_states.json (needs slight adjustments for BetterAltay)
-
-* **`canonical_block_states.nbt`** – Can be taken from [pmmp/BedrockData](https://github.com/pmmp/BedrockData) or generated from `block_palette.nbt` found in [Kaooot/bedrock-network-data](https://github.com/Kaooot/bedrock-network-data/) or [CloudburstMC/Data](https://github.com/CloudburstMC/Data), using [this script](https://gist.github.com/DavyCraft648/942e8cf8534d3e48ea990aa4503b59f1).
-
-* **`r12_to_current_block_map.bin`** – Available directly from [pmmp/BedrockData](https://github.com/pmmp/BedrockData).
-
-* **`r16_to_current_item_map.json`** – Either updated manually or taken from [pmmp/BedrockData](https://github.com/pmmp/BedrockData).
+* **`block_palette.nbt`** – Taken from [altayofficial/BedrockData](https://github.com/altayofficial/BedrockData) or [Kaooot/bedrock-network-data](https://github.com/Kaooot/bedrock-network-data/) or [CloudburstMC/Data](https://github.com/CloudburstMC/Data).
+* **`r12_to_current_block_map.json`** – Updated by https://github.com/BetterAltayBedrock/r12-map-updater if needed.
 
 * **`stripped_biome_definitions.json`** – Obtainable from [CloudburstMC/Data](https://github.com/CloudburstMC/Data) or generated via ProxyPass.
 
-* **`creative_items.json`** – Can be pulled from [Kaooot/bedrock-network-data](https://github.com/Kaooot/bedrock-network-data/).
-* **`level_sound_id_map.json`** – Either updated by [extract_sound_map.py](https://gist.github.com/Benedikt05/977080670a15c8532ec3f1b82032d1d6) or taken from [pmmp/BedrockData](https://github.com/pmmp/BedrockData).
+* **`level_sound_id_map.json`** – Either updated by [extract_sound_map.py](https://gist.github.com/Benedikt05/977080670a15c8532ec3f1b82032d1d6) or taken from [altayofficial/BedrockData](https://github.com/altayofficial/BedrockData).
 
 ---
 

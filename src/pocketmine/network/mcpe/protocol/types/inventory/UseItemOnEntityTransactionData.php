@@ -39,6 +39,7 @@ class UseItemOnEntityTransactionData extends TransactionData{
 	private $actionType;
 	/** @var int */
 	private $hotbarSlot;
+	private int $handSlot;
 	/** @var ItemStackWrapper */
 	private $itemInHand;
 	/** @var Vector3 */
@@ -56,6 +57,10 @@ class UseItemOnEntityTransactionData extends TransactionData{
 
 	public function getHotbarSlot() : int{
 		return $this->hotbarSlot;
+	}
+
+	public function getHandSlot() : int{
+		return $this->handSlot;
 	}
 
 	public function getItemInHand() : ItemStackWrapper{
@@ -78,6 +83,7 @@ class UseItemOnEntityTransactionData extends TransactionData{
 		$this->entityRuntimeId = $stream->getEntityRuntimeId();
 		$this->actionType = $stream->getVarInt();
 		$this->hotbarSlot = $stream->getVarInt();
+		$this->handSlot = $stream->getByte();
 		$this->itemInHand = ItemStackWrapper::read($stream, true);
 		$this->playerPos = $stream->getVector3();
 		$this->clickPos = $stream->getVector3();
@@ -87,6 +93,7 @@ class UseItemOnEntityTransactionData extends TransactionData{
 		$stream->putEntityRuntimeId($this->entityRuntimeId);
 		$stream->putVarInt($this->actionType);
 		$stream->putVarInt($this->hotbarSlot);
+		$stream->putByte($this->handSlot);
 		$this->itemInHand->write($stream, true);
 		$stream->putVector3($this->playerPos);
 		$stream->putVector3($this->clickPos);
@@ -95,15 +102,17 @@ class UseItemOnEntityTransactionData extends TransactionData{
 	/**
 	 * @param NetworkInventoryAction[] $actions
 	 */
-	public static function new(array $actions, int $entityRuntimeId, int $actionType, int $hotbarSlot, ItemStackWrapper $itemInHand, Vector3 $playerPos, Vector3 $clickPos) : self{
+	public static function new(array $actions, int $entityRuntimeId, int $actionType, int $hotbarSlot, int $handSlot, ItemStackWrapper $itemInHand, Vector3 $playerPos, Vector3 $clickPos) : self{
 		$result = new self;
 		$result->actions = $actions;
 		$result->entityRuntimeId = $entityRuntimeId;
 		$result->actionType = $actionType;
 		$result->hotbarSlot = $hotbarSlot;
+		$result->handSlot = $handSlot;
 		$result->itemInHand = $itemInHand;
 		$result->playerPos = $playerPos;
 		$result->clickPos = $clickPos;
+
 		return $result;
 	}
 }

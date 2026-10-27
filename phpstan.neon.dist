@@ -12,6 +12,7 @@ includes:
 
 parameters:
 	level: 9
+	phpVersion: 80100
 	checkMissingCallableSignature: true
 	treatPhpDocTypesAsCertain: false
 	bootstrapFiles:
@@ -33,6 +34,7 @@ parameters:
 		analyse:
 			- src/pocketmine/block/StoneSlab.php #overrides STONE constant
 			- src/pocketmine/item/Potion.php #overrides WATER constant
+			- src/pocketmine/nethernet #vendored NetherNet transport library, analysed upstream
 	dynamicConstantNames:
 		- pocketmine\DEBUG
 		- pocketmine\IS_DEVELOPMENT_BUILD

@@ -30,6 +30,7 @@ use pocketmine\entity\EntityIds;
 use pocketmine\math\Vector3;
 use pocketmine\network\mcpe\NetworkSession;
 use pocketmine\network\mcpe\protocol\types\EntityLink;
+use pocketmine\network\mcpe\protocol\types\PassengerOfBlockArguments;
 use pocketmine\network\mcpe\protocol\types\entityProperty\EntityProperties;
 use UnexpectedValueException;
 use function count;
@@ -184,6 +185,8 @@ class AddActorPacket extends DataPacket{
 	/** @var EntityLink[] */
 	public array $links = [];
 
+	public ?PassengerOfBlockArguments $passengerOfBlockData = null;
+
 	protected function decodePayload(){
 		$this->entityUniqueId = $this->getEntityUniqueId();
 		$this->entityRuntimeId = $this->getEntityRuntimeId();
@@ -219,6 +222,7 @@ class AddActorPacket extends DataPacket{
 		for($i = 0; $i < $linkCount; ++$i){
 			$this->links[] = $this->getEntityLink();
 		}
+		$this->passengerOfBlockData = $this->readOptional(fn() => PassengerOfBlockArguments::read($this));
 	}
 
 	protected function encodePayload(){
@@ -251,6 +255,7 @@ class AddActorPacket extends DataPacket{
 		foreach($this->links as $link){
 			$this->putEntityLink($link);
 		}
+		$this->writeOptional($this->passengerOfBlockData, fn(PassengerOfBlockArguments $data) => $data->write($this));
 	}
 
 	public function handle(NetworkSession $session) : bool{

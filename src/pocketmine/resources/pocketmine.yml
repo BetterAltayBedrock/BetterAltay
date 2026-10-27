@@ -95,6 +95,23 @@ network:
   #Enable encryption of Minecraft network traffic. This has an impact on performance, but prevents hackers from stealing sessions and pretending to be other players.
   #DO NOT DISABLE THIS unless you understand the risks involved.
   enable-encryption: true
+  #Disable to accept NetherNet only. RakLib is no longer supported as of 26.60.
+  raklib:
+    enabled: false
+  #NetherNet (WebRTC DataChannels) transport, used by 26.50 as default.
+  #Requires PHP >= 8.1 with the ext-webrtc, ext-encoding and ext-sockets extensions.
+  nethernet:
+    #Enable the NetherNet transport.
+    enabled: true
+    #TCP port of the HTTP signaling server clients use to join by address. 0 = use the server port.
+    signaling-port: 0
+    #Let clients on the local network discover this server (UDP 7551).
+    lan-discovery: true
+    #64-bit id of this host in LAN discovery. 0 = generate a random id on every start.
+    network-id: 0
+    #Public IP addresses advertised to connecting clients (for 1:1 NAT port forwarding on a single public IP).
+    #Leave empty to advertise all automatically discovered addresses.
+    advertised-addresses: []
 
 debug:
   #If > 1, it will show debug messages in the console

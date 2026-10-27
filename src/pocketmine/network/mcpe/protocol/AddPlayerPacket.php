@@ -30,6 +30,7 @@ use pocketmine\network\mcpe\NetworkSession;
 use pocketmine\network\mcpe\protocol\types\CommandPermissions;
 use pocketmine\network\mcpe\protocol\types\DeviceOS;
 use pocketmine\network\mcpe\protocol\types\EntityLink;
+use pocketmine\network\mcpe\protocol\types\PassengerOfBlockArguments;
 use pocketmine\network\mcpe\protocol\types\entityProperty\EntityProperties;
 use pocketmine\network\mcpe\protocol\types\inventory\ItemStackWrapper;
 use pocketmine\network\mcpe\protocol\types\PlayerPermissions;
@@ -63,6 +64,7 @@ class AddPlayerPacket extends DataPacket{
 
 	public int $gameMode = 0;
 	public array $links = [];
+	public ?PassengerOfBlockArguments $passengerOfBlockData = null;
 
 	public string $deviceId = ""; //TODO: fill player's device ID (???)
 	public int $buildPlatform = DeviceOS::ANDROID;
@@ -87,6 +89,8 @@ class AddPlayerPacket extends DataPacket{
 		for($i = 0; $i < $linkCount; ++$i){
 			$this->links[$i] = $this->getEntityLink();
 		}
+
+		$this->passengerOfBlockData = $this->readOptional(fn() => PassengerOfBlockArguments::read($this));
 
 		$this->deviceId = $this->getString();
 		$this->buildPlatform = $this->getLInt();
@@ -121,6 +125,8 @@ class AddPlayerPacket extends DataPacket{
 		foreach($this->links as $link){
 			$this->putEntityLink($link);
 		}
+
+		$this->writeOptional($this->passengerOfBlockData, fn(PassengerOfBlockArguments $data) => $data->write($this));
 
 		$this->putString($this->deviceId);
 		$this->putLInt($this->buildPlatform);

@@ -82,6 +82,7 @@ use pocketmine\network\mcpe\protocol\types\DisconnectFailReason;
 use pocketmine\network\mcpe\protocol\types\LegacySkinAdapter;
 use pocketmine\network\mcpe\protocol\types\PlayerListEntry;
 use pocketmine\network\mcpe\protocol\types\SkinAdapterSingleton;
+use pocketmine\network\mcpe\NetherNetInterface;
 use pocketmine\network\mcpe\RakLibInterface;
 use pocketmine\network\Network;
 use pocketmine\network\query\QueryHandler;
@@ -1651,7 +1652,15 @@ class Server{
 			$this->pluginManager->loadPlugins($this->pluginPath);
 			$this->enablePlugins(PluginLoadOrder::STARTUP);
 
-			$this->network->registerInterface(new RakLibInterface($this));
+			if((bool) $this->getProperty("network.raklib.enabled", false)){
+				$this->network->registerInterface(new RakLibInterface($this));
+			}
+			if((bool) $this->getProperty("network.nethernet.enabled", true)){
+				$this->network->registerInterface(new NetherNetInterface($this));
+			}
+			if($this->network->getInterfaces() === []){
+				$this->logger->warning("Both the RakLib and NetherNet transports are disabled in the config; nobody will be able to connect");
+			}
 
 			foreach((array) $this->getProperty("worlds", []) as $name => $options){
 				if($options === null){

@@ -33,7 +33,6 @@ class LegacySkinAdapter implements SkinAdapter{
 	public function toSkinData(Skin $skin) : SkinData{
 		return $this->personaSkins[$skin->getSkinId()] ?? new SkinData(
 				$skin->getSkinId(),
-				"", //TODO: playfab ID
 				$skin->getResourcePatch(),
 				$skin->getSkinImage(),
 				$skin->getAnimations(),

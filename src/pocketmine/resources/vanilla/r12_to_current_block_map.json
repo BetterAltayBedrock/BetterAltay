@@ -7389,7 +7389,14 @@
         "meta": 0,
         "blockState": {
             "name": "minecraft:chorus_plant",
-            "states": [],
+            "states": {
+                "minecraft:connection_down": 0,
+                "minecraft:connection_east": 0,
+                "minecraft:connection_north": 0,
+                "minecraft:connection_south": 0,
+                "minecraft:connection_up": 0,
+                "minecraft:connection_west": 0
+            },
             "version": 18168865
         }
     },
@@ -15798,7 +15805,12 @@
         "blockState": {
             "name": "minecraft:fire",
             "states": {
-                "age": 0
+                "age": 0,
+                "minecraft:connection_east": 0,
+                "minecraft:connection_north": 0,
+                "minecraft:connection_south": 0,
+                "minecraft:connection_up": 0,
+                "minecraft:connection_west": 0
             },
             "version": 18168865
         }
@@ -15809,7 +15821,12 @@
         "blockState": {
             "name": "minecraft:fire",
             "states": {
-                "age": 1
+                "age": 1,
+                "minecraft:connection_east": 0,
+                "minecraft:connection_north": 0,
+                "minecraft:connection_south": 0,
+                "minecraft:connection_up": 0,
+                "minecraft:connection_west": 0
             },
             "version": 18168865
         }
@@ -15820,7 +15837,12 @@
         "blockState": {
             "name": "minecraft:fire",
             "states": {
-                "age": 2
+                "age": 2,
+                "minecraft:connection_east": 0,
+                "minecraft:connection_north": 0,
+                "minecraft:connection_south": 0,
+                "minecraft:connection_up": 0,
+                "minecraft:connection_west": 0
             },
             "version": 18168865
         }
@@ -15831,7 +15853,12 @@
         "blockState": {
             "name": "minecraft:fire",
             "states": {
-                "age": 3
+                "age": 3,
+                "minecraft:connection_east": 0,
+                "minecraft:connection_north": 0,
+                "minecraft:connection_south": 0,
+                "minecraft:connection_up": 0,
+                "minecraft:connection_west": 0
             },
             "version": 18168865
         }
@@ -15842,7 +15869,12 @@
         "blockState": {
             "name": "minecraft:fire",
             "states": {
-                "age": 4
+                "age": 4,
+                "minecraft:connection_east": 0,
+                "minecraft:connection_north": 0,
+                "minecraft:connection_south": 0,
+                "minecraft:connection_up": 0,
+                "minecraft:connection_west": 0
             },
             "version": 18168865
         }
@@ -15853,7 +15885,12 @@
         "blockState": {
             "name": "minecraft:fire",
             "states": {
-                "age": 5
+                "age": 5,
+                "minecraft:connection_east": 0,
+                "minecraft:connection_north": 0,
+                "minecraft:connection_south": 0,
+                "minecraft:connection_up": 0,
+                "minecraft:connection_west": 0
             },
             "version": 18168865
         }
@@ -15864,7 +15901,12 @@
         "blockState": {
             "name": "minecraft:fire",
             "states": {
-                "age": 6
+                "age": 6,
+                "minecraft:connection_east": 0,
+                "minecraft:connection_north": 0,
+                "minecraft:connection_south": 0,
+                "minecraft:connection_up": 0,
+                "minecraft:connection_west": 0
             },
             "version": 18168865
         }
@@ -15875,7 +15917,12 @@
         "blockState": {
             "name": "minecraft:fire",
             "states": {
-                "age": 7
+                "age": 7,
+                "minecraft:connection_east": 0,
+                "minecraft:connection_north": 0,
+                "minecraft:connection_south": 0,
+                "minecraft:connection_up": 0,
+                "minecraft:connection_west": 0
             },
             "version": 18168865
         }
@@ -15886,7 +15933,12 @@
         "blockState": {
             "name": "minecraft:fire",
             "states": {
-                "age": 8
+                "age": 8,
+                "minecraft:connection_east": 0,
+                "minecraft:connection_north": 0,
+                "minecraft:connection_south": 0,
+                "minecraft:connection_up": 0,
+                "minecraft:connection_west": 0
             },
             "version": 18168865
         }
@@ -15897,7 +15949,12 @@
         "blockState": {
             "name": "minecraft:fire",
             "states": {
-                "age": 9
+                "age": 9,
+                "minecraft:connection_east": 0,
+                "minecraft:connection_north": 0,
+                "minecraft:connection_south": 0,
+                "minecraft:connection_up": 0,
+                "minecraft:connection_west": 0
             },
             "version": 18168865
         }
@@ -15908,7 +15965,12 @@
         "blockState": {
             "name": "minecraft:fire",
             "states": {
-                "age": 10
+                "age": 10,
+                "minecraft:connection_east": 0,
+                "minecraft:connection_north": 0,
+                "minecraft:connection_south": 0,
+                "minecraft:connection_up": 0,
+                "minecraft:connection_west": 0
             },
             "version": 18168865
         }
@@ -15919,7 +15981,12 @@
         "blockState": {
             "name": "minecraft:fire",
             "states": {
-                "age": 11
+                "age": 11,
+                "minecraft:connection_east": 0,
+                "minecraft:connection_north": 0,
+                "minecraft:connection_south": 0,
+                "minecraft:connection_up": 0,
+                "minecraft:connection_west": 0
             },
             "version": 18168865
         }
@@ -15930,7 +15997,12 @@
         "blockState": {
             "name": "minecraft:fire",
             "states": {
-                "age": 12
+                "age": 12,
+                "minecraft:connection_east": 0,
+                "minecraft:connection_north": 0,
+                "minecraft:connection_south": 0,
+                "minecraft:connection_up": 0,
+                "minecraft:connection_west": 0
             },
             "version": 18168865
         }
@@ -15941,7 +16013,12 @@
         "blockState": {
             "name": "minecraft:fire",
             "states": {
-                "age": 13
+                "age": 13,
+                "minecraft:connection_east": 0,
+                "minecraft:connection_north": 0,
+                "minecraft:connection_south": 0,
+                "minecraft:connection_up": 0,
+                "minecraft:connection_west": 0
             },
             "version": 18168865
         }
@@ -15952,7 +16029,12 @@
         "blockState": {
             "name": "minecraft:fire",
             "states": {
-                "age": 14
+                "age": 14,
+                "minecraft:connection_east": 0,
+                "minecraft:connection_north": 0,
+                "minecraft:connection_south": 0,
+                "minecraft:connection_up": 0,
+                "minecraft:connection_west": 0
             },
             "version": 18168865
         }
@@ -15963,7 +16045,12 @@
         "blockState": {
             "name": "minecraft:fire",
             "states": {
-                "age": 15
+                "age": 15,
+                "minecraft:connection_east": 0,
+                "minecraft:connection_north": 0,
+                "minecraft:connection_south": 0,
+                "minecraft:connection_up": 0,
+                "minecraft:connection_west": 0
             },
             "version": 18168865
         }
@@ -27572,7 +27659,11 @@
         "blockState": {
             "name": "minecraft:redstone_wire",
             "states": {
-                "redstone_signal": 0
+                "redstone_east": "none",
+                "redstone_north": "none",
+                "redstone_signal": 0,
+                "redstone_south": "none",
+                "redstone_west": "none"
             },
             "version": 18168865
         }
@@ -27583,7 +27674,11 @@
         "blockState": {
             "name": "minecraft:redstone_wire",
             "states": {
-                "redstone_signal": 1
+                "redstone_east": "none",
+                "redstone_north": "none",
+                "redstone_signal": 1,
+                "redstone_south": "none",
+                "redstone_west": "none"
             },
             "version": 18168865
         }
@@ -27594,7 +27689,11 @@
         "blockState": {
             "name": "minecraft:redstone_wire",
             "states": {
-                "redstone_signal": 2
+                "redstone_east": "none",
+                "redstone_north": "none",
+                "redstone_signal": 2,
+                "redstone_south": "none",
+                "redstone_west": "none"
             },
             "version": 18168865
         }
@@ -27605,7 +27704,11 @@
         "blockState": {
             "name": "minecraft:redstone_wire",
             "states": {
-                "redstone_signal": 3
+                "redstone_east": "none",
+                "redstone_north": "none",
+                "redstone_signal": 3,
+                "redstone_south": "none",
+                "redstone_west": "none"
             },
             "version": 18168865
         }
@@ -27616,7 +27719,11 @@
         "blockState": {
             "name": "minecraft:redstone_wire",
             "states": {
-                "redstone_signal": 4
+                "redstone_east": "none",
+                "redstone_north": "none",
+                "redstone_signal": 4,
+                "redstone_south": "none",
+                "redstone_west": "none"
             },
             "version": 18168865
         }
@@ -27627,7 +27734,11 @@
         "blockState": {
             "name": "minecraft:redstone_wire",
             "states": {
-                "redstone_signal": 5
+                "redstone_east": "none",
+                "redstone_north": "none",
+                "redstone_signal": 5,
+                "redstone_south": "none",
+                "redstone_west": "none"
             },
             "version": 18168865
         }
@@ -27638,7 +27749,11 @@
         "blockState": {
             "name": "minecraft:redstone_wire",
             "states": {
-                "redstone_signal": 6
+                "redstone_east": "none",
+                "redstone_north": "none",
+                "redstone_signal": 6,
+                "redstone_south": "none",
+                "redstone_west": "none"
             },
             "version": 18168865
         }
@@ -27649,7 +27764,11 @@
         "blockState": {
             "name": "minecraft:redstone_wire",
             "states": {
-                "redstone_signal": 7
+                "redstone_east": "none",
+                "redstone_north": "none",
+                "redstone_signal": 7,
+                "redstone_south": "none",
+                "redstone_west": "none"
             },
             "version": 18168865
         }
@@ -27660,7 +27779,11 @@
         "blockState": {
             "name": "minecraft:redstone_wire",
             "states": {
-                "redstone_signal": 8
+                "redstone_east": "none",
+                "redstone_north": "none",
+                "redstone_signal": 8,
+                "redstone_south": "none",
+                "redstone_west": "none"
             },
             "version": 18168865
         }
@@ -27671,7 +27794,11 @@
         "blockState": {
             "name": "minecraft:redstone_wire",
             "states": {
-                "redstone_signal": 9
+                "redstone_east": "none",
+                "redstone_north": "none",
+                "redstone_signal": 9,
+                "redstone_south": "none",
+                "redstone_west": "none"
             },
             "version": 18168865
         }
@@ -27682,7 +27809,11 @@
         "blockState": {
             "name": "minecraft:redstone_wire",
             "states": {
-                "redstone_signal": 10
+                "redstone_east": "none",
+                "redstone_north": "none",
+                "redstone_signal": 10,
+                "redstone_south": "none",
+                "redstone_west": "none"
             },
             "version": 18168865
         }
@@ -27693,7 +27824,11 @@
         "blockState": {
             "name": "minecraft:redstone_wire",
             "states": {
-                "redstone_signal": 11
+                "redstone_east": "none",
+                "redstone_north": "none",
+                "redstone_signal": 11,
+                "redstone_south": "none",
+                "redstone_west": "none"
             },
             "version": 18168865
         }
@@ -27704,7 +27839,11 @@
         "blockState": {
             "name": "minecraft:redstone_wire",
             "states": {
-                "redstone_signal": 12
+                "redstone_east": "none",
+                "redstone_north": "none",
+                "redstone_signal": 12,
+                "redstone_south": "none",
+                "redstone_west": "none"
             },
             "version": 18168865
         }
@@ -27715,7 +27854,11 @@
         "blockState": {
             "name": "minecraft:redstone_wire",
             "states": {
-                "redstone_signal": 13
+                "redstone_east": "none",
+                "redstone_north": "none",
+                "redstone_signal": 13,
+                "redstone_south": "none",
+                "redstone_west": "none"
             },
             "version": 18168865
         }
@@ -27726,7 +27869,11 @@
         "blockState": {
             "name": "minecraft:redstone_wire",
             "states": {
-                "redstone_signal": 14
+                "redstone_east": "none",
+                "redstone_north": "none",
+                "redstone_signal": 14,
+                "redstone_south": "none",
+                "redstone_west": "none"
             },
             "version": 18168865
         }
@@ -27737,7 +27884,11 @@
         "blockState": {
             "name": "minecraft:redstone_wire",
             "states": {
-                "redstone_signal": 15
+                "redstone_east": "none",
+                "redstone_north": "none",
+                "redstone_signal": 15,
+                "redstone_south": "none",
+                "redstone_west": "none"
             },
             "version": 18168865
         }

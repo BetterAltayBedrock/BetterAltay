@@ -57,6 +57,14 @@ interface SourceInterface{
 	public function close(Player $player, string $reason = "unknown reason");
 
 	/**
+	 * Returns whether connections made over this transport are encrypted by the transport itself.
+	 *
+	 * Transports which do so, and which authenticate the client in the process, do not need the Minecraft-layer
+	 * encryption handshake: it would be redundant there, and their clients do not complete it.
+	 */
+	public function isTransportEncrypted() : bool;
+
+	/**
 	 * @return void
 	 */
 	public function setName(string $name);

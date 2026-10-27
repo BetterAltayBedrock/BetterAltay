@@ -18,6 +18,9 @@ resource_packs/
 server.lock
 /phpstan.neon
 
+# NetherNet server identity, generated on first start and holding a private key
+nethernet-identity.pem
+
 # Common IDEs
 .idea/*
 !.idea/codeStyles/

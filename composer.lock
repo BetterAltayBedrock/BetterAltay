@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "a40d2c22e1e63ea9185ff58e9198ee53",
+    "content-hash": "b9506d4cb7398ca53cacf932ab065473",
     "packages": [
         {
             "name": "adhocore/json-comment",
@@ -2590,13 +2590,15 @@
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
-        "php": "^8.0 || ^8.1",
+        "php": "^8.1",
         "php-64bit": "*",
+        "php-ipv6": "*",
         "ext-chunkutils2": "^0.3.1",
         "ext-crypto": "^0.3.1",
         "ext-ctype": "*",
         "ext-curl": "*",
         "ext-date": "*",
+        "ext-encoding": "~1.0.0",
         "ext-hash": "*",
         "ext-json": "*",
         "ext-mbstring": "*",
@@ -2608,6 +2610,7 @@
         "ext-simplexml": "*",
         "ext-sockets": "*",
         "ext-spl": "*",
+        "ext-webrtc": "*",
         "ext-yaml": ">=2.0.0",
         "ext-zip": "*",
         "ext-zlib": ">=1.2.11",
@@ -2615,7 +2618,7 @@
     },
     "platform-dev": {},
     "platform-overrides": {
-        "php": "8.0.0"
+        "php": "8.1.0"
     },
     "plugin-api-version": "2.9.0"
 }

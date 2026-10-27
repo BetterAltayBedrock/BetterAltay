@@ -58,7 +58,7 @@ final class ItemTypeDictionary{
 	private $stringToIntMap = [];
 
 	private static function make() : self{
-		$table = json_decode(file_get_contents(RESOURCE_PATH . '/vanilla/runtime_item_states.json'), true);
+		$table = json_decode(file_get_contents(RESOURCE_PATH . '/vanilla//item_palette.json'), true)["items"];
 		$itemComponentsData = file_get_contents(RESOURCE_PATH . '/vanilla/item_components.nbt');
 
 		if(!is_array($table) || !is_string($itemComponentsData)){

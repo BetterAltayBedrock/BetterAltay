@@ -94,7 +94,6 @@ class NetworkBinaryStream extends BinaryStream{
 
 	public function getSkin() : SkinData{
 		$skinId = $this->getString();
-		$skinPlayFabId = $this->getString();
 		$skinResourcePatch = $this->getString();
 		$skinData = $this->getSkinImage();
 		$animationCount = $this->getUnsignedVarInt();
@@ -145,7 +144,7 @@ class NetworkBinaryStream extends BinaryStream{
 		$trustedSkinFlag = $this->getString();
 		$profileHash = $this->getString();
 
-		return new SkinData($skinId, $skinPlayFabId, $skinResourcePatch, $skinData, $animations, $capeData, $geometryData, $geometryDataVersion, $animationData, $capeId, $fullSkinId, $armSize, $skinColor, $personaPieces, $pieceTintColors, true, $premium, $persona, $capeOnClassic, $isPrimaryUser, $override, $trustedSkinFlag, $profileHash);
+		return new SkinData($skinId, $skinResourcePatch, $skinData, $animations, $capeData, $geometryData, $geometryDataVersion, $animationData, $capeId, $fullSkinId, $armSize, $skinColor, $personaPieces, $pieceTintColors, true, $premium, $persona, $capeOnClassic, $isPrimaryUser, $override, $trustedSkinFlag, $profileHash);
 	}
 
 	/**
@@ -153,7 +152,6 @@ class NetworkBinaryStream extends BinaryStream{
 	 */
 	public function putSkin(SkinData $skin){
 		$this->putString($skin->getSkinId());
-		$this->putString($skin->getPlayFabId());
 		$this->putString($skin->getResourcePatch());
 		$this->putSkinImage($skin->getSkinImage());
 		$this->putUnsignedVarInt(count($skin->getAnimations()));
