@@ -95,10 +95,10 @@ network:
   #Enable encryption of Minecraft network traffic. This has an impact on performance, but prevents hackers from stealing sessions and pretending to be other players.
   #DO NOT DISABLE THIS unless you understand the risks involved.
   enable-encryption: true
-  #Enable the RakLib transport (UDP) used by regular Minecraft: Bedrock clients. Disable to accept NetherNet only.
+  #Disable to accept NetherNet only. RakLib is no longer supported as of 26.60.
   raklib:
     enabled: false
-  #NetherNet (WebRTC DataChannels) transport, used by console clients and for join-by-address connections.
+  #NetherNet (WebRTC DataChannels) transport, used by 26.50 as default.
   #Requires PHP >= 8.1 with the ext-webrtc, ext-encoding and ext-sockets extensions.
   nethernet:
     #Enable the NetherNet transport.
