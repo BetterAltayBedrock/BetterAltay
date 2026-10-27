@@ -79,6 +79,8 @@ use pocketmine\network\mcpe\protocol\TextPacket;
 use pocketmine\network\mcpe\protocol\types\SkinAdapterSingleton;
 use pocketmine\network\mcpe\protocol\UpdateAdventureSettingsPacket;
 use pocketmine\network\mcpe\protocol\UpdateClientOptionsPacket;
+use pocketmine\network\mcpe\protocol\ServerboundDataStorePacket;
+use pocketmine\network\mcpe\protocol\ServerboundDataDrivenScreenClosedPacket;
 use pocketmine\Player;
 use pocketmine\Server;
 use pocketmine\timings\Timings;
@@ -282,6 +284,14 @@ class PlayerNetworkSessionAdapter extends NetworkSession{
 
 	public function handleBookEdit(BookEditPacket $packet) : bool{
 		return $this->player->handleBookEdit($packet);
+	}
+
+	public function handleServerboundDataStore(ServerboundDataStorePacket $packet) : bool{
+		return $this->player->getDDUISession()->update($packet->getUpdate());
+	}
+
+	public function handleServerboundDataDrivenScreenClosed(ServerboundDataDrivenScreenClosedPacket $packet) : bool{
+		return $this->player->getDDUISession()->closed($packet->formId, $packet->closeReason);
 	}
 
 	public function handleModalFormResponse(ModalFormResponsePacket $packet) : bool{

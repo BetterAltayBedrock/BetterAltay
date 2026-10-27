@@ -85,6 +85,7 @@ use pocketmine\event\player\PlayerTransferEvent;
 use pocketmine\event\server\DataPacketSendEvent;
 use pocketmine\form\Form;
 use pocketmine\form\FormValidationException;
+use pocketmine\ddui\DDUISession;
 use pocketmine\inventory\CraftingGrid;
 use pocketmine\inventory\Inventory;
 use pocketmine\inventory\InventoryHolder;
@@ -504,6 +505,9 @@ class Player extends Human implements CommandSender, ChunkLoader, IPlayer{
 	/** @var Form[] */
 	protected $forms = [];
 
+	/** @var DDUISession|null */
+	private ?DDUISession $dduiSession = null;
+
 	/** @var float */
 	protected $lastRightClickTime = 0.0;
 	/** @var UseItemTransactionData|null */
@@ -530,6 +534,12 @@ class Player extends Human implements CommandSender, ChunkLoader, IPlayer{
 		$this->firstBatchConfigSequenceCompleted = $firstBatchConfigSequenceCompleted;
 	}
 
+	/**
+	 * @return DDUISession
+	 */
+	public function getDDUISession() : DDUISession{
+		return $this->dduiSession ??= new DDUISession();
+	}
 
 	/**
 	 * @return TranslationContainer|string
@@ -4552,6 +4562,11 @@ class Player extends Human implements CommandSender, ChunkLoader, IPlayer{
 			}
 			$this->interface->close($this, $notify ? $reason : "");
 			$this->sessionAdapter = null;
+
+			if($this->dduiSession !== null){
+				$this->dduiSession->dispose();
+				$this->dduiSession = null;
+			}
 
 			PermissionManager::getInstance()->unsubscribeFromPermission(Server::BROADCAST_CHANNEL_USERS, $this);
 			PermissionManager::getInstance()->unsubscribeFromPermission(Server::BROADCAST_CHANNEL_ADMINISTRATIVE, $this);

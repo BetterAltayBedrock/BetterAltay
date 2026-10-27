@@ -1,6 +1,5 @@
 <?php
 
-
 declare(strict_types=1);
 
 namespace pocketmine\command\defaults;
@@ -15,21 +14,51 @@ use pocketmine\network\mcpe\protocol\types\CommandParameter;
 use pocketmine\network\mcpe\protocol\types\hud\HudElement;
 use pocketmine\network\mcpe\protocol\types\hud\HudVisibility;
 use pocketmine\Player;
+use function array_keys;
+use function array_merge;
 use function count;
+use function strtolower;
 
 class HudCommand extends VanillaCommand{
 
+	/** @var array<string, int[]> */
+	private const SINGLE_ELEMENT_MAP = [
+		"air_bubbles" => [HudElement::AIR_BUBBLES],
+		"armor" => [HudElement::ARMOR],
+		"crosshair" => [HudElement::CROSSHAIR],
+		"health" => [HudElement::HEALTH],
+		"horse_health" => [HudElement::VEHICLE_HEALTH],
+		"hotbar" => [HudElement::HOTBAR],
+		"hunger" => [HudElement::FOOD],
+		"item_text" => [HudElement::ITEM_TEXT_POPUP],
+		"paperdoll" => [HudElement::PAPER_DOLL],
+		"progress_bar" => [HudElement::XP],
+		"status_effects" => [HudElement::STATUS_EFFECTS],
+		"tooltips" => [HudElement::TOOLTIPS],
+		"touch_controls" => [HudElement::TOUCH_CONTROLS],
+	];
+
+	/** @var array<string, int[]> */
+	private array $elementMap;
+
 	public function __construct(string $name){
+		$this->elementMap = array_merge(self::SINGLE_ELEMENT_MAP, [
+			"all" => array_merge(...array_values(self::SINGLE_ELEMENT_MAP))
+		]);
+
 		parent::__construct(
 			$name,
-			"Changes the visibility of hud elements.",
-			"/hud <target: target> <visible: HudVisibility> [hud_element: HudElement]", [], [
+			"Changes the visibility of HUD elements.",
+			"/hud <target: target> <visible: HudVisibility> [hud_element: HudElement]",
+			[],
 			[
-				new CommandParameter("player", AvailableCommandsPacket::ARG_TYPE_TARGET, false),
-				new CommandParameter("visible", AvailableCommandsPacket::ARG_TYPE_STRING, false, new CommandEnum("HudVisibility", ["hide", "reset"])),
-				new CommandParameter("hud_element", AvailableCommandsPacket::ARG_TYPE_STRING, true, new CommandEnum("HudElement", ["air_bubbles", "all", "armor", "crosshair", "health", "horse_health", "hotbar", "hunger", "item_text", "paperdoll", "progress_bar", "status_effects", "tooltips", "touch_controls"])),
+				[
+					new CommandParameter("player", AvailableCommandsPacket::ARG_TYPE_TARGET, false),
+					new CommandParameter("visible", AvailableCommandsPacket::ARG_TYPE_STRING, false, new CommandEnum("HudVisibility", ["hide", "reset"])),
+					new CommandParameter("hud_element", AvailableCommandsPacket::ARG_TYPE_STRING, true, new CommandEnum("HudElement", array_keys($this->elementMap))),
+				]
 			]
-		]);
+		);
 		$this->setPermission("altay.command.hud");
 	}
 
@@ -38,58 +67,33 @@ class HudCommand extends VanillaCommand{
 			return true;
 		}
 
-		if(!$sender instanceof Player){
-			$sender->sendMessage("This command must be executed as a player");
-			return false;
-		}
-
 		if(count($args) < 2){
 			throw new InvalidCommandSyntaxException();
 		}
 
-		$visibility = match ($args[1]) {
+		/** @var Player[] $targets */
+		$targets = CommandSelector::findTargets($sender, $args[0], Player::class);
+		if(count($targets) === 0){
+			$sender->sendMessage("§cNo targets matched selector.");
+			return true;
+		}
+
+		$visibility = match (strtolower($args[1])) {
 			"hide" => HudVisibility::HIDE,
 			"reset" => HudVisibility::RESET,
 			default => throw new InvalidCommandSyntaxException()
 		};
 
-		$hudElements = match ($args[2] ?? "all") {
-			"air_bubbles" => [HudElement::AIR_BUBBLES],
-			"armor" => [HudElement::ARMOR],
-			"crosshair" => [HudElement::CROSSHAIR],
-			"health" => [HudElement::HEALTH],
-			"horse_health" => [HudElement::VEHICLE_HEALTH],
-			"hotbar" => [HudElement::HOTBAR],
-			"hunger" => [HudElement::FOOD],
-			"item_text" => [HudElement::ITEM_TEXT_POPUP],
-			"paperdoll" => [HudElement::PAPER_DOLL],
-			"progress_bar" => [HudElement::XP],
-			"status_effects" => [HudElement::STATUS_EFFECTS],
-			"tooltips" => [HudElement::TOOLTIPS],
-			"touch_controls" => [HudElement::TOUCH_CONTROLS],
-			"all" => [
-				HudElement::AIR_BUBBLES,
-				HudElement::ARMOR,
-				HudElement::CROSSHAIR,
-				HudElement::HEALTH,
-				HudElement::VEHICLE_HEALTH,
-				HudElement::HOTBAR,
-				HudElement::FOOD,
-				HudElement::PAPER_DOLL,
-				HudElement::XP,
-				HudElement::TOOLTIPS,
-				HudElement::TOUCH_CONTROLS,
-				HudElement::STATUS_EFFECTS,
-				HudElement::ITEM_TEXT_POPUP,
-			],
-			default => throw new InvalidCommandSyntaxException()
-		};
+		$elementKey = strtolower($args[2] ?? "all");
+
+		if(!isset($this->elementMap[$elementKey])){
+			throw new InvalidCommandSyntaxException();
+		}
 
 		$pk = new SetHudPacket();
-		$pk->hudElements = $hudElements;
+		$pk->hudElements = $this->elementMap[$elementKey];
 		$pk->visibility = $visibility;
-		/** @var Player[] $targets */
-		$targets = CommandSelector::findTargets($sender, $args[0], Player::class);
+
 		$sender->getServer()->broadcastPacket($targets, $pk);
 
 		$sender->sendMessage("Hud command successfully executed");
