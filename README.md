@@ -48,7 +48,7 @@ To get started with BetterAltay, follow these steps:
 
 1. **Download the latest `BetterAltay.phar` file** from the [Releases](https://github.com/BetterAltayBedrock/BetterAltay/releases) page.
 2. **Download the `start.sh`, `start.cmd`, or `start.ps1`** from this repository and place it in the same directory as the `BetterAltay.phar` file.
-3. **Obtain the PHP binaries** from [Benedikt05/PHP-Binaries](https://github.com/BetterAltayBedrock/PHP-Binaries-Releases) and extract them to your server directory.
+3. **Obtain the PHP binaries** from [Benedikt05/PHP-Binaries](https://github.com/BetterAltayBedrock/PHP-Binaries/releases/tag/pm3-php-8.1-latest) and extract them to your server directory.
 4. **Run the server** using `start.sh` (Linux/macOS) or `start.cmd` (Windows).
 
 ---
