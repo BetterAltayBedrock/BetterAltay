@@ -112,6 +112,14 @@ class RakLibInterface implements ServerInstance, AdvancedSourceInterface{
 		$this->network = $network;
 	}
 
+	/**
+	 * RakLib carries its packets over plain UDP, so the Minecraft-layer handshake is the only protection against
+	 * session theft.
+	 */
+	public function isTransportEncrypted() : bool{
+		return false;
+	}
+
 	public function process() : void{
 		while($this->interface->handlePacket()){
 		}

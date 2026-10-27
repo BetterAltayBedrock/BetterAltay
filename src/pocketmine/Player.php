@@ -222,6 +222,8 @@ use pocketmine\network\mcpe\protocol\UpdateAttributesPacket;
 use pocketmine\network\mcpe\protocol\UpdateBlockPacket;
 use pocketmine\network\mcpe\protocol\VoxelShapesPacket;
 use pocketmine\network\SourceInterface;
+use pocketmine\network\TransportIdentityException;
+use pocketmine\network\TransportIdentityKey;
 use pocketmine\permission\PermissibleBase;
 use pocketmine\permission\PermissionAttachment;
 use pocketmine\permission\PermissionAttachmentInfo;
@@ -340,6 +342,11 @@ class Player extends Human implements CommandSender, ChunkLoader, IPlayer{
 	private $batchedPackets = [];
 
 	private ?EncryptionContext $cipher = null;
+
+	/**
+	 * Identity the transport layer proved for this connection, if it authenticates its clients.
+	 */
+	private ?TransportIdentityKey $transportIdentityKey = null;
 
 	/**
 	 * @var int
@@ -2392,7 +2399,22 @@ class Player extends Human implements CommandSender, ChunkLoader, IPlayer{
 			throw new AssumptionFailedError("We should never have reached here if the key is invalid");
 		}
 
-		if(EncryptionContext::$ENABLED){
+		/*
+		 * Authenticated logins require the key the connection proved to the transport, to prevent replay attacks;
+		 * unauthenticated logins carry no verified identity to impersonate, so there is nothing to bind.
+		 */
+		if($signedByMojang && $this->transportIdentityKey !== null){
+			try{
+				$this->transportIdentityKey->verify($identityPublicKey);
+			}catch(TransportIdentityException $e){
+				$this->server->getLogger()->warning($this->getName() . " failed the transport identity check: " . $e->getMessage());
+				$this->close("", $this->server->getLanguage()->translateString("pocketmine.disconnect.invalidSession", [$e->getMessage()]));
+
+				return;
+			}
+		}
+
+		if(EncryptionContext::$ENABLED && !$this->interface->isTransportEncrypted()){
 			$this->server->getAsyncPool()->submitTask(new PrepareEncryptionTask(
 				$identityPublicKey,
 				function(string $encryptionKey, string $handshakeJwt) : void{
@@ -4182,6 +4204,13 @@ class Player extends Human implements CommandSender, ChunkLoader, IPlayer{
 	 */
 	public function getCipher() : ?EncryptionContext{
 		return $this->cipher;
+	}
+
+	/**
+	 * @internal Called by the network interface when the transport proves the client's identity for this connection.
+	 */
+	public function setTransportIdentityKey(?TransportIdentityKey $transportIdentityKey) : void{
+		$this->transportIdentityKey = $transportIdentityKey;
 	}
 
 	/**
