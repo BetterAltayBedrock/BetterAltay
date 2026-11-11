@@ -30,5 +30,7 @@ class CommandOutputMessage{
 	public $messageId;
 	/** @var string[] */
 	public $parameters = [];
+	/** @var string|null */
+	public $rawMessage = null;
 
 }

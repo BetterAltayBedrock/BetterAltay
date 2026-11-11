@@ -27,6 +27,7 @@ namespace pocketmine\network\mcpe\protocol;
 
 use pocketmine\network\mcpe\NetworkSession;
 use pocketmine\network\mcpe\protocol\types\Experiments;
+use pocketmine\network\mcpe\protocol\types\resourcepacks\EditorPackType;
 use pocketmine\resourcepacks\ResourcePack;
 use function count;
 
@@ -38,7 +39,8 @@ class ResourcePackStackPacket extends DataPacket{
 	public array $resourcePackStack = [];
 	public string $baseGameVersion = ProtocolInfo::MINECRAFT_VERSION_NETWORK;
 	public Experiments $experiments;
-	public bool $includeEditorPacks = false;
+	/** @see EditorPackType */
+	public int $editorPackTypes = EditorPackType::NONE;
 
 	protected function decodePayload() : void{
 		$this->mustAccept = $this->getBool();
@@ -52,7 +54,7 @@ class ResourcePackStackPacket extends DataPacket{
 
 		$this->baseGameVersion = $this->getString();
 		$this->experiments = Experiments::read($this);
-		$this->includeEditorPacks = $this->getBool();
+		$this->editorPackTypes = $this->getByte();
 	}
 
 	protected function encodePayload() : void{
@@ -67,7 +69,7 @@ class ResourcePackStackPacket extends DataPacket{
 
 		$this->putString($this->baseGameVersion);
 		$this->experiments->write($this);
-		$this->putBool($this->includeEditorPacks);
+		$this->putByte($this->editorPackTypes);
 	}
 
 	public function handle(NetworkSession $session) : bool{

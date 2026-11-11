@@ -42,6 +42,7 @@ class CommandOutputPacket extends DataPacket{
 	public CommandOriginData $originData;
 	public string $outputType;
 	public int $successCount;
+	/** @var CommandOutputMessage[] */
 	public array $messages = [];
 	public string $data;
 
@@ -68,6 +69,8 @@ class CommandOutputPacket extends DataPacket{
 		for($i = 0, $size = $this->getUnsignedVarInt(); $i < $size; ++$i){
 			$message->parameters[] = $this->getString();
 		}
+
+		$message->rawMessage = $this->readOptional(fn() => $this->getString());
 
 		return $message;
 	}
@@ -98,6 +101,8 @@ class CommandOutputPacket extends DataPacket{
 		foreach($message->parameters as $parameter){
 			$this->putString($parameter);
 		}
+
+		$this->writeOptional($message->rawMessage, fn(string $rawMessage) => $this->putString($rawMessage));
 	}
 
 	public function handle(NetworkSession $session) : bool{

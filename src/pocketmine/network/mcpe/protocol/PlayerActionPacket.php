@@ -66,6 +66,8 @@ class PlayerActionPacket extends DataPacket{
 	public const ACTION_STOP_CRAWLING = 33;
 	public const ACTION_START_FLYING = 34;
 	public const ACTION_STOP_FLYING = 35;
+	public const ACTION_START_USING_ITEM = 37;
+	public const ACTION_SWAP_OFFHAND = 38;
 
 	public int $entityRuntimeId;
 	public int $action;

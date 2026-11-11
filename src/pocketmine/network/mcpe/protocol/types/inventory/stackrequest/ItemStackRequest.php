@@ -57,12 +57,7 @@ final class ItemStackRequest{
 	public function getFilterStringCause() : int{ return $this->filterStringCause; }
 
 	private static function readAction(NetworkBinaryStream $in, int $outerTypeId) : ItemStackRequestAction{
-		$innerTypeId = $in->getByte();
-		$expectedInner = ItemStackRequestActionType::INNER_TYPES[$outerTypeId] ?? null;
-		if($expectedInner === null || $expectedInner !== $innerTypeId){
-			throw new UnexpectedValueException("Unhandled item stack request action type $outerTypeId (inner $innerTypeId)");
-		}
-		switch($innerTypeId){
+		switch($outerTypeId){
 			case ItemStackRequestActionType::TAKE:
 				return TakeStackRequestAction::read($in);
 			case ItemStackRequestActionType::PLACE:
@@ -91,8 +86,12 @@ final class ItemStackRequest{
 				return CreativeCreateStackRequestAction::read($in);
 			case ItemStackRequestActionType::CRAFTING_RECIPE_OPTIONAL:
 				return CraftRecipeOptionalStackRequestAction::read($in);
+			case ItemStackRequestActionType::CRAFTING_GRINDSTONE:
+				return GrindstoneStackRequestAction::read($in);
 			case ItemStackRequestActionType::CRAFTING_LOOM:
 				return LoomStackRequestAction::read($in);
+			case ItemStackRequestActionType::CRAFTING_DISC_PRESS:
+				return CraftDiscPressStackRequestAction::read($in);
 			case ItemStackRequestActionType::CRAFTING_NON_IMPLEMENTED_DEPRECATED_ASK_TY_LAING:
 				return DeprecatedCraftingNonImplementedStackRequestAction::read($in);
 			case ItemStackRequestActionType::CRAFTING_RESULTS_DEPRECATED_ASK_TY_LAING:
@@ -107,6 +106,11 @@ final class ItemStackRequest{
 		$actions = [];
 		for($i = 0, $len = $in->getUnsignedVarInt(); $i < $len; ++$i){
 			$outerTypeId = $in->getUnsignedVarInt();
+			$innerTypeId = $in->getByte();
+			$expectedInner = ItemStackRequestActionType::INNER_TYPES[$outerTypeId] ?? null;
+			if($expectedInner === null || $expectedInner !== $innerTypeId){
+				throw new UnexpectedValueException("Unhandled item stack request action type $outerTypeId (inner $innerTypeId)");
+			}
 			$actions[] = self::readAction($in, $outerTypeId);
 		}
 		$filterStrings = [];
@@ -121,7 +125,8 @@ final class ItemStackRequest{
 		$out->writeGenericTypeNetworkId($this->requestId);
 		$out->putUnsignedVarInt(count($this->actions));
 		foreach($this->actions as $action){
-			$out->putByte($action::getTypeId());
+			$out->putUnsignedVarInt($action::getTypeId());
+			$out->putByte(ItemStackRequestActionType::INNER_TYPES[$action::getTypeId()]);
 			$action->write($out);
 		}
 		$out->putUnsignedVarInt(count($this->filterStrings));

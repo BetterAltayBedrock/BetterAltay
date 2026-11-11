@@ -38,12 +38,14 @@ class StructureBlockUpdatePacket extends DataPacket/* implements ServerboundPack
 	public StructureEditorData $structureEditorData;
 	public bool $isPowered;
 	public bool $waterlogged;
+	public bool $keepStructureVoid = false;
 
 	protected function decodePayload(){
 		$this->getBlockPosition($this->x, $this->y, $this->z);
 		$this->structureEditorData = $this->getStructureEditorData();
 		$this->isPowered = $this->getBool();
 		$this->waterlogged = $this->getBool();
+		$this->keepStructureVoid = $this->getBool();
 	}
 
 	protected function encodePayload(){
@@ -51,6 +53,7 @@ class StructureBlockUpdatePacket extends DataPacket/* implements ServerboundPack
 		$this->putStructureEditorData($this->structureEditorData);
 		$this->putBool($this->isPowered);
 		$this->putBool($this->waterlogged);
+		$this->putBool($this->keepStructureVoid);
 	}
 
 	public function handle(NetworkSession $session) : bool{

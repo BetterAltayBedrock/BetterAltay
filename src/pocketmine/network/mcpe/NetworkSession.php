@@ -30,7 +30,6 @@ use pocketmine\network\mcpe\protocol\AddBehaviorTreePacket;
 use pocketmine\network\mcpe\protocol\AddItemActorPacket;
 use pocketmine\network\mcpe\protocol\AddPaintingPacket;
 use pocketmine\network\mcpe\protocol\AddPlayerPacket;
-use pocketmine\network\mcpe\protocol\AddVolumeEntityPacket;
 use pocketmine\network\mcpe\protocol\AnimateEntityPacket;
 use pocketmine\network\mcpe\protocol\AnimatePacket;
 use pocketmine\network\mcpe\protocol\AnvilDamagePacket;
@@ -47,6 +46,7 @@ use pocketmine\network\mcpe\protocol\BossEventPacket;
 use pocketmine\network\mcpe\protocol\CameraPacket;
 use pocketmine\network\mcpe\protocol\CameraShakePacket;
 use pocketmine\network\mcpe\protocol\ChangeDimensionPacket;
+use pocketmine\network\mcpe\protocol\ChatPacket;
 use pocketmine\network\mcpe\protocol\ChunkRadiusUpdatedPacket;
 use pocketmine\network\mcpe\protocol\ClientboundCloseFormPacket;
 use pocketmine\network\mcpe\protocol\ClientboundControlSchemeSetPacket;
@@ -56,6 +56,8 @@ use pocketmine\network\mcpe\protocol\ClientboundDataDrivenUIShowScreenPacket;
 use pocketmine\network\mcpe\protocol\ClientboundDataStorePacket;
 use pocketmine\network\mcpe\protocol\ClientboundDebugRendererPacket;
 use pocketmine\network\mcpe\protocol\ClientboundMapItemDataPacket;
+use pocketmine\network\mcpe\protocol\ClientboundMusicPlaybackFailurePacket;
+use pocketmine\network\mcpe\protocol\ClientboundOnlineMusicPlaybackResponsePacket;
 use pocketmine\network\mcpe\protocol\ClientboundTextureShiftPacket;
 use pocketmine\network\mcpe\protocol\ClientboundUpdateSoundDataPacket;
 use pocketmine\network\mcpe\protocol\ClientCacheBlobStatusPacket;
@@ -138,6 +140,7 @@ use pocketmine\network\mcpe\protocol\PlayerListPacket;
 use pocketmine\network\mcpe\protocol\PlayerLocationPacket;
 use pocketmine\network\mcpe\protocol\PlayerSkinPacket;
 use pocketmine\network\mcpe\protocol\PlayerStartItemCooldownPacket;
+use pocketmine\network\mcpe\protocol\PlayerToggleArmorVisibilityRequestPacket;
 use pocketmine\network\mcpe\protocol\PlaySoundPacket;
 use pocketmine\network\mcpe\protocol\PlayStatusPacket;
 use pocketmine\network\mcpe\protocol\PositionTrackingDBClientRequestPacket;
@@ -146,7 +149,6 @@ use pocketmine\network\mcpe\protocol\PurchaseReceiptPacket;
 use pocketmine\network\mcpe\protocol\RecordStartedPacket;
 use pocketmine\network\mcpe\protocol\RemoveActorPacket;
 use pocketmine\network\mcpe\protocol\RemoveObjectivePacket;
-use pocketmine\network\mcpe\protocol\RemoveVolumeEntityPacket;
 use pocketmine\network\mcpe\protocol\RequestAbilityPacket;
 use pocketmine\network\mcpe\protocol\RequestChunkRadiusPacket;
 use pocketmine\network\mcpe\protocol\RequestNetworkSettingsPacket;
@@ -162,6 +164,7 @@ use pocketmine\network\mcpe\protocol\ScriptMessagePacket;
 use pocketmine\network\mcpe\protocol\PrimitiveShapesPacket;
 use pocketmine\network\mcpe\protocol\ServerboundDataDrivenScreenClosedPacket;
 use pocketmine\network\mcpe\protocol\ServerboundDataStorePacket;
+use pocketmine\network\mcpe\protocol\ServerboundRequestOnlineMusicPlaybackPacket;
 use pocketmine\network\mcpe\protocol\ServerSettingsRequestPacket;
 use pocketmine\network\mcpe\protocol\ServerSettingsResponsePacket;
 use pocketmine\network\mcpe\protocol\ServerStatsPacket;
@@ -819,14 +822,6 @@ abstract class NetworkSession{
 		return false;
 	}
 
-	public function handleAddVolumeEntity(AddVolumeEntityPacket $packet) : bool{
-		return false;
-	}
-
-	public function handleRemoveVolumeEntity(RemoveVolumeEntityPacket $packet) : bool{
-		return false;
-	}
-
 	public function handleSimulationType(SimulationTypePacket $packet) : bool{
 		return false;
 	}
@@ -1004,6 +999,26 @@ abstract class NetworkSession{
 	}
 
 	public function handleRecordStarted(RecordStartedPacket $packet) : bool{
+		return false;
+	}
+
+	public function handleChat(ChatPacket $packet) : bool{
+		return false;
+	}
+
+	public function handleServerboundRequestOnlineMusicPlayback(ServerboundRequestOnlineMusicPlaybackPacket $packet) : bool{
+		return false;
+	}
+
+	public function handleClientboundOnlineMusicPlaybackResponse(ClientboundOnlineMusicPlaybackResponsePacket $packet) : bool{
+		return false;
+	}
+
+	public function handlePlayerToggleArmorVisibilityRequest(PlayerToggleArmorVisibilityRequestPacket $packet) : bool{
+		return false;
+	}
+
+	public function handleClientboundMusicPlaybackFailure(ClientboundMusicPlaybackFailurePacket $packet) : bool{
 		return false;
 	}
 

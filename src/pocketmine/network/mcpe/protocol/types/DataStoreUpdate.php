@@ -15,7 +15,6 @@ declare(strict_types=1);
 namespace pocketmine\network\mcpe\protocol\types;
 
 use pocketmine\network\mcpe\NetworkBinaryStream;
-use UnexpectedValueException;
 
 /**
  * @see ServerboundDataStorePacket&ClientboundDataStorePacket
@@ -25,11 +24,8 @@ final class DataStoreUpdate extends DataStore{
 
 	public function __construct(
 		private string $name,
-		private string $property,
-		private string $path,
 		private DataStoreValue $data,
 		private int $updateCount,
-		private int $pathUpdateCount,
 	){
 	}
 
@@ -39,48 +35,25 @@ final class DataStoreUpdate extends DataStore{
 
 	public function getName() : string{ return $this->name; }
 
-	public function getProperty() : string{ return $this->property; }
-
-	public function getPath() : string{ return $this->path; }
-
 	public function getData() : DataStoreValue{ return $this->data; }
 
 	public function getUpdateCount() : int{ return $this->updateCount; }
 
-	public function getPathUpdateCount() : int{ return $this->pathUpdateCount; }
-
 	public static function read(NetworkBinaryStream $in) : self{
 		$name = $in->getString();
-		$property = $in->getString();
-		$path = $in->getString();
-
-		$data = match ($in->getUnsignedVarInt()) {
-			DataStoreValueType::DOUBLE => DoubleDataStoreValue::read($in),
-			DataStoreValueType::BOOL => BoolDataStoreValue::read($in),
-			DataStoreValueType::STRING => StringDataStoreValue::read($in),
-			default => throw new UnexpectedValueException("Unknown DataStoreValueType"),
-		};
-
+		$data = DataStoreValue::readWithType($in);
 		$updateCount = $in->getLInt();
-		$pathUpdateCount = $in->getLInt();
 
 		return new self(
 			$name,
-			$property,
-			$path,
 			$data,
 			$updateCount,
-			$pathUpdateCount,
 		);
 	}
 
 	public function write(NetworkBinaryStream $out) : void{
 		$out->putString($this->name);
-		$out->putString($this->property);
-		$out->putString($this->path);
-		$out->putUnsignedVarInt($this->data->getTypeId());
-		$this->data->write($out);
+		$this->data->writeWithType($out);
 		$out->putLInt($this->updateCount);
-		$out->putLInt($this->pathUpdateCount);
 	}
 }

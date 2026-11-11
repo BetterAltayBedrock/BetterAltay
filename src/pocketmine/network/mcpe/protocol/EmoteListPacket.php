@@ -27,6 +27,7 @@ namespace pocketmine\network\mcpe\protocol;
 
 use pocketmine\network\mcpe\NetworkSession;
 use pocketmine\utils\UUID;
+use UnexpectedValueException;
 use function count;
 
 class EmoteListPacket extends DataPacket/* implements ClientboundPacket*/
@@ -56,7 +57,11 @@ class EmoteListPacket extends DataPacket/* implements ClientboundPacket*/
 	protected function decodePayload() : void{
 		$this->playerEntityRuntimeId = $this->getEntityRuntimeId();
 		$this->emoteIds = [];
-		for($i = 0, $len = $this->getUnsignedVarInt(); $i < $len; ++$i){
+		$emoteCount = $this->getUnsignedVarInt();
+		if($emoteCount > 6){
+			throw new UnexpectedValueException("Too many emotes in EmoteListPacket");
+		}
+		for($i = 0; $i < $emoteCount; ++$i){
 			$this->emoteIds[] = $this->getUUID();
 		}
 	}

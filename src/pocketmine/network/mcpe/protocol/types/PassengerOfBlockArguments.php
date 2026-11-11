@@ -15,7 +15,8 @@ final class PassengerOfBlockArguments{
 		private float $rotation,
 		private float $rotationLimit,
 		/** @see PassengerOfBlockEmoteType */
-		private int $emoteType
+		private int $emoteType,
+		private int $blockType
 	){
 	}
 
@@ -29,6 +30,8 @@ final class PassengerOfBlockArguments{
 
 	public function getEmoteType() : int{ return $this->emoteType; }
 
+	public function getBlockType() : int{ return $this->blockType; }
+
 	public static function read(NetworkBinaryStream $in) : self{
 		$x = $y = $z = 0;
 		$in->getBlockPosition($x, $y, $z);
@@ -37,8 +40,9 @@ final class PassengerOfBlockArguments{
 		$rotation = $in->getLFloat();
 		$rotationLimit = $in->getLFloat();
 		$emoteType = $in->getByte();
+		$blockType = $in->getLLong();
 
-		return new self($blockPosition, $offset, $rotation, $rotationLimit, $emoteType);
+		return new self($blockPosition, $offset, $rotation, $rotationLimit, $emoteType, $blockType);
 	}
 
 	public function write(NetworkBinaryStream $out) : void{
@@ -47,5 +51,6 @@ final class PassengerOfBlockArguments{
 		$out->putLFloat($this->rotation);
 		$out->putLFloat($this->rotationLimit);
 		$out->putByte($this->emoteType);
+		$out->putLLong($this->blockType);
 	}
 }

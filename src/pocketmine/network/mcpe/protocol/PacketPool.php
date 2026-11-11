@@ -185,8 +185,6 @@ class PacketPool{
 		static::registerPacket(new ItemRegistryPacket());
 		static::registerPacket(new ClientboundDebugRendererPacket());
 		static::registerPacket(new SyncActorPropertyPacket());
-		static::registerPacket(new AddVolumeEntityPacket());
-		static::registerPacket(new RemoveVolumeEntityPacket());
 		static::registerPacket(new SimulationTypePacket());
 		static::registerPacket(new NpcDialoguePacket());
 		static::registerPacket(new EduUriResourcePacket());
@@ -231,6 +229,11 @@ class PacketPool{
 		static::registerPacket(new ClientboundUpdateSoundDataPacket());
 		static::registerPacket(new SetPlayerFurnaceOptionsPacket());
 		static::registerPacket(new RecordStartedPacket());
+		static::registerPacket(new ChatPacket());
+		static::registerPacket(new ServerboundRequestOnlineMusicPlaybackPacket());
+		static::registerPacket(new ClientboundOnlineMusicPlaybackResponsePacket());
+		static::registerPacket(new PlayerToggleArmorVisibilityRequestPacket());
+		static::registerPacket(new ClientboundMusicPlaybackFailurePacket());
 	}
 
 	/**

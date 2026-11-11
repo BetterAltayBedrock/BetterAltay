@@ -26,6 +26,7 @@ namespace pocketmine\network\mcpe\protocol;
 #include <rules/DataPacket.h>
 
 use pocketmine\network\mcpe\NetworkSession;
+use UnexpectedValueException;
 use function count;
 
 class PlayerFogPacket extends DataPacket/* implements ClientboundPacket*/
@@ -57,7 +58,11 @@ class PlayerFogPacket extends DataPacket/* implements ClientboundPacket*/
 
 	protected function decodePayload() : void{
 		$this->fogLayers = [];
-		for($i = 0, $len = $this->getUnsignedVarInt(); $i < $len; ++$i){
+		$fogCount = $this->getUnsignedVarInt();
+		if($fogCount > 16){
+			throw new UnexpectedValueException("Too many fog layers in PlayerFogPacket");
+		}
+		for($i = 0; $i < $fogCount; ++$i){
 			$this->fogLayers[] = $this->getString();
 		}
 	}

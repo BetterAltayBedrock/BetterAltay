@@ -56,6 +56,7 @@ class TextPacket extends DataPacket{
 	public string $message;
 	/** @var string[] */
 	public array $parameters = [];
+	public bool $queue = false;
 	public string $xboxUserId = "";
 	public string $platformChatId = "";
 	public ?string $filteredMessage = null;
@@ -82,6 +83,7 @@ class TextPacket extends DataPacket{
 				for($i = 0; $i < $count; ++$i){
 					$this->parameters[] = $this->getString();
 				}
+				$this->queue = $this->getBool();
 				break;
 		}
 
@@ -117,6 +119,7 @@ class TextPacket extends DataPacket{
 				foreach($this->parameters as $p){
 					$this->putString($p);
 				}
+				$this->putBool($this->queue);
 				break;
 		}
 

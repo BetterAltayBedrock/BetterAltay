@@ -9,9 +9,9 @@ use pocketmine\Player;
 use pocketmine\network\mcpe\protocol\types\BoolDataStoreValue;
 use pocketmine\network\mcpe\protocol\types\DoubleDataStoreValue;
 use pocketmine\network\mcpe\protocol\types\StringDataStoreValue;
+use pocketmine\network\mcpe\protocol\types\DataStoreRemoval;
 use pocketmine\network\mcpe\protocol\types\DataStoreUpdate;
 use pocketmine\network\mcpe\protocol\types\DataStoreChange;
-use pocketmine\network\mcpe\protocol\types\DynamicDataStoreValue;
 use pocketmine\network\mcpe\protocol\ClientboundDataDrivenUICloseScreenPacket;
 use pocketmine\network\mcpe\protocol\ClientboundDataDrivenUIShowScreenPacket;
 use pocketmine\network\mcpe\protocol\ClientboundDataStorePacket;
@@ -25,11 +25,12 @@ use function is_int;
 use function is_string;
 use function is_bool;
 use function is_finite;
-use function array_pop;
+use function array_keys;
 use function array_merge;
 use function array_values;
 use function preg_replace;
-use function explode;
+use function str_starts_with;
+use function substr;
 
 class DDUI{
 	
@@ -215,23 +216,50 @@ class DDUI{
 		return "custom_form_data_" . $this->id;
 	}
 
-    private function snapshot() : \stdClass{
-        $root = new \stdClass();
+    private function storePrefix() : string{
+        return "minecraft:" . $this->property();
+    }
+
+    private static function storeNameForProperty(string $property, string $path) : string{
+        return "minecraft:" . $property . "." . (preg_replace("/\.(\d+)(?=\.|$)/", "[$1]", $path) ?? $path);
+    }
+
+    private function storeName(string $path) : string{
+        return self::storeNameForProperty($this->property(), $path);
+    }
+
+    private function pathFromStoreName(string $name) : ?string{
+        $prefix = $this->storePrefix() . ".";
+        $propertyPrefix = $this->property() . ".";
+
+        if(str_starts_with($name, $prefix)){
+            $path = substr($name, strlen($prefix));
+        }elseif(str_starts_with($name, $propertyPrefix)){
+            $path = substr($name, strlen($propertyPrefix));
+        }else{
+            return null;
+        }
+
+        return preg_replace("/\[(\d+)]/", ".$1", $path);
+    }
+
+    /** @return DataStoreChange[] */
+    private function createDataStoreChanges() : array{
+        $changes = [];
 
         foreach($this->fields as $path => $value){
-            $parts = explode(".", $path);
-			$leaf = array_pop($parts);
-			$node = $root;
+            $value = self::value($value);
+            $data = match(true){
+                is_bool($value) => new BoolDataStoreValue($value),
+                is_string($value) => new StringDataStoreValue($value),
+                is_int($value), is_float($value) => new DoubleDataStoreValue((float) $value),
+                default => throw new \InvalidArgumentException("DDUI values must be scalar")
+            };
 
-            foreach($parts as $part){
-                if(!isset($node->{$part})){
-					$node->{$part} = new \stdClass();
-				}
-                $node = $node->{$part};
-            }
-            $node->{$leaf} = self::value($value);
+            $changes[] = new DataStoreChange($this->storeName($path), 1, $data);
         }
-        return $root;
+
+        return $changes;
     }
 
     public function show() : void{
@@ -250,7 +278,7 @@ class DDUI{
         $this->counts = [];
 
         try{
-            $this->player->dataPacket(ClientboundDataStorePacket::create([new DataStoreChange("minecraft", $this->property(), 1, new DynamicDataStoreValue($this->snapshot()))]));
+            $this->player->dataPacket(ClientboundDataStorePacket::create($this->createDataStoreChanges()));
             $this->player->dataPacket(ClientboundDataDrivenUIShowScreenPacket::create("minecraft:custom_form", $this->id, $this->id));
 
             foreach($this->fields as $path => $value){
@@ -281,16 +309,19 @@ class DDUI{
 
         $this->counts[$path] = ($this->counts[$path] ?? 0) + 1;
 
-        $wirePath = preg_replace("/\.(\d+)(?=\.|$)/", "[$1]", $path);
-        $this->player->dataPacket(ClientboundDataStorePacket::create([new DataStoreUpdate("minecraft", $this->property(), $wirePath, $data, 1, $this->counts[$path])]));
+        $this->player->dataPacket(ClientboundDataStorePacket::create([new DataStoreUpdate($this->storeName($path), $data, $this->counts[$path])]));
     }
 
     public function handleUpdate(DataStoreUpdate $update) : void{
-        if($this->id === null || $update->getName() !== "minecraft" || $update->getProperty() !== $this->property() || $update->getUpdateCount() !== 1){
+        if($this->id === null){
 			return;
 		}
 
-        $path = preg_replace("/\[(\d+)]/", ".$1", $update->getPath());
+        $path = $this->pathFromStoreName($update->getName());
+        if($path === null){
+            return;
+        }
+
         $input = $this->inputs[$path] ?? null; $button = $this->buttons[$path] ?? null;
 
         if($input === null && $button === null){
@@ -303,7 +334,7 @@ class DDUI{
 			return;
 		}
 
-        $counter = $update->getPathUpdateCount();
+        $counter = $update->getUpdateCount();
 
         if($counter <= ($this->counts[$path] ?? 0)){
 			return;
@@ -369,7 +400,13 @@ class DDUI{
     }
 
     private function clearProperty(string $property) : void{
-        $this->player->dataPacket(ClientboundDataStorePacket::create([new DataStoreChange("minecraft", $property, 2, new DynamicDataStoreValue(null))]));
+        $removals = [new DataStoreRemoval("minecraft:" . $property)];
+
+        foreach(array_keys($this->fields) as $path){
+            $removals[] = new DataStoreRemoval(self::storeNameForProperty($property, $path));
+        }
+
+        $this->player->dataPacket(ClientboundDataStorePacket::create($removals));
     }
 
     public function release() : void{

@@ -65,5 +65,6 @@ interface WindowTypes{
 	public const CHEST_BOAT = 34;
 	public const DECORATED_POT = 35;
 	public const CRAFTER = 36;
+	public const DISC_PRESS = 38;
 
 }

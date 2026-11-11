@@ -47,8 +47,10 @@ final class DisconnectFailReason{
 	public const SERVER_NOT_FOUND = 33;
 	public const OUTDATED_SERVER = 34;
 	public const OUTDATED_CLIENT = 35;
+	public const NO_PREMIUM_PLATFORM = 36;
 	public const MULTIPLAYER_DISABLED = 37;
 	public const NO_WIFI = 38;
+	public const WORLD_CORRUPTION = 39;
 	public const NO_REASON = 40;
 	public const DISCONNECTED = 41;
 	public const INVALID_PLAYER = 42;
@@ -71,10 +73,14 @@ final class DisconnectFailReason{
 	public const INCOMPATIBLE_PACK = 59;
 	public const OUT_OF_STORAGE = 60;
 	public const INVALID_LEVEL = 61;
+	public const DISCONNECT_PACKET = 62;
 	public const BLOCK_MISMATCH = 63;
 	public const INVALID_HEIGHTS = 64;
 	public const INVALID_WIDTHS = 65;
+	public const CONNECTION_LOST = 66;
+	public const ZOMBIE_CONNECTION = 67;
 	public const SHUTDOWN = 68;
+	public const REASON_NOT_SET = 69;
 	public const LOADING_STATE_TIMEOUT = 70;
 	public const RESOURCE_PACK_LOADING_FAILED = 71;
 	public const SEARCHING_FOR_SESSION_LOADING_SCREEN_FAILED = 72;
@@ -94,6 +100,7 @@ final class DisconnectFailReason{
 	public const CONN_NEGOTIATION_TIMEOUT = 86;
 	public const CONN_INACTIVITY_TIMEOUT = 87;
 	public const STALE_CONNECTION_BEING_REPLACED = 88;
+	public const REALMS_SESSION_NOT_FOUND = 89;
 	public const BAD_PACKET = 90;
 	public const CONN_FAILED_TO_CREATE_OFFER = 91;
 	public const CONN_FAILED_TO_CREATE_ANSWER = 92;
@@ -113,6 +120,7 @@ final class DisconnectFailReason{
 	public const SERVER_SHUTDOWN = 106;
 	public const GAME_SETUP_CANCELLED = 107;
 	public const GAME_SETUP_FAILED = 108;
+	public const NO_VENUE = 109;
 	public const CONN_SIGNALING_SIGN_IN_FAILED = 110;
 	public const SESSION_ACCESS_DENIED = 111;
 	public const SERVICE_SIGN_IN_ISSUE = 112;
@@ -143,6 +151,25 @@ final class DisconnectFailReason{
 	public const NONCE_NOT_FOUND = 137;
 	public const NONCE_EXPIRED = 138;
 	public const NONCE_NOT_VALID = 139;
-	public const MAX_DISCONNECT_FAIL_REASON = 140;
+	public const HOST_DISCONNECTED = 140;
+	public const EDITOR_JOIN_INTENT_POLICY_FAILURE = 141;
+	public const NETHER_NET_IDENTITY_NOT_ALLOWED = 142;
+	public const INVALID_NAME = 143;
+	public const EXPIRED_TOKEN = 144;
+	public const HOST_ACCEPTS_NO_TYPE_OF_AUTH = 145;
+	public const NOT_AUTHENTICATED_FAST_FAIL = 146;
+	public const EDITOR_NOT_ALLOWED = 147;
+	public const MISSING_STRUCTURE_DATA = 148;
+	public const UNSUPPORTED_TRANSPORT = 149;
+	public const SUB_CLIENT_LOGIN_NOT_BOUND = 150;
+	public const SESSION_RUNTIME_ERROR = 151;
+	public const SESSION_INVALID_RESPONSE = 152;
+	public const SESSION_NETWORK_ERROR = 153;
+	public const SESSION_SERVICE_ERROR = 154;
+	public const SESSION_SERVICE_UNAVAILABLE = 155;
+	public const SESSION_THROTTLED = 156;
+	public const SESSION_REQUEST_REJECTED = 157;
+	public const SESSION_UNKNOWN_ERROR = 158;
+	public const MAX_DISCONNECT_FAIL_REASON = 159;
 
 }

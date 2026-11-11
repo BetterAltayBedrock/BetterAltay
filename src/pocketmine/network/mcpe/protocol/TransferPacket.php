@@ -27,6 +27,7 @@ namespace pocketmine\network\mcpe\protocol;
 
 use pocketmine\network\mcpe\NetworkSession;
 use pocketmine\network\mcpe\protocol\types\GatheringJoinInfo;
+use pocketmine\network\mcpe\protocol\types\TransferPlayerUIOptions;
 
 class TransferPacket extends DataPacket{
 	public const NETWORK_ID = ProtocolInfo::TRANSFER_PACKET;
@@ -35,12 +36,14 @@ class TransferPacket extends DataPacket{
 	public int $port = 19132;
 	public bool $reloadWorld = false; //always false
 	public ?GatheringJoinInfo $gatheringJoinInfo = null;
+	public ?TransferPlayerUIOptions $serverTransferSettings = null;
 
 	protected function decodePayload() : void{
 		$this->address = $this->getString();
 		$this->port = $this->getLShort();
 		$this->reloadWorld = $this->getBool();
-		$this->gatheringJoinInfo = $this->readOptional(fn(GatheringJoinInfo $gatheringJoinInfo) => GatheringJoinInfo::read($this));
+		$this->gatheringJoinInfo = $this->readOptional(fn() => GatheringJoinInfo::read($this));
+		$this->serverTransferSettings = $this->readOptional(fn() => TransferPlayerUIOptions::read($this));
 	}
 
 	protected function encodePayload() : void{
@@ -48,6 +51,7 @@ class TransferPacket extends DataPacket{
 		$this->putLShort($this->port);
 		$this->putBool($this->reloadWorld);
 		$this->writeOptional($this->gatheringJoinInfo, fn(GatheringJoinInfo $gatheringJoinInfo) => $gatheringJoinInfo->write($this));
+		$this->writeOptional($this->serverTransferSettings, fn(TransferPlayerUIOptions $settings) => $settings->write($this));
 	}
 
 	public function handle(NetworkSession $session) : bool{

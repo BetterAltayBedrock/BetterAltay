@@ -40,6 +40,7 @@ class PlaySoundPacket extends DataPacket{
 	public bool $bypassListenerRangeCheck = false;
 	public ?int $serverSoundHandle = null;
 	public ?float $playbackPositionSeconds = null;
+	public ?float $startDelaySeconds = null;
 
 	public static function create(
 		string $soundName,
@@ -51,7 +52,8 @@ class PlaySoundPacket extends DataPacket{
 		int $loopCount = 0,
 		bool $bypassListenerRangeCheck = false,
 		?int $serverSoundHandle = null,
-		?float $playbackPositionSeconds = null
+		?float $playbackPositionSeconds = null,
+		?float $startDelaySeconds = null
 	) : self{
 		$result = new self;
 		$result->soundName = $soundName;
@@ -64,6 +66,7 @@ class PlaySoundPacket extends DataPacket{
 		$result->bypassListenerRangeCheck = $bypassListenerRangeCheck;
 		$result->serverSoundHandle = $serverSoundHandle;
 		$result->playbackPositionSeconds = $playbackPositionSeconds;
+		$result->startDelaySeconds = $startDelaySeconds;
 
 		return $result;
 	}
@@ -80,6 +83,7 @@ class PlaySoundPacket extends DataPacket{
 		$this->bypassListenerRangeCheck = $this->getBool();
 		$this->serverSoundHandle = $this->readOptional(fn() => $this->getLLong());
 		$this->playbackPositionSeconds = $this->readOptional(fn() => $this->getLFloat());
+		$this->startDelaySeconds = $this->readOptional(fn() => $this->getLFloat());
 	}
 
 	protected function encodePayload() : void{
@@ -90,7 +94,8 @@ class PlaySoundPacket extends DataPacket{
 		$this->putVarInt($this->loopCount);
 		$this->putBool($this->bypassListenerRangeCheck);
 		$this->writeOptional($this->serverSoundHandle, fn(int $serverSoundHandle) => $this->putLLong($serverSoundHandle));
-		$this->writeOptional($this->playbackPositionSeconds, fn(int $playbackPositionSeconds) => $this->putLFloat($playbackPositionSeconds));
+		$this->writeOptional($this->playbackPositionSeconds, fn(float $playbackPositionSeconds) => $this->putLFloat($playbackPositionSeconds));
+		$this->writeOptional($this->startDelaySeconds, fn(float $startDelaySeconds) => $this->putLFloat($startDelaySeconds));
 	}
 
 	public function handle(NetworkSession $session) : bool{

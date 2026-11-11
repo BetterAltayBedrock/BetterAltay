@@ -24,9 +24,8 @@ final class DataStoreChange extends DataStore {
 
 	public function __construct(
 		private string $name,
-		private string $property,
 		private int $updateCount,
-		private DynamicDataStoreValue $data
+		private DataStoreValue $data
 	){}
 
 	public function getTypeId() : int{
@@ -35,22 +34,17 @@ final class DataStoreChange extends DataStore {
 
 	public function getName() : string{ return $this->name; }
 
-	public function getProperty() : string{ return $this->property; }
-
 	public function getUpdateCount() : int{ return $this->updateCount; }
 
-	public function getData() : DynamicDataStoreValue{ return $this->data; }
+	public function getData() : DataStoreValue{ return $this->data; }
 
 	public static function read(NetworkBinaryStream $in) : self{
 		$name = $in->getString();
-		$property = $in->getString();
 		$updateCount = $in->getLInt();
-
-		$data = DynamicDataStoreValue::read($in);
+		$data = DataStoreValue::readWithType($in);
 
 		return new self(
 			$name,
-			$property,
 			$updateCount,
 			$data,
 		);
@@ -58,8 +52,7 @@ final class DataStoreChange extends DataStore {
 
 	public function write(NetworkBinaryStream $out) : void{
 		$out->putString($this->name);
-		$out->putString($this->property);
 		$out->putLInt($this->updateCount);
-		$this->data->write($out);
+		$this->data->writeWithType($out);
 	}
 }

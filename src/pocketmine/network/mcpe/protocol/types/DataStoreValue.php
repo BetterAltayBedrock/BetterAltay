@@ -15,10 +15,25 @@ declare(strict_types=1);
 namespace pocketmine\network\mcpe\protocol\types;
 
 use pocketmine\network\mcpe\NetworkBinaryStream;
+use UnexpectedValueException;
 
 abstract class DataStoreValue{
 
 	abstract public function getTypeId() : int;
 
 	abstract public function write(NetworkBinaryStream $out) : void;
+
+	public static function readWithType(NetworkBinaryStream $in) : self{
+		return match($in->getUnsignedVarInt()){
+			DataStoreValueType::DOUBLE => DoubleDataStoreValue::read($in),
+			DataStoreValueType::BOOL => BoolDataStoreValue::read($in),
+			DataStoreValueType::STRING => StringDataStoreValue::read($in),
+			default => throw new UnexpectedValueException("Unknown DataStoreValueType"),
+		};
+	}
+
+	public function writeWithType(NetworkBinaryStream $out) : void{
+		$out->putUnsignedVarInt($this->getTypeId());
+		$this->write($out);
+	}
 }

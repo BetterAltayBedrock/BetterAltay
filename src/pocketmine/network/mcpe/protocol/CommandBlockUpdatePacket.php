@@ -49,6 +49,7 @@ class CommandBlockUpdatePacket extends DataPacket{
 	public bool $shouldTrackOutput;
 	public int $tickDelay;
 	public bool $executeOnFirstTick;
+	public bool $lastOutputIsRawMessage = false;
 
 	protected function decodePayload() : void{
 		$this->isBlock = $this->getBool();
@@ -71,6 +72,7 @@ class CommandBlockUpdatePacket extends DataPacket{
 		$this->shouldTrackOutput = $this->getBool();
 		$this->tickDelay = $this->getLInt();
 		$this->executeOnFirstTick = $this->getBool();
+		$this->lastOutputIsRawMessage = $this->getBool();
 	}
 
 	protected function encodePayload() : void{
@@ -93,6 +95,7 @@ class CommandBlockUpdatePacket extends DataPacket{
 		$this->putBool($this->shouldTrackOutput);
 		$this->putLInt($this->tickDelay);
 		$this->putBool($this->executeOnFirstTick);
+		$this->putBool($this->lastOutputIsRawMessage);
 	}
 
 	public function handle(NetworkSession $session) : bool{
