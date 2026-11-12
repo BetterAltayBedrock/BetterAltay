@@ -234,6 +234,8 @@ class PacketPool{
 		static::registerPacket(new ClientboundOnlineMusicPlaybackResponsePacket());
 		static::registerPacket(new PlayerToggleArmorVisibilityRequestPacket());
 		static::registerPacket(new ClientboundMusicPlaybackFailurePacket());
+		static::registerPacket(new VirtualContainerOpenPacket());
+		static::registerPacket(new VirtualContainerClosePacket());
 	}
 
 	/**

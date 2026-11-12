@@ -26,6 +26,7 @@ namespace pocketmine\network\mcpe\protocol;
 #include <rules/DataPacket.h>
 
 use pocketmine\network\mcpe\NetworkSession;
+use pocketmine\network\mcpe\protocol\types\sound\SoundAttachOptions;
 
 class PlaySoundPacket extends DataPacket{
 	public const NETWORK_ID = ProtocolInfo::PLAY_SOUND_PACKET;
@@ -41,6 +42,7 @@ class PlaySoundPacket extends DataPacket{
 	public ?int $serverSoundHandle = null;
 	public ?float $playbackPositionSeconds = null;
 	public ?float $startDelaySeconds = null;
+	public ?SoundAttachOptions $soundAttachOptions = null;
 
 	public static function create(
 		string $soundName,
@@ -53,7 +55,8 @@ class PlaySoundPacket extends DataPacket{
 		bool $bypassListenerRangeCheck = false,
 		?int $serverSoundHandle = null,
 		?float $playbackPositionSeconds = null,
-		?float $startDelaySeconds = null
+		?float $startDelaySeconds = null,
+		?SoundAttachOptions $soundAttachOptions = null
 	) : self{
 		$result = new self;
 		$result->soundName = $soundName;
@@ -67,6 +70,7 @@ class PlaySoundPacket extends DataPacket{
 		$result->serverSoundHandle = $serverSoundHandle;
 		$result->playbackPositionSeconds = $playbackPositionSeconds;
 		$result->startDelaySeconds = $startDelaySeconds;
+		$result->soundAttachOptions = $soundAttachOptions;
 
 		return $result;
 	}
@@ -84,6 +88,7 @@ class PlaySoundPacket extends DataPacket{
 		$this->serverSoundHandle = $this->readOptional(fn() => $this->getLLong());
 		$this->playbackPositionSeconds = $this->readOptional(fn() => $this->getLFloat());
 		$this->startDelaySeconds = $this->readOptional(fn() => $this->getLFloat());
+		$this->soundAttachOptions = $this->readOptional(fn() => SoundAttachOptions::read($this));
 	}
 
 	protected function encodePayload() : void{
@@ -96,6 +101,7 @@ class PlaySoundPacket extends DataPacket{
 		$this->writeOptional($this->serverSoundHandle, fn(int $serverSoundHandle) => $this->putLLong($serverSoundHandle));
 		$this->writeOptional($this->playbackPositionSeconds, fn(float $playbackPositionSeconds) => $this->putLFloat($playbackPositionSeconds));
 		$this->writeOptional($this->startDelaySeconds, fn(float $startDelaySeconds) => $this->putLFloat($startDelaySeconds));
+		$this->writeOptional($this->soundAttachOptions, fn(SoundAttachOptions $options) => $options->write($this));
 	}
 
 	public function handle(NetworkSession $session) : bool{

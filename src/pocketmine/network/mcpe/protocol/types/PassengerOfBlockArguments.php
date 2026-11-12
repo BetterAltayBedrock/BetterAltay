@@ -6,6 +6,7 @@ namespace pocketmine\network\mcpe\protocol\types;
 
 use pocketmine\math\Vector3;
 use pocketmine\network\mcpe\NetworkBinaryStream;
+use pocketmine\utils\UUID;
 
 final class PassengerOfBlockArguments{
 
@@ -16,7 +17,8 @@ final class PassengerOfBlockArguments{
 		private float $rotationLimit,
 		/** @see PassengerOfBlockEmoteType */
 		private int $emoteType,
-		private int $blockType
+		private int $blockType,
+		private UUID $packUUID
 	){
 	}
 
@@ -32,6 +34,8 @@ final class PassengerOfBlockArguments{
 
 	public function getBlockType() : int{ return $this->blockType; }
 
+	public function getPackUUID() : UUID{ return $this->packUUID; }
+
 	public static function read(NetworkBinaryStream $in) : self{
 		$x = $y = $z = 0;
 		$in->getBlockPosition($x, $y, $z);
@@ -41,8 +45,9 @@ final class PassengerOfBlockArguments{
 		$rotationLimit = $in->getLFloat();
 		$emoteType = $in->getByte();
 		$blockType = $in->getLLong();
+		$packUUID = $in->getUUID();
 
-		return new self($blockPosition, $offset, $rotation, $rotationLimit, $emoteType, $blockType);
+		return new self($blockPosition, $offset, $rotation, $rotationLimit, $emoteType, $blockType, $packUUID);
 	}
 
 	public function write(NetworkBinaryStream $out) : void{
@@ -52,5 +57,6 @@ final class PassengerOfBlockArguments{
 		$out->putLFloat($this->rotationLimit);
 		$out->putByte($this->emoteType);
 		$out->putLLong($this->blockType);
+		$out->putUUID($this->packUUID);
 	}
 }

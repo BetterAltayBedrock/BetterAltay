@@ -66,5 +66,6 @@ interface WindowTypes{
 	public const DECORATED_POT = 35;
 	public const CRAFTER = 36;
 	public const DISC_PRESS = 38;
+	public const VIRTUAL_CONTAINER = 39;
 
 }

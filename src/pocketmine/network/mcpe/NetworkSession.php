@@ -221,6 +221,8 @@ use pocketmine\network\mcpe\protocol\UpdatePlayerGameTypePacket;
 use pocketmine\network\mcpe\protocol\UpdateSoftEnumPacket;
 use pocketmine\network\mcpe\protocol\UpdateSubChunkBlocksPacket;
 use pocketmine\network\mcpe\protocol\UpdateTradePacket;
+use pocketmine\network\mcpe\protocol\VirtualContainerClosePacket;
+use pocketmine\network\mcpe\protocol\VirtualContainerOpenPacket;
 use pocketmine\network\mcpe\protocol\VoxelShapesPacket;
 
 abstract class NetworkSession{
@@ -1019,6 +1021,14 @@ abstract class NetworkSession{
 	}
 
 	public function handleClientboundMusicPlaybackFailure(ClientboundMusicPlaybackFailurePacket $packet) : bool{
+		return false;
+	}
+
+	public function handleVirtualContainerOpen(VirtualContainerOpenPacket $packet) : bool{
+		return false;
+	}
+
+	public function handleVirtualContainerClose(VirtualContainerClosePacket $packet) : bool{
 		return false;
 	}
 

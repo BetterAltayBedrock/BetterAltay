@@ -37,7 +37,7 @@ interface ProtocolInfo{
 	 */
 
 	/** Actual Minecraft: PE protocol version */
-	public const CURRENT_PROTOCOL = 2250;
+	public const CURRENT_PROTOCOL = 2259;
 	/** Current Minecraft PE version reported by the server. This is usually the earliest currently supported version. */
 	public const MINECRAFT_VERSION = 'v26.70';
 	/** Version number sent to clients in ping responses. */
@@ -266,4 +266,6 @@ interface ProtocolInfo{
 	public const CLIENTBOUND_ONLINE_MUSIC_PLAYBACK_RESPONSE_PACKET = 0x16b;
 	public const PLAYER_TOGGLE_ARMOR_VISIBILITY_REQUEST_PACKET = 0x16c;
 	public const CLIENTBOUND_MUSIC_PLAYBACK_FAILURE_PACKET = 0x16d;
+	public const VIRTUAL_CONTAINER_OPEN_PACKET = 0x16e;
+	public const VIRTUAL_CONTAINER_CLOSE_PACKET = 0x16f;
 }

@@ -170,6 +170,7 @@ final class DisconnectFailReason{
 	public const SESSION_THROTTLED = 156;
 	public const SESSION_REQUEST_REJECTED = 157;
 	public const SESSION_UNKNOWN_ERROR = 158;
-	public const MAX_DISCONNECT_FAIL_REASON = 159;
+	public const BROKEN_DATA = 159;
+	public const MAX_DISCONNECT_FAIL_REASON = 160;
 
 }

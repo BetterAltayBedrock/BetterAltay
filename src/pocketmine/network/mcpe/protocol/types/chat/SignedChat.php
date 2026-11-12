@@ -21,10 +21,10 @@ final class SignedChat{
 	public function __construct(
 		private string $keyId,
 		private string $senderId,
-		private string $roomId,
 		private string $messageId,
 		private string $scanText,
 		private string $redactedText,
+		private string $authorName,
 		private string $signature
 	){}
 
@@ -32,23 +32,23 @@ final class SignedChat{
 
 	public function getSenderId() : string{ return $this->senderId; }
 
-	public function getRoomId() : string{ return $this->roomId; }
-
 	public function getMessageId() : string{ return $this->messageId; }
 
 	public function getScanText() : string{ return $this->scanText; }
 
 	public function getRedactedText() : string{ return $this->redactedText; }
 
+	public function getAuthorName() : string{ return $this->authorName; }
+
 	public function getSignature() : string{ return $this->signature; }
 
 	public function write(NetworkBinaryStream $out) : void{
 		$out->putString($this->keyId);
 		$out->putString($this->senderId);
-		$out->putString($this->roomId);
 		$out->putString($this->messageId);
 		$out->putString($this->scanText);
 		$out->putString($this->redactedText);
+		$out->putString($this->authorName);
 		$out->putString($this->signature);
 	}
 

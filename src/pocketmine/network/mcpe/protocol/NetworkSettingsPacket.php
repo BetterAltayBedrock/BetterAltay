@@ -26,6 +26,7 @@ namespace pocketmine\network\mcpe\protocol;
 #include <rules/DataPacket.h>
 
 use pocketmine\network\mcpe\NetworkSession;
+use pocketmine\network\mcpe\protocol\types\SCTPRecoveryProfile;
 
 class NetworkSettingsPacket extends DataPacket
 {
@@ -39,6 +40,7 @@ class NetworkSettingsPacket extends DataPacket
 	public bool $enableClientThrottling;
 	public int $clientThrottleThreshold;
 	public float $clientThrottleScalar;
+	public int $recoveryProfile = SCTPRecoveryProfile::DEFAULT;
 
 	public function canBeSentBeforeLogin() : bool{
 		return true;
@@ -50,6 +52,7 @@ class NetworkSettingsPacket extends DataPacket
 		$this->enableClientThrottling = $this->getBool();
 		$this->clientThrottleThreshold = $this->getByte();
 		$this->clientThrottleScalar = $this->getLFloat();
+		$this->recoveryProfile = $this->getByte();
 	}
 
 	protected function encodePayload() : void{
@@ -58,6 +61,7 @@ class NetworkSettingsPacket extends DataPacket
 		$this->putBool($this->enableClientThrottling);
 		$this->putByte($this->clientThrottleThreshold);
 		$this->putLFloat($this->clientThrottleScalar);
+		$this->putByte($this->recoveryProfile);
 	}
 
 	public function handle(NetworkSession $session) : bool{
