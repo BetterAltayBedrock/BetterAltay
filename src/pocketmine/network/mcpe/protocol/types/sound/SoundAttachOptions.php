@@ -12,7 +12,7 @@ final class SoundAttachOptions{
 		private int $entityRuntimeId
 	){}
 
-	public function getEntityRuntimeIdField() : int{ return $this->entityRuntimeId; } //TODO: rename this
+	public function getEntityRuntimeId() : int{ return $this->entityRuntimeId; }
 
 	public static function read(NetworkBinaryStream $in) : self{
 		return new self($in->getEntityRuntimeId());
