@@ -22,7 +22,8 @@
 declare(strict_types=1);
 
 const VERSIONS = [
-	"8.1"
+	"8.1",
+	"8.2"
 ];
 
 $workflowFile = file_get_contents(__DIR__ . '/main.yml');

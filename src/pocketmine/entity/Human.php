@@ -972,11 +972,4 @@ class Human extends Creature implements ProjectileSource, InventoryHolder{
 	public function setPlayerFlag(int $flagId, bool $value = true) : void{
 		$this->setDataFlag(self::DATA_PLAYER_FLAGS, $flagId, $value, self::DATA_TYPE_BYTE);
 	}
-
-	public function setNewProgress(?float $newProgress) : void{
-		if($newProgress < 0.0 || $newProgress > 1.0){
-			throw new InvalidArgumentException("XP progress must be in range 0-1");
-		}
-		$this->newProgress = $newProgress;
-	}
 }
