@@ -32,7 +32,7 @@ final class MusicPlaybackFailureEntry{
 	}
 
 	public static function read(NetworkBinaryStream $in) : self{
-		$state = MusicPlaybackState::from($in->getString());
+		$state = MusicPlaybackState::fromPacket($in->getString());
 		$description = $in->getString();
 		return new self($state, $description);
 	}

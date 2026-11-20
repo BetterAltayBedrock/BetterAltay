@@ -57,7 +57,7 @@ final class ClientboundOnlineMusicPlaybackResponsePacket extends DataPacket{
 
 	protected function decodePayload() : void{
 		$this->requestId = $this->getLInt();
-		$this->state = MusicPlaybackState::from($this->getString());
+		$this->state = MusicPlaybackState::fromPacket($this->getString());
 		$this->sharedMetadata = $this->getString();
 		$this->playbackContent = $this->getString();
 	}
