@@ -38,6 +38,7 @@ use function array_map;
 use function array_values;
 use function base64_decode;
 use function count;
+use function explode;
 use function file_get_contents;
 use function is_array;
 use function is_string;
@@ -260,6 +261,10 @@ class CraftingManager{
 	}
 
 	private static function itemFromStringId(string $stringId, int $damage, int $count) : ?Item{
+		//some recipe descriptors append the damage value to the item ID ("minecraft:white_wool:0"); the damage itself
+		//is already provided in auxValue/damage, so the suffix is simply dropped here
+		$stringId = self::stripDamageSuffix($stringId);
+
 		$translator = ItemTranslator::getInstance();
 		[$id, $meta] = $translator->fromStringId($stringId);
 
@@ -276,6 +281,16 @@ class CraftingManager{
 		}
 
 		return ItemFactory::get($id, $meta, $count);
+	}
+
+	/**
+	 * Some recipe descriptors carry a damage value as a suffix of the item ID ("minecraft:white_wool:0"). That value is
+	 * already provided separately (auxValue for inputs, damage for outputs), so the suffix is dropped to make the ID
+	 * resolvable.
+	 */
+	private static function stripDamageSuffix(string $stringId) : string{
+		$parts = explode(":", $stringId, 3);
+		return isset($parts[2]) ? $parts[0] . ":" . $parts[1] : $stringId;
 	}
 
 	/**
