@@ -207,6 +207,10 @@ final class ItemTranslator{
 	}
 
 
+	public function hasComplexMapping(string $stringId) : bool{
+		return isset($this->complexMappings[$stringId]);
+	}
+
 	/**
 	 * @return int[]
 	 * @phpstan-return array{int, int}
