@@ -766,6 +766,7 @@
         "minecraft:record_creator": "minecraft:music_disc_creator",
         "minecraft:record_creator_music_box": "minecraft:music_disc_creator_music_box",
         "minecraft:record_far": "minecraft:music_disc_far",
+        "minecraft:record_flurry": "minecraft:music_disc_flurry",
         "minecraft:record_lava_chicken": "minecraft:music_disc_lava_chicken",
         "minecraft:record_mall": "minecraft:music_disc_mall",
         "minecraft:record_mellohi": "minecraft:music_disc_mellohi",

@@ -230,7 +230,7 @@
     },
     {
       "name": "minecraft:apple",
-      "id": 886,
+      "id": 887,
       "version": 1,
       "component_based": true
     },
@@ -470,7 +470,7 @@
     },
     {
       "name": "minecraft:banner_pattern",
-      "id": 850,
+      "id": 851,
       "version": 2,
       "component_based": false
     },
@@ -698,7 +698,7 @@
     },
     {
       "name": "minecraft:black_bundle",
-      "id": 865,
+      "id": 866,
       "version": 1,
       "component_based": true
     },
@@ -890,7 +890,7 @@
     },
     {
       "name": "minecraft:blue_bundle",
-      "id": 866,
+      "id": 867,
       "version": 1,
       "component_based": true
     },
@@ -1040,7 +1040,7 @@
     },
     {
       "name": "minecraft:boat",
-      "id": 846,
+      "id": 847,
       "version": 2,
       "component_based": false
     },
@@ -1142,7 +1142,7 @@
     },
     {
       "name": "minecraft:breeze_rod",
-      "id": 882,
+      "id": 883,
       "version": 1,
       "component_based": true
     },
@@ -1201,8 +1201,14 @@
       "component_based": false
     },
     {
+      "name": "minecraft:brittle_ice",
+      "id": -1249,
+      "version": 2,
+      "component_based": false
+    },
+    {
       "name": "minecraft:brown_bundle",
-      "id": 867,
+      "id": 868,
       "version": 1,
       "component_based": true
     },
@@ -1394,7 +1400,7 @@
     },
     {
       "name": "minecraft:bundle",
-      "id": 868,
+      "id": 869,
       "version": 1,
       "component_based": true
     },
@@ -1431,6 +1437,36 @@
     {
       "name": "minecraft:calcite",
       "id": -326,
+      "version": 2,
+      "component_based": false
+    },
+    {
+      "name": "minecraft:calcite_double_slab",
+      "id": -1268,
+      "version": 2,
+      "component_based": false
+    },
+    {
+      "name": "minecraft:calcite_pillar",
+      "id": -1270,
+      "version": 2,
+      "component_based": false
+    },
+    {
+      "name": "minecraft:calcite_slab",
+      "id": -1267,
+      "version": 2,
+      "component_based": false
+    },
+    {
+      "name": "minecraft:calcite_stairs",
+      "id": -1266,
+      "version": 2,
+      "component_based": false
+    },
+    {
+      "name": "minecraft:calcite_wall",
+      "id": -1269,
       "version": 2,
       "component_based": false
     },
@@ -1598,7 +1634,7 @@
     },
     {
       "name": "minecraft:chemistry_table",
-      "id": 839,
+      "id": 840,
       "version": 2,
       "component_based": false
     },
@@ -1795,6 +1831,12 @@
       "component_based": false
     },
     {
+      "name": "minecraft:chiseled_packed_ice",
+      "id": -1258,
+      "version": 2,
+      "component_based": false
+    },
+    {
       "name": "minecraft:chiseled_polished_blackstone",
       "id": -279,
       "version": 2,
@@ -1821,6 +1863,12 @@
     {
       "name": "minecraft:chiseled_sandstone",
       "id": -944,
+      "version": 2,
+      "component_based": false
+    },
+    {
+      "name": "minecraft:chiseled_soulshale",
+      "id": -1281,
       "version": 2,
       "component_based": false
     },
@@ -2078,7 +2126,7 @@
     },
     {
       "name": "minecraft:colored_torch_bp",
-      "id": 844,
+      "id": 845,
       "version": 2,
       "component_based": false
     },
@@ -2102,7 +2150,7 @@
     },
     {
       "name": "minecraft:colored_torch_rg",
-      "id": 843,
+      "id": 844,
       "version": 2,
       "component_based": false
     },
@@ -2354,7 +2402,7 @@
     },
     {
       "name": "minecraft:copper_spear",
-      "id": 858,
+      "id": 859,
       "version": 1,
       "component_based": true
     },
@@ -2672,7 +2720,7 @@
     },
     {
       "name": "minecraft:cyan_bundle",
-      "id": 869,
+      "id": 870,
       "version": 1,
       "component_based": true
     },
@@ -3332,7 +3380,7 @@
     },
     {
       "name": "minecraft:diamond_spear",
-      "id": 859,
+      "id": 860,
       "version": 1,
       "component_based": true
     },
@@ -3387,12 +3435,6 @@
     {
       "name": "minecraft:disc_fragment_5",
       "id": 652,
-      "version": 2,
-      "component_based": false
-    },
-    {
-      "name": "minecraft:disc_press",
-      "id": -1251,
       "version": 2,
       "component_based": false
     },
@@ -3512,7 +3554,7 @@
     },
     {
       "name": "minecraft:dye",
-      "id": 849,
+      "id": 850,
       "version": 2,
       "component_based": false
     },
@@ -4316,7 +4358,7 @@
     },
     {
       "name": "minecraft:end_crystal",
-      "id": 852,
+      "id": 853,
       "version": 2,
       "component_based": false
     },
@@ -4796,7 +4838,7 @@
     },
     {
       "name": "minecraft:glow_berries",
-      "id": 887,
+      "id": 888,
       "version": 0,
       "component_based": false
     },
@@ -4970,7 +5012,7 @@
     },
     {
       "name": "minecraft:golden_spear",
-      "id": 860,
+      "id": 861,
       "version": 1,
       "component_based": true
     },
@@ -5030,7 +5072,7 @@
     },
     {
       "name": "minecraft:gray_bundle",
-      "id": 870,
+      "id": 871,
       "version": 1,
       "component_based": true
     },
@@ -5156,7 +5198,7 @@
     },
     {
       "name": "minecraft:green_bundle",
-      "id": 871,
+      "id": 872,
       "version": 1,
       "component_based": true
     },
@@ -5504,13 +5546,13 @@
     },
     {
       "name": "minecraft:hard_stained_glass",
-      "id": 841,
+      "id": 842,
       "version": 2,
       "component_based": false
     },
     {
       "name": "minecraft:hard_stained_glass_pane",
-      "id": 842,
+      "id": 843,
       "version": 2,
       "component_based": false
     },
@@ -5678,7 +5720,7 @@
     },
     {
       "name": "minecraft:ice_ball",
-      "id": 853,
+      "id": 854,
       "version": 1,
       "component_based": true
     },
@@ -5690,13 +5732,13 @@
     },
     {
       "name": "minecraft:ice_crystal",
-      "id": 854,
+      "id": 855,
       "version": 1,
       "component_based": true
     },
     {
       "name": "minecraft:icicle",
-      "id": 855,
+      "id": 856,
       "version": 1,
       "component_based": true
     },
@@ -5876,7 +5918,7 @@
     },
     {
       "name": "minecraft:iron_spear",
-      "id": 861,
+      "id": 862,
       "version": 1,
       "component_based": true
     },
@@ -6278,7 +6320,7 @@
     },
     {
       "name": "minecraft:light_block",
-      "id": 845,
+      "id": 846,
       "version": 2,
       "component_based": false
     },
@@ -6380,7 +6422,7 @@
     },
     {
       "name": "minecraft:light_blue_bundle",
-      "id": 872,
+      "id": 873,
       "version": 1,
       "component_based": true
     },
@@ -6506,7 +6548,7 @@
     },
     {
       "name": "minecraft:light_gray_bundle",
-      "id": 873,
+      "id": 874,
       "version": 1,
       "component_based": true
     },
@@ -6650,7 +6692,7 @@
     },
     {
       "name": "minecraft:lime_bundle",
-      "id": 874,
+      "id": 875,
       "version": 1,
       "component_based": true
     },
@@ -6866,7 +6908,7 @@
     },
     {
       "name": "minecraft:magenta_bundle",
-      "id": 875,
+      "id": 876,
       "version": 1,
       "component_based": true
     },
@@ -7429,6 +7471,12 @@
       "component_based": true
     },
     {
+      "name": "minecraft:music_disc_flurry",
+      "id": 839,
+      "version": 2,
+      "component_based": true
+    },
+    {
       "name": "minecraft:music_disc_lava_chicken",
       "id": 837,
       "version": 2,
@@ -7682,7 +7730,7 @@
     },
     {
       "name": "minecraft:netherite_spear",
-      "id": 862,
+      "id": 863,
       "version": 1,
       "component_based": true
     },
@@ -7856,7 +7904,7 @@
     },
     {
       "name": "minecraft:ominous_trial_key",
-      "id": 883,
+      "id": 884,
       "version": 1,
       "component_based": true
     },
@@ -7868,7 +7916,7 @@
     },
     {
       "name": "minecraft:orange_bundle",
-      "id": 876,
+      "id": 877,
       "version": 1,
       "component_based": true
     },
@@ -8109,6 +8157,36 @@
     {
       "name": "minecraft:packed_ice",
       "id": 174,
+      "version": 2,
+      "component_based": false
+    },
+    {
+      "name": "minecraft:packed_ice_brick_double_slab",
+      "id": -1260,
+      "version": 2,
+      "component_based": false
+    },
+    {
+      "name": "minecraft:packed_ice_brick_slab",
+      "id": -1256,
+      "version": 2,
+      "component_based": false
+    },
+    {
+      "name": "minecraft:packed_ice_brick_stairs",
+      "id": -1257,
+      "version": 2,
+      "component_based": false
+    },
+    {
+      "name": "minecraft:packed_ice_brick_wall",
+      "id": -1259,
+      "version": 2,
+      "component_based": false
+    },
+    {
+      "name": "minecraft:packed_ice_bricks",
+      "id": -1250,
       "version": 2,
       "component_based": false
     },
@@ -8372,7 +8450,7 @@
     },
     {
       "name": "minecraft:pink_bundle",
-      "id": 877,
+      "id": 878,
       "version": 1,
       "component_based": true
     },
@@ -8679,6 +8757,66 @@
     {
       "name": "minecraft:polished_blackstone_wall",
       "id": -297,
+      "version": 2,
+      "component_based": false
+    },
+    {
+      "name": "minecraft:polished_calcite",
+      "id": -1275,
+      "version": 2,
+      "component_based": false
+    },
+    {
+      "name": "minecraft:polished_calcite_brick_double_slab",
+      "id": -1278,
+      "version": 2,
+      "component_based": false
+    },
+    {
+      "name": "minecraft:polished_calcite_brick_slab",
+      "id": -1277,
+      "version": 2,
+      "component_based": false
+    },
+    {
+      "name": "minecraft:polished_calcite_brick_stairs",
+      "id": -1276,
+      "version": 2,
+      "component_based": false
+    },
+    {
+      "name": "minecraft:polished_calcite_brick_wall",
+      "id": -1279,
+      "version": 2,
+      "component_based": false
+    },
+    {
+      "name": "minecraft:polished_calcite_bricks",
+      "id": -1280,
+      "version": 2,
+      "component_based": false
+    },
+    {
+      "name": "minecraft:polished_calcite_double_slab",
+      "id": -1273,
+      "version": 2,
+      "component_based": false
+    },
+    {
+      "name": "minecraft:polished_calcite_slab",
+      "id": -1272,
+      "version": 2,
+      "component_based": false
+    },
+    {
+      "name": "minecraft:polished_calcite_stairs",
+      "id": -1271,
+      "version": 2,
+      "component_based": false
+    },
+    {
+      "name": "minecraft:polished_calcite_wall",
+      "id": -1274,
       "version": 2,
       "component_based": false
     },
@@ -9164,7 +9302,7 @@
     },
     {
       "name": "minecraft:purple_bundle",
-      "id": 878,
+      "id": 879,
       "version": 1,
       "component_based": true
     },
@@ -9464,7 +9602,7 @@
     },
     {
       "name": "minecraft:red_bundle",
-      "id": 879,
+      "id": 880,
       "version": 1,
       "component_based": true
     },
@@ -9632,7 +9770,7 @@
     },
     {
       "name": "minecraft:red_shrub",
-      "id": 856,
+      "id": 857,
       "version": 1,
       "component_based": true
     },
@@ -9980,7 +10118,7 @@
     },
     {
       "name": "minecraft:shelf_mushroom",
-      "id": 857,
+      "id": 858,
       "version": 1,
       "component_based": true
     },
@@ -10255,6 +10393,36 @@
       "component_based": false
     },
     {
+      "name": "minecraft:snow_brick_double_slab",
+      "id": -1264,
+      "version": 2,
+      "component_based": false
+    },
+    {
+      "name": "minecraft:snow_brick_slab",
+      "id": -1263,
+      "version": 2,
+      "component_based": false
+    },
+    {
+      "name": "minecraft:snow_brick_stairs",
+      "id": -1262,
+      "version": 2,
+      "component_based": false
+    },
+    {
+      "name": "minecraft:snow_brick_wall",
+      "id": -1265,
+      "version": 2,
+      "component_based": false
+    },
+    {
+      "name": "minecraft:snow_bricks",
+      "id": -1261,
+      "version": 2,
+      "component_based": false
+    },
+    {
       "name": "minecraft:snow_golem_spawn_egg",
       "id": 511,
       "version": 2,
@@ -10316,7 +10484,7 @@
     },
     {
       "name": "minecraft:spawn_egg",
-      "id": 851,
+      "id": 852,
       "version": 2,
       "component_based": false
     },
@@ -10640,7 +10808,7 @@
     },
     {
       "name": "minecraft:stone_spear",
-      "id": 863,
+      "id": 864,
       "version": 1,
       "component_based": true
     },
@@ -11096,7 +11264,7 @@
     },
     {
       "name": "minecraft:trial_key",
-      "id": 884,
+      "id": 885,
       "version": 1,
       "component_based": true
     },
@@ -12038,7 +12206,7 @@
     },
     {
       "name": "minecraft:white_bundle",
-      "id": 880,
+      "id": 881,
       "version": 1,
       "component_based": true
     },
@@ -12182,7 +12350,7 @@
     },
     {
       "name": "minecraft:wind_charge",
-      "id": 885,
+      "id": 886,
       "version": 1,
       "component_based": true
     },
@@ -12284,7 +12452,7 @@
     },
     {
       "name": "minecraft:wooden_spear",
-      "id": 864,
+      "id": 865,
       "version": 1,
       "component_based": true
     },
@@ -12314,7 +12482,7 @@
     },
     {
       "name": "minecraft:yellow_bundle",
-      "id": 881,
+      "id": 882,
       "version": 1,
       "component_based": true
     },
