@@ -832,5 +832,6 @@
     "minecraft:record_bounce": 799,
     "minecraft:soul_campfire": 801,
     "minecraft:blue_egg": 851,
-    "minecraft:brown_egg": 852
+    "minecraft:brown_egg": 852,
+    "minecraft:record_flurry": 853
 }

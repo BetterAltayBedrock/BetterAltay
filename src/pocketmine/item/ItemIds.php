@@ -310,5 +310,6 @@ interface ItemIds extends BlockIds{
 	public const RECORD_BOUNCE = 799;
 	public const BLUE_EGG = 851;
 	public const BROWN_EGG = 852;
+	public const RECORD_FLURRY = 853;
 
 }

@@ -312,6 +312,7 @@ class ItemFactory{
 			Item::RECORD_TEARS => Record::SOUND_RECORD_TEARS,
 			Item::RECORD_LAVA_CHICKEN => Record::SOUND_RECORD_LAVA_CHICKEN,
 			Item::RECORD_BOUNCE => Record::SOUND_RECORD_BOUNCE,
+			Item::RECORD_FLURRY => Record::SOUND_RECORD_FLURRY,
 		];
 
 		foreach($records as $itemId => $soundId){

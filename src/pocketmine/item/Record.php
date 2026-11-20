@@ -48,6 +48,7 @@ class Record extends Item{
 	public const SOUND_RECORD_TEARS = "record.tears";
 	public const SOUND_RECORD_LAVA_CHICKEN = "record.lava_chicken";
 	public const SOUND_RECORD_BOUNCE = "record.bounce";
+	public const SOUND_RECORD_FLURRY = "record.flurry";
 
 	public function __construct(int $id, protected string $soundId){
 		parent::__construct($id, 0, "Music Disc");
