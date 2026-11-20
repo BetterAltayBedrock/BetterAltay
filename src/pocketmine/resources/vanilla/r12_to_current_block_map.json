@@ -25465,6 +25465,7 @@
         "blockState": {
             "name": "minecraft:powered_repeater",
             "states": {
+                "locked": 0,
                 "minecraft:cardinal_direction": "south",
                 "repeater_delay": 0
             },
@@ -25477,6 +25478,7 @@
         "blockState": {
             "name": "minecraft:powered_repeater",
             "states": {
+                "locked": 0,
                 "minecraft:cardinal_direction": "west",
                 "repeater_delay": 0
             },
@@ -25489,6 +25491,7 @@
         "blockState": {
             "name": "minecraft:powered_repeater",
             "states": {
+                "locked": 0,
                 "minecraft:cardinal_direction": "north",
                 "repeater_delay": 0
             },
@@ -25501,6 +25504,7 @@
         "blockState": {
             "name": "minecraft:powered_repeater",
             "states": {
+                "locked": 0,
                 "minecraft:cardinal_direction": "east",
                 "repeater_delay": 0
             },
@@ -25513,6 +25517,7 @@
         "blockState": {
             "name": "minecraft:powered_repeater",
             "states": {
+                "locked": 0,
                 "minecraft:cardinal_direction": "south",
                 "repeater_delay": 1
             },
@@ -25525,6 +25530,7 @@
         "blockState": {
             "name": "minecraft:powered_repeater",
             "states": {
+                "locked": 0,
                 "minecraft:cardinal_direction": "west",
                 "repeater_delay": 1
             },
@@ -25537,6 +25543,7 @@
         "blockState": {
             "name": "minecraft:powered_repeater",
             "states": {
+                "locked": 0,
                 "minecraft:cardinal_direction": "north",
                 "repeater_delay": 1
             },
@@ -25549,6 +25556,7 @@
         "blockState": {
             "name": "minecraft:powered_repeater",
             "states": {
+                "locked": 0,
                 "minecraft:cardinal_direction": "east",
                 "repeater_delay": 1
             },
@@ -25561,6 +25569,7 @@
         "blockState": {
             "name": "minecraft:powered_repeater",
             "states": {
+                "locked": 0,
                 "minecraft:cardinal_direction": "south",
                 "repeater_delay": 2
             },
@@ -25573,6 +25582,7 @@
         "blockState": {
             "name": "minecraft:powered_repeater",
             "states": {
+                "locked": 0,
                 "minecraft:cardinal_direction": "west",
                 "repeater_delay": 2
             },
@@ -25585,6 +25595,7 @@
         "blockState": {
             "name": "minecraft:powered_repeater",
             "states": {
+                "locked": 0,
                 "minecraft:cardinal_direction": "north",
                 "repeater_delay": 2
             },
@@ -25597,6 +25608,7 @@
         "blockState": {
             "name": "minecraft:powered_repeater",
             "states": {
+                "locked": 0,
                 "minecraft:cardinal_direction": "east",
                 "repeater_delay": 2
             },
@@ -25609,6 +25621,7 @@
         "blockState": {
             "name": "minecraft:powered_repeater",
             "states": {
+                "locked": 0,
                 "minecraft:cardinal_direction": "south",
                 "repeater_delay": 3
             },
@@ -25621,6 +25634,7 @@
         "blockState": {
             "name": "minecraft:powered_repeater",
             "states": {
+                "locked": 0,
                 "minecraft:cardinal_direction": "west",
                 "repeater_delay": 3
             },
@@ -25633,6 +25647,7 @@
         "blockState": {
             "name": "minecraft:powered_repeater",
             "states": {
+                "locked": 0,
                 "minecraft:cardinal_direction": "north",
                 "repeater_delay": 3
             },
@@ -25645,6 +25660,7 @@
         "blockState": {
             "name": "minecraft:powered_repeater",
             "states": {
+                "locked": 0,
                 "minecraft:cardinal_direction": "east",
                 "repeater_delay": 3
             },
@@ -28610,6 +28626,7 @@
         "blockState": {
             "name": "minecraft:scaffolding",
             "states": {
+                "bottom": 0,
                 "stability": 0,
                 "stability_check": 0
             },
@@ -28622,6 +28639,7 @@
         "blockState": {
             "name": "minecraft:scaffolding",
             "states": {
+                "bottom": 0,
                 "stability": 1,
                 "stability_check": 0
             },
@@ -28634,6 +28652,7 @@
         "blockState": {
             "name": "minecraft:scaffolding",
             "states": {
+                "bottom": 0,
                 "stability": 2,
                 "stability_check": 0
             },
@@ -28646,6 +28665,7 @@
         "blockState": {
             "name": "minecraft:scaffolding",
             "states": {
+                "bottom": 0,
                 "stability": 3,
                 "stability_check": 0
             },
@@ -28658,6 +28678,7 @@
         "blockState": {
             "name": "minecraft:scaffolding",
             "states": {
+                "bottom": 0,
                 "stability": 4,
                 "stability_check": 0
             },
@@ -28670,6 +28691,7 @@
         "blockState": {
             "name": "minecraft:scaffolding",
             "states": {
+                "bottom": 0,
                 "stability": 5,
                 "stability_check": 0
             },
@@ -28682,6 +28704,7 @@
         "blockState": {
             "name": "minecraft:scaffolding",
             "states": {
+                "bottom": 0,
                 "stability": 6,
                 "stability_check": 0
             },
@@ -28694,6 +28717,7 @@
         "blockState": {
             "name": "minecraft:scaffolding",
             "states": {
+                "bottom": 0,
                 "stability": 7,
                 "stability_check": 0
             },
@@ -28706,6 +28730,7 @@
         "blockState": {
             "name": "minecraft:scaffolding",
             "states": {
+                "bottom": 0,
                 "stability": 0,
                 "stability_check": 1
             },
@@ -28718,6 +28743,7 @@
         "blockState": {
             "name": "minecraft:scaffolding",
             "states": {
+                "bottom": 0,
                 "stability": 1,
                 "stability_check": 1
             },
@@ -28730,6 +28756,7 @@
         "blockState": {
             "name": "minecraft:scaffolding",
             "states": {
+                "bottom": 0,
                 "stability": 2,
                 "stability_check": 1
             },
@@ -28742,6 +28769,7 @@
         "blockState": {
             "name": "minecraft:scaffolding",
             "states": {
+                "bottom": 0,
                 "stability": 3,
                 "stability_check": 1
             },
@@ -28754,6 +28782,7 @@
         "blockState": {
             "name": "minecraft:scaffolding",
             "states": {
+                "bottom": 0,
                 "stability": 4,
                 "stability_check": 1
             },
@@ -28766,6 +28795,7 @@
         "blockState": {
             "name": "minecraft:scaffolding",
             "states": {
+                "bottom": 0,
                 "stability": 5,
                 "stability_check": 1
             },
@@ -28778,6 +28808,7 @@
         "blockState": {
             "name": "minecraft:scaffolding",
             "states": {
+                "bottom": 0,
                 "stability": 6,
                 "stability_check": 1
             },
@@ -28790,6 +28821,7 @@
         "blockState": {
             "name": "minecraft:scaffolding",
             "states": {
+                "bottom": 0,
                 "stability": 7,
                 "stability_check": 1
             },
@@ -36072,6 +36104,7 @@
         "blockState": {
             "name": "minecraft:unpowered_repeater",
             "states": {
+                "locked": 0,
                 "minecraft:cardinal_direction": "south",
                 "repeater_delay": 0
             },
@@ -36084,6 +36117,7 @@
         "blockState": {
             "name": "minecraft:unpowered_repeater",
             "states": {
+                "locked": 0,
                 "minecraft:cardinal_direction": "west",
                 "repeater_delay": 0
             },
@@ -36096,6 +36130,7 @@
         "blockState": {
             "name": "minecraft:unpowered_repeater",
             "states": {
+                "locked": 0,
                 "minecraft:cardinal_direction": "north",
                 "repeater_delay": 0
             },
@@ -36108,6 +36143,7 @@
         "blockState": {
             "name": "minecraft:unpowered_repeater",
             "states": {
+                "locked": 0,
                 "minecraft:cardinal_direction": "east",
                 "repeater_delay": 0
             },
@@ -36120,6 +36156,7 @@
         "blockState": {
             "name": "minecraft:unpowered_repeater",
             "states": {
+                "locked": 0,
                 "minecraft:cardinal_direction": "south",
                 "repeater_delay": 1
             },
@@ -36132,6 +36169,7 @@
         "blockState": {
             "name": "minecraft:unpowered_repeater",
             "states": {
+                "locked": 0,
                 "minecraft:cardinal_direction": "west",
                 "repeater_delay": 1
             },
@@ -36144,6 +36182,7 @@
         "blockState": {
             "name": "minecraft:unpowered_repeater",
             "states": {
+                "locked": 0,
                 "minecraft:cardinal_direction": "north",
                 "repeater_delay": 1
             },
@@ -36156,6 +36195,7 @@
         "blockState": {
             "name": "minecraft:unpowered_repeater",
             "states": {
+                "locked": 0,
                 "minecraft:cardinal_direction": "east",
                 "repeater_delay": 1
             },
@@ -36168,6 +36208,7 @@
         "blockState": {
             "name": "minecraft:unpowered_repeater",
             "states": {
+                "locked": 0,
                 "minecraft:cardinal_direction": "south",
                 "repeater_delay": 2
             },
@@ -36180,6 +36221,7 @@
         "blockState": {
             "name": "minecraft:unpowered_repeater",
             "states": {
+                "locked": 0,
                 "minecraft:cardinal_direction": "west",
                 "repeater_delay": 2
             },
@@ -36192,6 +36234,7 @@
         "blockState": {
             "name": "minecraft:unpowered_repeater",
             "states": {
+                "locked": 0,
                 "minecraft:cardinal_direction": "north",
                 "repeater_delay": 2
             },
@@ -36204,6 +36247,7 @@
         "blockState": {
             "name": "minecraft:unpowered_repeater",
             "states": {
+                "locked": 0,
                 "minecraft:cardinal_direction": "east",
                 "repeater_delay": 2
             },
@@ -36216,6 +36260,7 @@
         "blockState": {
             "name": "minecraft:unpowered_repeater",
             "states": {
+                "locked": 0,
                 "minecraft:cardinal_direction": "south",
                 "repeater_delay": 3
             },
@@ -36228,6 +36273,7 @@
         "blockState": {
             "name": "minecraft:unpowered_repeater",
             "states": {
+                "locked": 0,
                 "minecraft:cardinal_direction": "west",
                 "repeater_delay": 3
             },
@@ -36240,6 +36286,7 @@
         "blockState": {
             "name": "minecraft:unpowered_repeater",
             "states": {
+                "locked": 0,
                 "minecraft:cardinal_direction": "north",
                 "repeater_delay": 3
             },
@@ -36252,6 +36299,7 @@
         "blockState": {
             "name": "minecraft:unpowered_repeater",
             "states": {
+                "locked": 0,
                 "minecraft:cardinal_direction": "east",
                 "repeater_delay": 3
             },
